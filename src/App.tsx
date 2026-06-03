@@ -1,15 +1,14 @@
-import './App.css'
+import "./App.css";
+import Button from "./components/ui/Button";
+import Navbar from "./components/layout/Navbar";
 
 function App() {
-
   return (
     <>
-      <div>
-        <p className='text-red-500'>Projet EFFICIENCY WEDDING</p>
-        <p> React Vite</p>
-      </div>
+      <Navbar />
+      <Button text="Réserver maintenant" />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
