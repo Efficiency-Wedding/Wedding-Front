@@ -73,11 +73,9 @@ const Home: FC<Props> = () => {
                     <h2 className="text-2xl sm:text-3xl font-bold mb-2">
                         Mariages de Rêve
                     </h2>
-
                     <p className="text-gray-600 mb-4 text-sm">
                         Découvrez quelques-uns de nos plus beaux événements.
                     </p>
-
                     <div className="mb-10">
                         <div className="block lg:hidden w-full">
                             <Carousel images={weddingImages} />
@@ -87,7 +85,6 @@ const Home: FC<Props> = () => {
                             <Carousel images={weddingImages} />
                             <Carousel images={profileImages} />
                         </div>
-
                     </div>
                     <div className="flex items-center gap-2 mt-5 flex-wrap">
                         <div className="flex text-yellow-400">
