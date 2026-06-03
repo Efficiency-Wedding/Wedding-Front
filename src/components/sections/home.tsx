@@ -24,7 +24,6 @@ const Home: FC<Props> = () => {
         >
             <div className="flex flex-col lg:flex-row py-10 gap-10 lg:gap-0">
 
-                {/* LEFT */}
                 <div className="w-full lg:w-1/3 flex items-center px-4 sm:px-10 py-8">
                     <div>
                         <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6 tracking-tight text-left">
@@ -35,14 +34,11 @@ const Home: FC<Props> = () => {
                             Wedding planner professionnel à Madagascar.
                             Nous organisons votre mariage de A à Z pour faire de votre grand jour un moment inoubliable.
                         </p>
-
                         <Button text="Réserver votre Date" icon={FaArrowRight} />
 
                         <p className="mt-5 text-gray-500 text-sm">
                             Mariage clé en main garantie.
                         </p>
-
-                        {/* avatars */}
                         <div className="flex items-center mt-5">
                             <img src={profil1} className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-white object-cover" />
                             <img src={profil2} className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-white -ml-3 object-cover" />
@@ -55,24 +51,27 @@ const Home: FC<Props> = () => {
                     </div>
                 </div>
 
-                {/* CENTER IMAGE */}
-                <div className="w-full lg:w-1/3 flex items-center justify-center relative">
-                    <div className="p-2 border-2 border-black/10 rounded-[250px] max-w-xs sm:max-w-sm mx-auto">
-                        <img
-                            src={bg}
-                            alt="visual"
-                            className="w-full object-contain rounded-[250px]"
-                        />
-                    </div>
-
-                    <div className="absolute left-1/2 bottom-[-20px] sm:bottom-0 -translate-x-1/2 translate-y-1/2">
-                        <div className="w-20 sm:w-28 h-20 sm:h-28 rounded-full overflow-hidden border-4 border-white shadow-lg bg-white">
-                            <img src={verre} alt="badge" className="w-full h-full object-cover" />
+                <div className="w-full lg:w-1/3 flex items-center justify-center">
+                    <div className="relative w-fit mx-auto">
+                        <div className="p-2 border-2 border-black/10 rounded-[250px] w-[220px] sm:w-[280px] lg:w-[320px]">
+                            <img
+                                src={bg}
+                                alt="visual"
+                                className="w-full h-full object-cover rounded-[250px]"
+                            />
+                        </div>
+                        <div className="absolute left-1/2 bottom-0 translate-x-[-50%] translate-y-1/2">
+                            <div className="w-20 sm:w-24 lg:w-28 h-20 sm:h-24 lg:h-28 rounded-full overflow-hidden border-4 border-white shadow-lg bg-white">
+                                <img
+                                    src={verre}
+                                    alt="badge"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* RIGHT */}
                 <div className="w-full lg:w-1/3 px-4 sm:px-8 py-8 flex flex-col justify-center">
                     <h2 className="text-2xl sm:text-3xl font-bold mb-2">
                         Mariages de Rêve
@@ -122,14 +121,12 @@ const Home: FC<Props> = () => {
                         Mariage est Unique
                     </p>
                 </div>
-
                 <div className="w-full lg:w-1/3 flex justify-center items-center lg:px-8 lg:border-l lg:border-r border-gray-300">
                     <p className="text-xs sm:text-sm text-gray-700 leading-relaxed font-medium text-center max-w-sm">
                         Que vous rêviez d'une cérémonie intime ou d'une réception grandiose, nous nous occupons de tout :
                         décoration, salle, traiteur, animation, photo, vidéo et coordination du Jour J.
                     </p>
                 </div>
-
                 <div className="w-full lg:w-1/3 flex justify-center lg:justify-end lg:pl-8 lg:border-l border-gray-300">
                     <div className="text-center lg:text-right">
                         <p className="text-3xl sm:text-4xl font-bold text-gray-900">100+</p>
