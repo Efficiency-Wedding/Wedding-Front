@@ -1,0 +1,15 @@
+import './App.css'
+
+function App() {
+
+  return (
+    <>
+      <div>
+        <p className='text-red-500'>Projet EFFICIENCY WEDDING</p>
+        <p> React Vite</p>
+      </div>
+    </>
+  )
+}
+
+export default App
