@@ -14,7 +14,7 @@ export default function Button({
 }: ButtonProps) {
     return (
         <button
-            className={`inline-flex items-center gap-2 font-medium text-white transition duration-300 rounded-full px-5 py-2 shadow-md w-fit bg-primary hover:bg-primary-light hover:text-black ${className}`}
+            className={`inline-flex items-center gap-2 font-medium text-white transition duration-300 rounded-full px-5 py-2 shadow-md w-fit bg-primary hover:bg-hover hover:text-black ${className}`}
             {...props}
         >
             {text}
