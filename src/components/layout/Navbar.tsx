@@ -8,12 +8,13 @@ const menuItems = [
     { id: "apropos", label: "A propos" },
     { id: "services", label: "Services" },
     { id: "gallery", label: "Gallery" },
+    { id: "blog", label: "Blog" },
     { id: "contact", label: "Contact" }
-
 ];
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
+
     const scrollTo = (id: string) => {
         document.getElementById(id)?.scrollIntoView({
             behavior: "smooth"
@@ -30,7 +31,7 @@ export default function Navbar() {
                         onClick?.();
                         scrollTo(item.id);
                     }}
-                    className="relative group text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-100 transition"
+                    className="relative group text-gray-700 font-medium py-2 px-3 rounded-lg hover:bg-gray-100 transition w-full whitespace-nowrap"
                 >
                     <span className="group-hover:text-primary transition-colors duration-300">
                         {item.label}
@@ -44,26 +45,33 @@ export default function Navbar() {
 
     return (
         <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-gray-200">
-            <nav className="flex justify-between items-center px-6 md:px-10 py-4">
-                <a href="#home" className="flex items-center">
+            <nav className="flex justify-between items-center px-4 md:px-10 py-4">
+
+                <a
+                    href="#home"
+                    className="flex items-center shrink-0 z-50"
+                >
                     <img
                         src={logo}
                         alt="logo"
-                        className="w-32 md:w-40 h-10 object-contain cursor-pointer hover:scale-105 transition"
+                        className="w-[140px] h-10 object-contain cursor-pointer hover:scale-105 transition shrink-0"
                     />
                 </a>
+
                 <div className="hidden md:flex gap-10 text-sm">
                     <Menu />
                 </div>
+
                 <div className="hidden md:block">
                     <Button
                         text="Planifier mon mariage"
                         onClick={() => scrollTo("contact")}
                     />
                 </div>
+
                 <button
                     onClick={() => setOpen(!open)}
-                    className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition"
+                    className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition flex items-center justify-center shrink-0 z-50"
                 >
                     {open ? <FaTimes size={20} /> : <FaBars size={20} />}
                 </button>
@@ -71,7 +79,6 @@ export default function Navbar() {
 
             {open && (
                 <div className="md:hidden bg-background border-t border-gray-100 px-6 py-5 flex flex-col gap-4">
-
                     <div className="flex flex-col gap-3">
                         <Menu onClick={() => setOpen(false)} />
                     </div>
