@@ -1,13 +1,11 @@
 import './App.css'
+import WeddingServices from './services/Services'
 
 function App() {
 
   return (
     <>
-      <div>
-        <p className='text-red-500'>Projet EFFICIENCY WEDDING</p>
-        <p> React Vite</p>
-      </div>
+      <WeddingServices/>
     </>
   )
 }
