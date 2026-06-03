@@ -1,12 +1,12 @@
 import "./App.css";
-import Button from "./components/ui/Button";
 import Navbar from "./components/layout/Navbar";
+import Home from "./components/sections/home";
 
 function App() {
   return (
     <>
       <Navbar />
-      <Button text="Réserver maintenant" />
+      <Home />
     </>
   );
 }

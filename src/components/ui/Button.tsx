@@ -1,6 +1,4 @@
 import type { ButtonHTMLAttributes } from "react";
-import { useState } from "react";
-import { colors } from "@/constants/colors";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     text: string;
@@ -14,16 +12,9 @@ export default function Button({
     className = "",
     ...props
 }: ButtonProps) {
-    const [hover, setHover] = useState(false);
-
     return (
         <button
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            style={{
-                backgroundColor: hover ? colors.primaryDark : colors.primary,
-            }}
-            className={`inline-flex items-center gap-2 font-medium text-white transition duration-300 rounded-full px-5 py-2 shadow-md w-fit ${className}`}
+            className={`inline-flex items-center gap-2 font-medium text-white transition duration-300 rounded-full px-5 py-2 shadow-md w-fit bg-primary hover:bg-primary-light hover:text-black ${className}`}
             {...props}
         >
             {text}
