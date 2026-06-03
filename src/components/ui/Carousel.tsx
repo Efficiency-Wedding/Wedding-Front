@@ -14,8 +14,8 @@ export default function Carousel({ images = [] }: CarouselProps) {
     };
 
     return (
-        <div className="flex flex-col items-center w-full">
-            <div className="relative w-64 h-64 rounded-2xl overflow-hidden shadow-lg">
+        <div className="w-full">
+            <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg">
                 <img
                     src={images[index]}
                     alt="carousel image"

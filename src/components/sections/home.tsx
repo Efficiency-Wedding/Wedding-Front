@@ -18,75 +18,82 @@ const profileImages: string[] = [profil1, profil2, profil3];
 
 const Home: FC<Props> = () => {
     return (
-        <section id="home" className="flex flex-col bg-background overflow-hidden pl-[100px] pr-[100px]">
-            <div className="flex flex-col lg:flex-row py-10">
-                <div className="w-full lg:w-1/3 flex items-center px-10 py-8">
+        <section
+            id="home"
+            className="flex flex-col bg-background overflow-x-hidden px-4 sm:px-6 lg:px-[100px]"
+        >
+            <div className="flex flex-col lg:flex-row py-10 gap-10 lg:gap-0">
+
+                {/* LEFT */}
+                <div className="w-full lg:w-1/3 flex items-center px-4 sm:px-10 py-8">
                     <div>
-                        <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6 tracking-tight text-left">
-                            Dites Oui à
-                            l'Amour, Nous
-                            Faisons le Reste
+                        <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6 tracking-tight text-left">
+                            Dites Oui à l'Amour, Nous Faisons le Reste
                         </h1>
 
-                        <p className="text-gray-600 text-lg mb-6 text-justify">
+                        <p className="text-gray-600 text-base sm:text-lg mb-6 text-justify">
                             Wedding planner professionnel à Madagascar.
-                            Nous organisons votre mariage de A à Z pour
-                            faire de votre grand jour un moment inoubliable.
+                            Nous organisons votre mariage de A à Z pour faire de votre grand jour un moment inoubliable.
                         </p>
 
-                        <Button
-                            text="Réserver votre Date"
-                            icon={FaArrowRight}
-                        />
+                        <Button text="Réserver votre Date" icon={FaArrowRight} />
 
-                        <p className="mt-5 text-gray-500">
+                        <p className="mt-5 text-gray-500 text-sm">
                             Mariage clé en main garantie.
                         </p>
 
+                        {/* avatars */}
                         <div className="flex items-center mt-5">
-                            <img src={profil1} className="w-12 h-12 rounded-full border-2 border-white object-cover" />
-                            <img src={profil2} className="w-12 h-12 rounded-full border-2 border-white -ml-3 object-cover" />
-                            <img src={profil3} className="w-12 h-12 rounded-full border-2 border-white -ml-3 object-cover" />
+                            <img src={profil1} className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-white object-cover" />
+                            <img src={profil2} className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-white -ml-3 object-cover" />
+                            <img src={profil3} className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-white -ml-3 object-cover" />
 
-                            <div className="w-12 h-12 rounded-full bg-gray-900 text-white flex items-center justify-center border-2 border-white -ml-3">
+                            <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-full bg-gray-900 text-white flex items-center justify-center border-2 border-white -ml-3">
                                 <FaPlus size={14} />
                             </div>
                         </div>
                     </div>
                 </div>
 
+                {/* CENTER IMAGE */}
                 <div className="w-full lg:w-1/3 flex items-center justify-center relative">
-                    <div className="p-2 border-2 border-black/10" style={{ borderRadius: "250px" }}>
+                    <div className="p-2 border-2 border-black/10 rounded-[250px] max-w-xs sm:max-w-sm mx-auto">
                         <img
                             src={bg}
                             alt="visual"
-                            className="w-full max-w-md object-contain"
-                            style={{ borderRadius: "250px" }}
+                            className="w-full object-contain rounded-[250px]"
                         />
                     </div>
-                    <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2">
-                        <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg bg-white">
-                            <img
-                                src={verre}
-                                alt="badge"
-                                className="w-full h-full object-cover"
-                            />
+
+                    <div className="absolute left-1/2 bottom-[-20px] sm:bottom-0 -translate-x-1/2 translate-y-1/2">
+                        <div className="w-20 sm:w-28 h-20 sm:h-28 rounded-full overflow-hidden border-4 border-white shadow-lg bg-white">
+                            <img src={verre} alt="badge" className="w-full h-full object-cover" />
                         </div>
                     </div>
                 </div>
 
-                <div className="w-full lg:w-1/3 px-8 py-8 flex flex-col justify-center">
-                    <h2 className="text-3xl font-bold mb-2">
+                {/* RIGHT */}
+                <div className="w-full lg:w-1/3 px-4 sm:px-8 py-8 flex flex-col justify-center">
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-2">
                         Mariages de Rêve
                     </h2>
+
                     <p className="text-gray-600 mb-4 text-sm">
                         Découvrez quelques-uns de nos plus beaux événements.
                     </p>
-                    <div className="flex gap-4 mb-10">
-                        <Carousel images={weddingImages} />
-                        <Carousel images={profileImages} />
+
+                    <div className="mb-10">
+                        <div className="block lg:hidden w-full">
+                            <Carousel images={weddingImages} />
+                        </div>
+
+                        <div className="hidden lg:grid lg:grid-cols-2 gap-4 w-full">
+                            <Carousel images={weddingImages} />
+                            <Carousel images={profileImages} />
+                        </div>
+
                     </div>
-                    <div className="flex items-center gap-2 mt-5">
+                    <div className="flex items-center gap-2 mt-5 flex-wrap">
                         <div className="flex text-yellow-400">
                             <FaStar />
                             <FaStar />
@@ -97,47 +104,44 @@ const Home: FC<Props> = () => {
                         <p className="text-sm font-medium text-gray-700">4.6</p>
                         <p className="text-sm text-gray-500">(46%)</p>
                     </div>
-
-                    <div className="mt-5 flex flex-col gap-2">
-                        <div className="flex flex-wrap gap-2 justify-between w-full">
-                            <Button text="#Moments capturés" />
-                            <Button text="#Mariage" />
-                            <Button text="#Amour & émotions" />
-                        </div>
-
-                        <div className="flex flex-wrap gap-2 justify-between w-full">
-                            <Button text="#Luxure" />
-                            <Button text="#Mariage premium" />
-                            <Button text="#Amour & émotions" />
-                        </div>
+                    <div className="mt-5 flex flex-wrap gap-2 justify-start">
+                        <Button text="#Moments capturés" />
+                        <Button text="#Amour & émotions" />
+                        <Button text="#Luxure" />
+                        <Button text="#Mariage" />
+                        <Button text="#Mariage premium" />
+                        <Button text="#Amour & émotions" />
                     </div>
                 </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row px-10 py-6 bg-primary-light rounded-xl mx-6">
-                <div className="w-full lg:w-1/3 mb-4 lg:mb-0 lg:pr-8">
-                    <p className="text-2xl font-bold text-gray-900 leading-tight">
+            <div className="flex flex-col lg:flex-row items-center lg:items-stretch text-center lg:text-left gap-6 lg:gap-0 px-4 sm:px-10 py-6 bg-primary-light rounded-xl mx-2 sm:mx-6">
+                <div className="w-full lg:w-1/3 flex justify-center lg:justify-start lg:pr-8">
+                    <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
                         Parce que Chaque <br />
                         Mariage est Unique
                     </p>
                 </div>
-                <div className="w-full lg:w-1/3 mb-4 lg:mb-0 lg:px-8 lg:border-l lg:border-r border-gray-300 flex items-center justify-center">
-                    <p className="text-sm text-gray-700 leading-relaxed font-medium text-center max-w-sm">
+
+                <div className="w-full lg:w-1/3 flex justify-center items-center lg:px-8 lg:border-l lg:border-r border-gray-300">
+                    <p className="text-xs sm:text-sm text-gray-700 leading-relaxed font-medium text-center max-w-sm">
                         Que vous rêviez d'une cérémonie intime ou d'une réception grandiose, nous nous occupons de tout :
                         décoration, salle, traiteur, animation, photo, vidéo et coordination du Jour J.
                     </p>
                 </div>
-                <div className="w-full lg:w-1/3 flex items-center justify-end lg:pl-8 lg:border-l border-gray-300">
-                    <div className="text-right">
-                        <p className="text-4xl font-bold text-gray-900">100+</p>
+
+                <div className="w-full lg:w-1/3 flex justify-center lg:justify-end lg:pl-8 lg:border-l border-gray-300">
+                    <div className="text-center lg:text-right">
+                        <p className="text-3xl sm:text-4xl font-bold text-gray-900">100+</p>
                         <p className="text-xs text-gray-600 mt-1">
                             100+ événements réussis
                         </p>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </section>
     );
 };
+
 export default Home;
