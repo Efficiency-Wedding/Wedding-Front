@@ -1,15 +1,14 @@
-import './App.css'
+import "./App.css";
+import Navbar from "./components/layout/Navbar";
+import Home from "./components/sections/home";
 
 function App() {
-
   return (
     <>
-      <div>
-        <p className='text-red-500'>Projet EFFICIENCY WEDDING</p>
-        <p> React Vite</p>
-      </div>
+      <Navbar />
+      <Home />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
