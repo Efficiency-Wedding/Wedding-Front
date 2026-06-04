@@ -1,6 +1,5 @@
 import blog1 from "@/assets/images/blog/blog (1).jpeg";
 import blog2 from "@/assets/images/blog/blog (2).jpeg";
-import blog3 from "@/assets/images/blog/blog (3).jpeg";
 import blog4 from "@/assets/images/blog/blog (4).jpeg";
 import blog5 from "@/assets/images/blog/blog (5).jpeg";
 import blog6 from "@/assets/images/blog/blog (6).jpeg";
@@ -8,6 +7,9 @@ import blog7 from "@/assets/images/blog/blog (7).jpeg";
 import blog8 from "@/assets/images/blog/blog (8).jpeg";
 import blog9 from "@/assets/images/blog/blog (9).jpeg";
 import blog10 from "@/assets/images/blog/blog (10).jpeg";
+import blog11 from "@/assets/images/blog/blog (11).jpeg";
+import blog12 from "@/assets/images/blog/blog (12).jpeg";
+import blog17 from "@/assets/images/blog/blog (17).jpeg";
 import blog18 from "@/assets/images/blog/blog (18).jpeg";
 
 
@@ -19,6 +21,7 @@ export type Article = {
   date: string;
   category: string;
   image: any;
+  gallery?: any[];
 };
 
 export const articles: Article[] = [
@@ -32,6 +35,7 @@ export const articles: Article[] = [
     date: "12 mai 2026",
     category: "Décoration",
     image: blog1,
+    gallery: [blog1, blog2, blog11, blog12, blog17],
   },
   {
     id: 2,
@@ -42,7 +46,8 @@ export const articles: Article[] = [
       "Le choix du lieu est l'une des décisions les plus importantes de votre organisation. Il définit l'atmosphère générale, le style de la décoration et même le menu. Commencez par établir une liste de critères essentiels : capacité d'accueil, distance, hébergement sur place, possibilité d'une cérémonie laïque en extérieur. Visitez toujours plusieurs lieux et imaginez-y votre journée du début à la fin. Posez les bonnes questions sur les prestataires imposés, les horaires et le couvre-feu sonore.",
     date: "28 avril 2026",
     category: "Conseils",
-    image: blog10
+    image: blog10,
+  gallery: [blog10, blog9, blog8],
   },
   {
     id: 3,
@@ -54,6 +59,7 @@ export const articles: Article[] = [
     date: "15 avril 2026",
     category: "Témoignages",
     image: blog8,
+  gallery: [blog8, blog7, blog6],
   },
   {
     id: 4,
@@ -64,7 +70,8 @@ export const articles: Article[] = [
       "La saison 2026 célèbre une mariée à la fois romantique et moderne. Les coupes fluides en mousseline de soie côtoient les bustiers structurés en mikado. Les manches bouffantes, les dos nus délicats et les capes amovibles permettent de transformer sa silhouette tout au long de la journée. Côté couleurs, le blanc cassé et les nuances poudrées dominent. Les accessoires se font discrets : un voile cathédrale, une paire de boucles d'oreilles vintage et un bouquet champêtre suffisent à parfaire la tenue.",
     date: "2 avril 2026",
     category: "Décoration",
-    image: blog18 
+    image: blog18,
+  gallery: [blog18, blog5, blog4],
   },
 ];
 
