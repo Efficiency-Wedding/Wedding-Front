@@ -428,29 +428,7 @@ function ServiceModal({ svc, onClose }: { svc: typeof services[0]; onClose: () =
               background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%)",
             }} />
             {/* Gallery thumbs */}
-            <div style={{
-              position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)",
-              display: "flex", gap: 8,
-            }}>
-              {svc.gallery.map((g, i) => (
-                <motion.button
-                  key={i}
-                  onClick={() => setImgIdx(i)}
-                  whileHover={{ scale: 1.15 }}
-                  whileTap={{ scale: 0.95 }}
-                  style={{
-                    width: i === imgIdx ? 28 : 8,
-                    height: 8,
-                    borderRadius: 4,
-                    background: i === imgIdx ? "#fff" : "rgba(255,255,255,0.5)",
-                    border: "none", cursor: "pointer",
-                    padding: 0, transition: "all 0.3s ease",
-                  }}
-                >
-                  <p className="text-transparent">{g}</p>
-                </motion.button>
-              ))}
-            </div>
+      
             {/* Tag badge */}
             {svc.tag && (
               <div style={{
