@@ -1,20 +1,61 @@
 import type { FC } from "react";
 import Button from "@/components/ui/Button";
-import bg from "@/assets/images/home/bck.avif";
-import profil1 from "@/assets/images/home/profil1.avif";
-import profil2 from "@/assets/images/home/profil2.jpg";
-import profil3 from "@/assets/images/home/profil3.jpg";
+import bg from "@/assets/images/home/home.jpg";
+import photo1 from "@/assets/images/home/photo.jpg";
+import photo2 from "@/assets/images/home/photo4.jpg";
+import photo3 from "@/assets/images/home/photo2.jpg";
+import photo4 from "@/assets/images/home/photo3.jpg";
+import photo16 from "@/assets/images/home/photo16.jpg";
+import photo17 from "@/assets/images/home/photo17.jpg";
+import photo18 from "@/assets/images/home/photo18.jpg";
+import photo7 from "@/assets/images/home/photo7.jpg";
+import photo8 from "@/assets/images/home/photo8.jpg";
+import photo9 from "@/assets/images/home/photo9.jpg";
+import photo10 from "@/assets/images/home/photo10.jpg";
+import photo11 from "@/assets/images/home/photo11.jpg";
+import photo14 from "@/assets/images/home/photo14.jpg";
+import photo15 from "@/assets/images/home/photo15.jpg";
 import verre from "@/assets/images/home/verre.jpg";
-import wed1 from "@/assets/images/home/wed1.avif";
-import wed2 from "@/assets/images/home/wed2.avif";
-import wed3 from "@/assets/images/home/wed.avif";
+import photo20 from "@/assets/images/home/photo6.jpg";
+import photo21 from "@/assets/images/home/photo1.jpg";
+import photo22 from "@/assets/images/home/photo5.jpg";
 import { FaArrowRight, FaStar, FaPlus } from "react-icons/fa";
 import Carousel from "@/components/ui/Carousel";
+import {
+    FaHeart,
+    FaGlassCheers,
+    FaCamera,
+    FaClipboardCheck,
+} from "react-icons/fa";
+import Card from "../ui/Card";
+import StatCard from "../ui/StatCard";
+import TestimonialCard from "../ui/TestimonialCard";
 
 type Props = {};
 
-const weddingImages: string[] = [wed1, wed2, wed3];
-const profileImages: string[] = [profil1, profil2, profil3];
+const weddingImages: string[] = [photo20, photo21, photo22];
+const photoeImages: string[] = [photo1, photo2, photo3];
+export const stats: {
+    number: string;
+    label: string;
+}[] = [
+        {
+            number: "3k+",
+            label: "Projects",
+        },
+        {
+            number: "200+",
+            label: "Clients",
+        },
+        {
+            number: "350+",
+            label: "Awards",
+        },
+        {
+            number: "16+",
+            label: "Years",
+        },
+    ];
 
 const Home: FC<Props> = () => {
     return (
@@ -37,9 +78,9 @@ const Home: FC<Props> = () => {
                             Mariage clé en main garantie.
                         </p>
                         <div className="flex items-center mt-5">
-                            <img src={profil1} className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-white object-cover" />
-                            <img src={profil2} className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-white -ml-3 object-cover" />
-                            <img src={profil3} className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-white -ml-3 object-cover" />
+                            <img src={photo1} className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-white object-cover" />
+                            <img src={photo2} className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-white -ml-3 object-cover" />
+                            <img src={photo3} className="w-10 sm:w-12 h-10 sm:h-12 rounded-full border-2 border-white -ml-3 object-cover" />
 
                             <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-full bg-gray-900 text-white flex items-center justify-center border-2 border-white -ml-3">
                                 <FaPlus size={14} />
@@ -83,7 +124,7 @@ const Home: FC<Props> = () => {
 
                         <div className="hidden lg:grid lg:grid-cols-2 gap-4 w-full">
                             <Carousel images={weddingImages} />
-                            <Carousel images={profileImages} />
+                            <Carousel images={photoeImages} />
                         </div>
                     </div>
                     <div className="flex items-center gap-2 mt-5 flex-wrap">
@@ -131,7 +172,171 @@ const Home: FC<Props> = () => {
                 </div>
 
             </div>
-        </section>
+
+            <div className="flex flex-col lg:flex-row gap-10 py-20 items-center">
+                <div className="w-full lg:w-1/2 flex gap-4 items-end">
+
+                    <div className="w-full bg-white p-2 pb-4 rounded-xl shadow-md transition-all duration-700 hover:scale-105 hover:shadow-2xl">
+                        <img
+                            src={photo7}
+                            alt="Mariage"
+                            className="w-full h-[350px] object-cover rounded-2xl"
+                        />
+                    </div>
+
+                    <div className="w-full bg-white p-2 pb-4 rounded-xl shadow-md transition-all duration-700 hover:scale-105 hover:shadow-2xl mt-10">
+                        <img
+                            src={photo4}
+                            alt="Mariage"
+                            className="w-full h-[250px] object-cover rounded-2xl"
+                        />
+                    </div>
+
+                </div>
+
+                <div className="w-full lg:w-1/2">
+                    <div className="flex items-center text-sm font-semibold text-primary pb-5">
+                        <span>01</span>
+
+                        <span className="mx-3 w-100 border-b border-dotted border-primary/40" />
+
+                        <span>A propos</span>
+                    </div>
+                    <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6">
+                        Nous Créons des Mariages Élégants et Inoubliables
+                    </h2>
+                    <p className="text-gray-600 leading-relaxed mb-8">
+                        Notre équipe accompagne les futurs mariés dans chaque étape
+                        de l'organisation. De la conception du thème à la coordination
+                        du Jour J, nous transformons vos idées en une expérience
+                        exceptionnelle remplie d'émotions et de souvenirs.
+                    </p>
+                    <Button
+                        text="Découvrir nos services"
+                        icon={FaArrowRight}
+                    />
+                </div>
+            </div>
+
+            <div className="pb-20">
+                <div className="flex justify-between items-end mb-12">
+
+                    <div className="max-w-2xl">
+                        <h2 className="text-4xl font-bold text-gray-900">
+                            Pour votre grand jour
+                        </h2>
+                    </div>
+                    <div className="flex flex-col items-end gap-3">
+                        <div className="flex items-center text-sm font-semibold text-primary">
+                            <span>03</span>
+
+                            <span className="mx-3 w-64 border-b border-dotted border-primary/40" />
+
+                            <span>Prestations</span>
+                        </div>
+
+                        <p className="text-gray-600 text-sm text-right max-w-xs">
+                            Des prestations soignées pour un mariage inoubliable, élégant et plein d’émotions.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+                    <Card
+                        image={photo8}
+                        icon={FaHeart}
+                        title="Organisation Complète"
+                        description="Planification et gestion de votre mariage de A à Z pour une expérience sereine et mémorable."
+                    />
+                    <Card
+                        image={photo11}
+                        icon={FaGlassCheers}
+                        title="Décoration & Réception"
+                        description="Création d'une ambiance élégante et personnalisée pour sublimer chaque instant."
+                    />
+                    <Card
+                        image={photo10}
+                        icon={FaCamera}
+                        title="Photo & Vidéo"
+                        description="Immortalisez chaque émotion grâce à une couverture photo et vidéo professionnelle."
+                    />
+                    <Card
+                        image={photo9}
+                        icon={FaClipboardCheck}
+                        title="Coordination Jour J"
+                        description="Nous coordonnons chaque détail afin que vous profitiez pleinement de votre mariage."
+                    />
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 text-center mt-16 bg-primary-light p-8">
+
+                    {stats.map((stat, index) => (
+                        <div
+                            key={stat.label}
+                            className={`p-4
+                ${index !== stats.length - 1 ? "md:border-r border-gray-300" : ""}
+                ${index < 2 ? "border-b md:border-b-0" : ""}
+            `}
+                        >
+                            <StatCard
+                                number={stat.number}
+                                label={stat.label}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="py-20 flex flex-col gap-6">
+                <div className="flex justify-between items-end mb-12">
+
+                    <div className="max-w-2xl">
+                        <h2 className="text-4xl font-bold text-gray-900">
+                            Histoires vécues par nos clients
+                        </h2>
+                    </div>
+                    <div className="flex flex-col items-end gap-3">
+                        <div className="flex items-center text-sm font-semibold text-primary">
+                            <span>03</span>
+
+                            <span className="mx-3 w-64 border-b border-dotted border-primary/40" />
+
+                            <span>Témoignages</span>
+                        </div>
+
+                        <p className="text-gray-600 text-sm text-right max-w-xs">
+                            Des couples heureux partagent leur expérience et les moments inoubliables de leur mariage.
+                        </p>
+                    </div>
+                </div>
+                <TestimonialCard
+                    image1={photo3}
+                    image2={photo16}
+                    name="Tolotra & Antso"
+                    text="Un moment magique du début à la fin. L’organisation était fluide, élégante et sans stress. Nous avons pu profiter pleinement de notre journée."
+                    tags={["Amour", "Luxe", "Mariage"]}
+                    footerTag="#Moments capturés"
+                />
+                <TestimonialCard
+                    image1={photo18}
+                    image2={photo17}
+                    name="Miora & Tojo"
+                    text="Chaque détail était parfaitement pensé. La décoration, l’ambiance et la coordination ont dépassé toutes nos attentes."
+                    tags={["Élégance", "Romance"]}
+                    footerTag="#Souvenirs inoubliables"
+                    reverseImages
+                />
+                <TestimonialCard
+                    image1={photo14}
+                    image2={photo15}
+                    name="Fara & Hery"
+                    text="Une expérience inoubliable. L’équipe a su transformer notre vision en un mariage élégant et rempli d’émotions."
+                    tags={["Émotion", "Prestige", "Joie"]}
+                    footerTag="#Love Story"
+                />
+            </div>
+
+        </section >
     );
 };
 
