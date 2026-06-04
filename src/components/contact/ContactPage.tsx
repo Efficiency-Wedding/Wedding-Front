@@ -547,7 +547,6 @@ export default function ContactPage() {
       <HeroContact />
       <ContactInfo />
       <ContactForm />
-      <Footer />
     </div>
   );
 }

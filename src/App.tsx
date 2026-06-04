@@ -4,6 +4,7 @@ import Navbar from "./components/layout/Navbar";
 import Home from "./components/sections/home";
 import { BlogPage } from "@/components/blog/blog";
 import Footer from "./components/layout/Footer";
+import ContactPage from "@/components/contact/ContactPage";
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
         />
         <Route
           path="/contact"
-          element={<Home/>}
+          element={<ContactPage/>}
         />
       </Routes>
       <Footer />
