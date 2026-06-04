@@ -46,7 +46,6 @@ export default function Navbar() {
     return (
         <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-gray-200">
             <nav className="flex justify-between items-center px-4 md:px-10 py-4">
-
                 <a
                     href="#home"
                     className="flex items-center shrink-0 z-50"
@@ -57,18 +56,16 @@ export default function Navbar() {
                         className="w-[140px] h-10 object-contain cursor-pointer hover:scale-105 transition shrink-0"
                     />
                 </a>
-
                 <div className="hidden md:flex gap-10 text-sm">
                     <Menu />
                 </div>
 
                 <div className="hidden md:block">
                     <Button
-                        text="Planifier mon mariage"
+                        text="Réserver"
                         onClick={() => scrollTo("contact")}
                     />
                 </div>
-
                 <button
                     onClick={() => setOpen(!open)}
                     className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition flex items-center justify-center shrink-0 z-50"
@@ -82,10 +79,9 @@ export default function Navbar() {
                     <div className="flex flex-col gap-3">
                         <Menu onClick={() => setOpen(false)} />
                     </div>
-
                     <div className="pt-2">
                         <Button
-                            text="Planifier mon mariage"
+                            text="Réserver"
                             onClick={() => {
                                 setOpen(false);
                                 scrollTo("contact");
