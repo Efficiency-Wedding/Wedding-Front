@@ -377,3 +377,55 @@
     background-clip: text;
   }
 }
+
+/* =========================
+   MICRO ANIMATIONS — Elegant, subtle
+   - hero/section entrance
+   - staggered reveal for lists/blocks
+ ========================= */
+
+.hero-entrance {
+  animation: pageFadeIn .9s ease both;
+}
+
+.section-entrance {
+  animation: sectionReveal .9s ease both;
+}
+
+/* Ensure reveals animate children with a gentle stagger */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  will-change: transform, opacity;
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal.revealed > * {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.reveal.revealed > *:nth-child(1) { animation: fadeScale .5s ease .04s both; }
+.reveal.revealed > *:nth-child(2) { animation: fadeScale .5s ease .10s both; }
+.reveal.revealed > *:nth-child(3) { animation: fadeScale .5s ease .16s both; }
+.reveal.revealed > *:nth-child(4) { animation: fadeScale .5s ease .22s both; }
+.reveal.revealed > *:nth-child(5) { animation: fadeScale .5s ease .28s both; }
+.reveal.revealed > *:nth-child(6) { animation: fadeScale .5s ease .34s both; }
+.reveal.revealed > *:nth-child(7) { animation: fadeScale .5s ease .40s both; }
+.reveal.revealed > *:nth-child(8) { animation: fadeScale .5s ease .46s both; }
+.reveal.revealed > *:nth-child(9) { animation: fadeScale .5s ease .52s both; }
+.reveal.revealed > *:nth-child(10){ animation: fadeScale .5s ease .58s both; }
+
+/* Soft hover for interactive elements to remain elegant */
+.button-glow,
+.button-premium,
+button,
+.card-hover:hover {
+  transition: transform .28s ease, box-shadow .28s ease;
+}
+
+.button-glow:hover { transform: translateY(-3px) scale(1.01); }
