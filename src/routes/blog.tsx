@@ -5,6 +5,7 @@ import { BlogList } from "@/components/blog/BlogList";
 import { BlogPost } from "@/components/blog/BlogPost";
 import { articles, type Article } from "@/components/blog/data";
 import { Sidebar } from "@/components/blog/Sidebar";
+import { BlogFooter } from "@/components/blog/Footer";
 
 export const Route = createFileRoute("/blog")({
   head: () => ({
@@ -55,6 +56,7 @@ function BlogPage() {
           </div>
         )}
       </main>
+      <BlogFooter />
     </div>
   );
 }
