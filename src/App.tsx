@@ -6,6 +6,9 @@ import { BlogPage } from "@/components/blog/blog";
 import Footer from "./components/layout/Footer";
 import ContactPage from "@/components/contact/ContactPage";
 import WeddingServices from "@/components/services/Services";
+import Perfume from "@/components/about/Apropos";
+import HistoirePage from "./components/about/HistoirePage";
+import Travail from "./components/about/Travail";
 
 function App() {
   return (
@@ -15,7 +18,19 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route
           path="/apropos"
-          element={<Home/>}
+          element={<Perfume/>}
+        />
+        <Route
+          path="/histoire"
+          element={<HistoirePage/>}
+        />
+        <Route
+          path="/travail"
+          element={<Travail/>}
+        />
+        <Route
+          path="/apropos"
+          element={<Perfume/>}
         />
         <Route
           path="/services"

@@ -22,14 +22,14 @@ const script = '"Great Vibes", cursive';
 const sans   = '"Inter", system-ui, sans-serif';
 
 const IMG = {
-  hero:   new URL("../assets/mar9.jpg", import.meta.url).href,
-  arch:   new URL("../assets/mar17.jpg", import.meta.url).href,
-  bride:  new URL("../assets/mar16.jpg", import.meta.url).href,
-  autumn: new URL("../assets/mar8.jpg", import.meta.url).href,
-  couple: new URL("../assets/mar14.jpg", import.meta.url).href,
-  mar12:  new URL("../assets/mar12.jpg", import.meta.url).href,
-  mar10:  new URL("../assets/mar10.jpg", import.meta.url).href,
-  mar13:  new URL("../assets/mar13.jpg", import.meta.url).href,
+  hero:   new URL("../../assets/mar9.jpg", import.meta.url).href,
+  arch:   new URL("../../assets/mar17.jpg", import.meta.url).href,
+  bride:  new URL("../../assets/mar16.jpg", import.meta.url).href,
+  autumn: new URL("../../assets/mar8.jpg", import.meta.url).href,
+  couple: new URL("../../assets/mar14.jpg", import.meta.url).href,
+  mar12:  new URL("../../assets/mar12.jpg", import.meta.url).href,
+  mar10:  new URL("../../assets/mar10.jpg", import.meta.url).href,
+  mar13:  new URL("../../assets/mar13.jpg", import.meta.url).href,
 };
 
 interface ZoomImgProps {
