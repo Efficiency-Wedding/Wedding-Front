@@ -2,6 +2,7 @@ import { useState } from "react";
 import logo from "@/assets/images/icons/logo.jpg";
 import Button from "@/components/ui/Button";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const menuItems = [
     { id: "", label: "Home" },
@@ -24,9 +25,9 @@ export default function Navbar() {
     const Menu = ({ onClick }: { onClick?: () => void }) => (
         <>
             {menuItems.map((item) => (
-                <a
+                <Link
                     key={item.id}
-                    href={`/${item.id}`}
+                    to={`/${item.id}`}
                     onClick={() => {
                         onClick?.();
                         scrollTo(item.id);
@@ -38,7 +39,7 @@ export default function Navbar() {
                     </span>
 
                     <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-primary transition-all duration-300 group-hover:w-full"></span>
-                </a>
+                </Link>
             ))}
         </>
     );
@@ -46,8 +47,8 @@ export default function Navbar() {
     return (
         <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-gray-200">
             <nav className="flex justify-between items-center px-4 md:px-10 py-4">
-                <a
-                    href="/"
+                <Link
+                    to="/"
                     className="flex items-center shrink-0 z-50"
                 >
                     <img
@@ -55,7 +56,7 @@ export default function Navbar() {
                         alt="logo"
                         className="w-[140px] h-10 object-contain cursor-pointer hover:scale-105 transition shrink-0"
                     />
-                </a>
+                </Link>
                 <div className="hidden md:flex gap-10 text-sm">
                     <Menu />
                 </div>
