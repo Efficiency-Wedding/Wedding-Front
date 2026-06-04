@@ -1,4 +1,5 @@
 import { ArrowLeft } from "lucide-react";
+import { useState } from "react";
 import type { Article } from "./data";
 
 type Props = {
@@ -7,6 +8,8 @@ type Props = {
 };
 
 export function BlogPost({ article, onBack }: Props) {
+  const [selectedImage, setSelectedImage] = useState(article.image);
+
   return (
     <article className="mx-auto max-w-3xl">
       <button
@@ -29,10 +32,23 @@ export function BlogPost({ article, onBack }: Props) {
 
       <div className="mt-8 overflow-hidden rounded-2xl">
         <img
-          src={article.image}
+          src={selectedImage}
           alt={article.title}
           className="h-[420px] w-full object-cover"
         />
+      </div>
+
+      {/* Thumbnail gallery */}
+      <div className="mt-4 flex space-x-2 overflow-x-auto">
+        {article.gallery?.map((img, idx) => (
+          <img
+            key={idx}
+            src={img}
+            alt={`Thumbnail ${idx + 1}`}
+            className={`h-20 w-20 object-cover rounded cursor-pointer ${selectedImage === img ? 'border-2 border-primary' : ''}`}
+            onClick={() => setSelectedImage(img)}
+          />
+        ))}
       </div>
 
       <div className="prose prose-lg mt-10 max-w-none font-light text-foreground">
