@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./ContactPage.css";
 
 const Counter: React.FC<{ end: number; suffix?: string; label: string }> = ({
@@ -8,7 +8,6 @@ const Counter: React.FC<{ end: number; suffix?: string; label: string }> = ({
 }) => {
   const [count, setCount] = useState(0);
   useEffect(() => {
-    let start = 0;
     const duration = 1500;
     const startTime = performance.now();
     const step = (ts: number) => {

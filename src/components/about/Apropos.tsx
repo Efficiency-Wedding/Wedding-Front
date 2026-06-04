@@ -17,9 +17,6 @@ const C = {
   shadowFrame: "0 10px 40px -10px rgba(180,100,100,0.28)",
 };
 
-const serif  = '"Cormorant Garamond", Georgia, serif';
-const script = '"Great Vibes", cursive';
-const sans   = '"Inter", system-ui, sans-serif';
 
 const IMG = {
   hero:   new URL("../../assets/mar9.jpg", import.meta.url).href,
