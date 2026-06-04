@@ -305,7 +305,7 @@ export default function Travail() {
 
   return (
 
-    <div className="page-entrance min-h-screen w-full overflow-x-hidden font-montserrat text-[#5A3A3A] bg-[#FFF8F8]">
+    <div className="page-entrance min-h-screen w-full overflow-x-hidden text-[#5A3A3A] bg-[#FFF8F8]">
 
       {/* HERO */}
 
@@ -441,7 +441,7 @@ export default function Travail() {
 
                   <br />
 
-                  <small className="font-montserrat text-xs text-[#8B6B6B] tracking-[2px]">
+                  <small className="text-xs text-[#8B6B6B] tracking-[2px]">
 
                     {f.unit}
 

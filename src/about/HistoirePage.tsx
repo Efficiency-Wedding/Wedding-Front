@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
-const portrait = new URL("./mar4.jpg", import.meta.url).href;
-const work = new URL("./mar3.jpg", import.meta.url).href;
-const joy = new URL("./mar2.jpg", import.meta.url).href;
+const portrait = new URL("../assets/mar4.jpg", import.meta.url).href;
+const work = new URL("../assets/mar3.jpg", import.meta.url).href;
+const joy = new URL("../assets/mar2.jpg", import.meta.url).href;
 
 /* ── Valeurs oklch identiques à StorySection ──────────────────
    or (gold)          : oklch(0.78 0.09 85)
@@ -57,12 +57,12 @@ export default function HistoirePage() {
   }, []);
 
   return (
-    <main className="page-entrance" style={{ minHeight: "100vh", backgroundColor: C.ivory, fontFamily: sans, color: C.blue }}>
+    <main className="page-entrance" style={{ minHeight: "100vh", backgroundColor: C.ivory, color: C.blue }}>
 
       {/* ── HERO ── */}
       <section className="reveal" ref={addReveal} style={{ position: "relative", height: "60vh", minHeight: "450px", overflow: "hidden" }}>
         <img
-          className="image-float"
+          className="image-floating"
           src={portrait}
           alt="Wedding planner"
           style={{
@@ -83,11 +83,10 @@ export default function HistoirePage() {
           textAlign: "center", padding: "0 1.5rem",
           color: C.white,
         }}>
-          <p style={{ fontFamily: script, fontSize: "clamp(2.8rem,5vw,3.8rem)", color: C.gold, lineHeight: 1 }}>
+          <p className="font-script" style={{ fontSize: "clamp(2.8rem,5vw,3.8rem)", color: C.gold, lineHeight: 1 }}>
             Notre Histoire
           </p>
-          <h1 style={{
-            fontFamily: serif,
+          <h1 className="font-serif" style={{
             fontSize: "clamp(2rem,5vw,3.5rem)",
             fontWeight: 600,
             letterSpacing: "0.2em",
@@ -115,7 +114,7 @@ export default function HistoirePage() {
             <p style={{ fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.35em", color: C.gold, fontWeight: 400 }}>
               Chapitre I
             </p>
-            <h2 style={{ fontFamily: serif, fontSize: "clamp(1.6rem,3vw,2.2rem)", fontWeight: 600, color: C.rose, lineHeight: 1.25, marginTop: "1rem", marginBottom: "1.5rem" }}>
+            <h2 className="font-serif" style={{ fontSize: "clamp(1.6rem,3vw,2.2rem)", fontWeight: 600, color: C.rose, lineHeight: 1.25, marginTop: "1rem", marginBottom: "1.5rem" }}>
               Une passion née sous le ciel de Madagascar
             </h2>
             <div style={{ fontSize: "0.9rem", lineHeight: 1.9, color: C.muted, display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -178,7 +177,7 @@ export default function HistoirePage() {
             <p style={{ fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.35em", color: C.gold, fontWeight: 400 }}>
               Chapitre II
             </p>
-            <h2 style={{ fontFamily: serif, fontSize: "clamp(1.6rem,3vw,2.2rem)", fontWeight: 600, color: C.blue, lineHeight: 1.25, marginTop: "1rem", marginBottom: "1.5rem" }}>
+            <h2 className="font-serif" style={{ fontSize: "clamp(1.6rem,3vw,2.2rem)", fontWeight: 600, color: C.blue, lineHeight: 1.25, marginTop: "1rem", marginBottom: "1.5rem" }}>
               Un mariage clé en main, du premier « oui » au dernier slow
             </h2>
             <div style={{ fontSize: "0.9rem", lineHeight: 1.9, color: C.muted, display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -196,7 +195,7 @@ export default function HistoirePage() {
           <p style={{ fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "0.35em", color: C.gold, fontWeight: 400 }}>
             Chapitre III
           </p>
-          <h2 style={{ fontFamily: serif, fontSize: "clamp(1.6rem,3vw,2.2rem)", fontWeight: 600, color: C.rose, lineHeight: 1.25, marginTop: "1rem", marginBottom: "1rem" }}>
+          <h2 className="font-serif" style={{ fontSize: "clamp(1.6rem,3vw,2.2rem)", fontWeight: 600, color: C.rose, lineHeight: 1.25, marginTop: "1rem", marginBottom: "1rem" }}>
             Ce qui nous anime
           </h2>
           <p style={{ fontSize: "0.9rem", lineHeight: 1.85, color: C.muted, maxWidth: "640px", margin: "0 auto 3.5rem" }}>
@@ -224,7 +223,7 @@ export default function HistoirePage() {
                 onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = C.shadowFrame; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = C.shadowSoft; }}
               >
-                <p style={{ fontFamily: script, fontSize: "2rem", color: C.gold, lineHeight: 1, marginBottom: "0.75rem" }}>
+                <p className="font-script" style={{ fontSize: "2rem", color: C.gold, lineHeight: 1, marginBottom: "0.75rem" }}>
                   {item.title}
                 </p>
                 <p style={{ fontSize: "0.875rem", lineHeight: 1.75, color: C.muted }}>
@@ -249,10 +248,10 @@ export default function HistoirePage() {
         <div style={{ position:"absolute", top:"-80px", left:"-80px", width:"300px", height:"300px", borderRadius:"50%", background:"radial-gradient(circle, rgba(242,215,224,0.12) 0%, transparent 70%)", pointerEvents:"none" }} />
         <div style={{ position:"absolute", bottom:"-60px", right:"-60px", width:"240px", height:"240px", borderRadius:"50%", background:"radial-gradient(circle, rgba(245,230,200,0.1) 0%, transparent 70%)", pointerEvents:"none" }} />
 
-        <p style={{ fontFamily: script, fontSize: "clamp(2.5rem,5vw,3.5rem)", color: C.gold, lineHeight: 1, marginBottom: "1rem", position:"relative" }}>
+        <p className="font-script" style={{ fontSize: "clamp(2.5rem,5vw,3.5rem)", color: C.gold, lineHeight: 1, marginBottom: "1rem", position:"relative" }}>
           Et votre histoire ?
         </p>
-        <h3 style={{ fontFamily: serif, fontSize: "clamp(1.4rem,3vw,2rem)", fontWeight: 600, color: C.white, maxWidth: "640px", margin: "0 auto 2.5rem", lineHeight: 1.35, position:"relative" }}>
+        <h3 className="font-serif" style={{ fontSize: "clamp(1.4rem,3vw,2rem)", fontWeight: 600, color: C.white, maxWidth: "640px", margin: "0 auto 2.5rem", lineHeight: 1.35, position:"relative" }}>
           Réservons ensemble la date qui changera votre vie.
         </h3>
 

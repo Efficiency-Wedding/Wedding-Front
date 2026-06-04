@@ -22,14 +22,14 @@ const script = '"Great Vibes", cursive';
 const sans   = '"Inter", system-ui, sans-serif';
 
 const IMG = {
-  hero:   new URL("./assets/mar9.jpg", import.meta.url).href,
-  arch:   new URL("./assets/mar17.jpg", import.meta.url).href,
-  bride:  new URL("./assets/mar16.jpg", import.meta.url).href,
-  autumn: new URL("./assets/mar8.jpg", import.meta.url).href,
-  couple: new URL("./assets/mar14.jpg", import.meta.url).href,
-  mar12:  new URL("./assets/mar12.jpg", import.meta.url).href,
-  mar10:  new URL("./assets/mar10.jpg", import.meta.url).href,
-  mar13:  new URL("./assets/mar13.jpg", import.meta.url).href,
+  hero:   new URL("../assets/mar9.jpg", import.meta.url).href,
+  arch:   new URL("../assets/mar17.jpg", import.meta.url).href,
+  bride:  new URL("../assets/mar16.jpg", import.meta.url).href,
+  autumn: new URL("../assets/mar8.jpg", import.meta.url).href,
+  couple: new URL("../assets/mar14.jpg", import.meta.url).href,
+  mar12:  new URL("../assets/mar12.jpg", import.meta.url).href,
+  mar10:  new URL("../assets/mar10.jpg", import.meta.url).href,
+  mar13:  new URL("../assets/mar13.jpg", import.meta.url).href,
 };
 
 interface ZoomImgProps {
@@ -80,7 +80,7 @@ export default function Perfume() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: C.ivory, color: C.muted, fontFamily: sans }} className="page-entrance overflow-x-hidden">
+    <div style={{ backgroundColor: C.ivory, color: C.muted }} className="page-entrance overflow-x-hidden">
 
       {/* ══ HERO — fond original #FFF9F5 avec image bg ══ */}
       <section
@@ -94,8 +94,7 @@ export default function Perfume() {
       >
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 text-center text-white">
-          <h1 style={{
-            fontFamily: serif,
+          <h1 className="font-serif" style={{
             fontSize: "clamp(2.5rem,6vw,4rem)",
             fontWeight: 300,
             letterSpacing: "12px",
@@ -104,8 +103,7 @@ export default function Perfume() {
           }}>
             EFFICIENCY
           </h1>
-          <p style={{
-            fontFamily: script,
+          <p className="font-script" style={{
             fontSize: "clamp(1.8rem,4vw,2.25rem)",
             lineHeight: 1.15,
             color: C.white,
@@ -201,8 +199,7 @@ export default function Perfume() {
               ✦ Notre promesse ✦
             </span>
 
-            <h2 style={{
-              fontFamily: serif,
+            <h2 className="font-serif" style={{
               fontSize: "clamp(1.6rem,3vw,2rem)",
               fontWeight: 600,
               lineHeight: 1.25,
@@ -248,7 +245,6 @@ export default function Perfume() {
                 padding: "0.85rem 2rem",
                 borderRadius: "2px",
                 fontSize: "0.7rem",
-                fontFamily: sans,
                 fontWeight: 600,
                 letterSpacing: "0.25em",
                 textTransform: "uppercase",
@@ -291,10 +287,10 @@ function StorySection({ onReadStory }: StorySectionProps) {
       <div className="relative mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2">
 
         <div className="order-2 lg:order-1">
-          <p style={{ fontFamily: script, fontSize: "clamp(3rem,6vw,4rem)", color: "oklch(0.78 0.09 85)", lineHeight: 1.1, marginBottom: "0.5rem" }}>
+          <p className="font-script" style={{ fontSize: "clamp(3rem,6vw,4rem)", color: "oklch(0.78 0.09 85)", lineHeight: 1.1, marginBottom: "0.5rem" }}>
             Bonjour&nbsp;!
           </p>
-          <h2 style={{ fontFamily: serif, fontSize: "clamp(1.75rem,3vw,2.25rem)", fontWeight: 600, lineHeight: 1.3, color: "oklch(0.45 0.06 250)", marginTop: "0.75rem", marginBottom: "2rem" }}>
+          <h2 className="font-serif" style={{ fontSize: "clamp(1.75rem,3vw,2.25rem)", fontWeight: 600, lineHeight: 1.3, color: "oklch(0.45 0.06 250)", marginTop: "0.75rem", marginBottom: "2rem" }}>
             Merci de passer par ici — je suis votre wedding planner,{" "}
             <span style={{ color: "oklch(0.72 0.09 15)" }}>passionnée, rêveuse & organisée.</span>
           </h2>
@@ -306,13 +302,13 @@ function StorySection({ onReadStory }: StorySectionProps) {
 
           {onReadStory ? (
             <button onClick={onReadStory}
-              style={{ marginTop:"2.5rem", display:"inline-flex", alignItems:"center", gap:"0.75rem", backgroundColor:"oklch(0.45 0.06 250)", color:"oklch(0.985 0.008 75)", padding:"1rem 2rem", fontSize:"0.7rem", fontFamily:sans, fontWeight:600, letterSpacing:"0.25em", textTransform:"uppercase", border:"none", cursor:"pointer", borderRadius:"2px", transition:"background-color 0.25s, transform 0.2s" }}
+              style={{ marginTop:"2.5rem", display:"inline-flex", alignItems:"center", gap:"0.75rem", backgroundColor:"oklch(0.45 0.06 250)", color:"oklch(0.985 0.008 75)", padding:"1rem 2rem", fontSize:"0.7rem", fontWeight:600, letterSpacing:"0.25em", textTransform:"uppercase", border:"none", cursor:"pointer", borderRadius:"2px", transition:"background-color 0.25s, transform 0.2s" }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor="oklch(0.72 0.09 15)"; e.currentTarget.style.transform="translateY(-2px)"; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor="oklch(0.45 0.06 250)"; e.currentTarget.style.transform="translateY(0)"; }}
             >Lire mon histoire <span aria-hidden>→</span></button>
           ) : (
             <Link to="/Histoirepage"
-              style={{ marginTop:"2.5rem", display:"inline-flex", alignItems:"center", gap:"0.75rem", backgroundColor:"oklch(0.45 0.06 250)", color:"oklch(0.985 0.008 75)", padding:"1rem 2rem", fontSize:"0.7rem", fontFamily:sans, fontWeight:600, letterSpacing:"0.25em", textTransform:"uppercase", textDecoration:"none", borderRadius:"2px", transition:"background-color 0.25s, transform 0.2s" }}
+              style={{ marginTop:"2.5rem", display:"inline-flex", alignItems:"center", gap:"0.75rem", backgroundColor:"oklch(0.45 0.06 250)", color:"oklch(0.985 0.008 75)", padding:"1rem 2rem", fontSize:"0.7rem", fontWeight:600, letterSpacing:"0.25em", textTransform:"uppercase", textDecoration:"none", borderRadius:"2px", transition:"background-color 0.25s, transform 0.2s" }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor="oklch(0.72 0.09 15)"; e.currentTarget.style.transform="translateY(-2px)"; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor="oklch(0.45 0.06 250)"; e.currentTarget.style.transform="translateY(0)"; }}
             >Lire mon histoire <span aria-hidden>→</span></Link>
