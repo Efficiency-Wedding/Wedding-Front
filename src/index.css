@@ -1,1 +1,379 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 0.5rem;
+
+  /* Elegant palette */
+  --ivory: oklch(0.985 0.008 75);
+  --background: oklch(0.985 0.008 75);
+  --foreground: oklch(0.28 0.04 260);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.28 0.04 260);
+
+  --rose: oklch(0.72 0.09 15);
+  --rose-soft: oklch(0.94 0.025 15);
+
+  --gold: oklch(0.78 0.09 85);
+  --gold-soft: oklch(0.95 0.035 85);
+
+  --blue: #1F3A5F;
+  --blue-soft: #5A7C9F;
+
+  --story-blue: oklch(0.45 0.06 250);
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-script: "Great Vibes", cursive;
+
+  --primary: var(--blue);
+  --primary-foreground: #F8F5EE;
+
+  --secondary: var(--rose);
+  --secondary-foreground: #FFFFFF;
+
+  --muted: oklch(0.95 0.012 75);
+  --muted-foreground: oklch(0.45 0.03 260);
+
+  --accent: var(--gold);
+  --accent-foreground: var(--foreground);
+
+  --border: oklch(0.9 0.015 75);
+  --input: oklch(0.9 0.015 75);
+  --ring: var(--rose);
+
+  --shadow-soft:
+    0 20px 60px -20px
+    color-mix(in oklab, var(--blue) 20%, transparent);
+
+  --shadow-frame:
+    0 10px 40px -10px
+    color-mix(in oklab, var(--rose) 35%, transparent);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* =========================
+     ANIMATIONS
+  ========================= */
+
+  @keyframes pageFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(25px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes sectionReveal {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes subtleFloat {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  @keyframes floatingSlow {
+    0% {
+      transform: translateY(0px) rotate(0deg) scale(1);
+    }
+    20% {
+      transform: translateY(-16px) rotate(-0.8deg) scale(1.005);
+    }
+    50% {
+      transform: translateY(-30px) rotate(1.4deg) scale(1.01);
+    }
+    80% {
+      transform: translateY(-16px) rotate(-0.4deg) scale(1.005);
+    }
+    100% {
+      transform: translateY(0px) rotate(0deg) scale(1);
+    }
+  }
+
+  @keyframes pulseGlow {
+    0% {
+      box-shadow: 0 0 0 rgba(248,183,117,.1);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(248,183,117,.25);
+    }
+    100% {
+      box-shadow: 0 0 0 rgba(248,183,117,.1);
+    }
+  }
+
+  @keyframes shine {
+    0% {
+      transform: translateX(-150%);
+    }
+    100% {
+      transform: translateX(250%);
+    }
+  }
+
+  @keyframes backgroundFlow {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes fadeScale {
+    from {
+      opacity: 0;
+      transform: scale(.92);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes textGlow {
+    0%,100% {
+      text-shadow: 0 0 0 rgba(248,183,117,0);
+    }
+    50% {
+      text-shadow: 0 0 20px rgba(248,183,117,.25);
+    }
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    color: var(--foreground);
+
+    background:
+      linear-gradient(
+        -45deg,
+        #fdf8f3,
+        #fffaf5,
+        #f9f3ec,
+        #fffdf9
+      );
+
+    background-size: 400% 400%;
+
+    animation:
+      backgroundFlow 18s ease infinite,
+      fadeScale 1.2s ease;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    animation: textGlow 6s ease-in-out infinite;
+  }
+
+  .page-entrance {
+    animation: pageFadeIn 1s ease-out both;
+  }
+
+  .hero-entrance,
+  .section-entrance {
+    animation: sectionReveal .9s ease-out both;
+  }
+
+  .card-entrance {
+    animation: fadeScale .8s ease both;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition:
+      opacity .9s ease,
+      transform .9s ease;
+  }
+
+  .revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+
+  .font-script {
+    font-family: var(--font-script);
+  }
+
+  .font-serif {
+    font-family: var(--font-serif);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-frame {
+    box-shadow: var(--shadow-frame);
+  }
+
+  /* =========================
+     FLOATING EFFECTS
+  ========================= */
+
+  .image-float {
+    animation:
+      floatingSlow 6s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  .image-float-fast {
+    animation:
+      subtleFloat 4.5s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  /* =========================
+     BUTTONS
+  ========================= */
+
+  .button-glow {
+    animation:
+      pulseGlow 4s ease-in-out infinite;
+  }
+
+  .button-premium {
+    position: relative;
+    overflow: hidden;
+    transition: all .4s ease;
+  }
+
+  .button-premium:hover {
+    transform: translateY(-4px);
+  }
+
+  .button-premium::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 40%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.6),
+      transparent
+    );
+
+    transform: translateX(-150%);
+  }
+
+  .button-premium:hover::before {
+    animation: shine 1.2s ease;
+  }
+
+  /* =========================
+     CARDS
+  ========================= */
+
+  .card-hover {
+    transition:
+      transform .45s ease,
+      box-shadow .45s ease;
+  }
+
+  .card-hover:hover {
+    transform:
+      translateY(-10px)
+      scale(1.02);
+
+    box-shadow:
+      0 30px 80px -25px
+      rgba(31,58,95,.25);
+  }
+
+  /* =========================
+     IMAGES
+  ========================= */
+
+  .image-hover-effect {
+    transition:
+      transform .7s ease,
+      box-shadow .7s ease,
+      filter .7s ease;
+  }
+
+  .image-hover-effect:hover {
+    transform:
+      translateY(-10px)
+      scale(1.04);
+
+    filter: brightness(1.05);
+
+    box-shadow:
+      0 35px 80px -25px
+      rgba(0,0,0,.25);
+  }
+
+  /* =========================
+     GLASS EFFECT
+  ========================= */
+
+  .glass {
+    backdrop-filter: blur(14px);
+    background: rgba(255,255,255,.65);
+    border: 1px solid rgba(255,255,255,.3);
+  }
+
+  /* =========================
+     GOLD TEXT
+  ========================= */
+
+  .text-gold-gradient {
+    background: linear-gradient(
+      135deg,
+      #D6B26E,
+      #F4D58D,
+      #D6B26E
+    );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
