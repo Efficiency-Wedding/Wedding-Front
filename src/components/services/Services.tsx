@@ -434,7 +434,7 @@ function ServiceModal({ svc, onClose }: { svc: typeof services[0]; onClose: () =
             }}>
               {svc.gallery.map((g, i) => (
                 <motion.button
-                  key={g+' fff'}
+                  key={i}
                   onClick={() => setImgIdx(i)}
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.95 }}
@@ -446,7 +446,9 @@ function ServiceModal({ svc, onClose }: { svc: typeof services[0]; onClose: () =
                     border: "none", cursor: "pointer",
                     padding: 0, transition: "all 0.3s ease",
                   }}
-                />
+                >
+                  <p className="text-transparent">{g}</p>
+                </motion.button>
               ))}
             </div>
             {/* Tag badge */}
