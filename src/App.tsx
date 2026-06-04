@@ -5,6 +5,7 @@ import Home from "./components/sections/home";
 import { BlogPage } from "@/components/blog/blog";
 import Footer from "./components/layout/Footer";
 import ContactPage from "@/components/contact/ContactPage";
+import WeddingServices from "@/components/services/Services";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
         />
         <Route
           path="/services"
-          element={<Home/>}
+          element={<WeddingServices/>}
         />
         <Route
           path="/gallery"

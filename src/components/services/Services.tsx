@@ -2,7 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "motion/react";
 
 // ── SVG Icon helper ─────────────────────────────────────────────────────────
-const Icon = ({ d, size = 22, stroke = "currentColor", strokeWidth = 1.8 }) => (
+type IconProps = {
+  d: string;
+  size?: number;
+  stroke?: string;
+  strokeWidth?: number;
+};
+
+const Icon = ({ d, size = 22, stroke = "currentColor", strokeWidth = 1.8 }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
     stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
     <path d={d} />
@@ -310,13 +317,13 @@ const LIGHT  = "#fdf6f9";
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 36 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
+  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as any, delay },
 });
 
 const staggerContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
 const staggerItem = {
   hidden: { opacity: 0, y: 30, scale: 0.96 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as any } },
 };
 
 // ── Section heading ──────────────────────────────────────────────────────────

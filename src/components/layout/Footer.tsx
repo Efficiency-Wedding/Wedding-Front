@@ -1,5 +1,6 @@
 import { FaXTwitter } from "react-icons/fa6";
 import { FaInstagram, FaLinkedinIn, FaGithub } from "react-icons/fa";
+import logo from '@/assets/images/icons/logo-footer.png'
 
 const Footer = () => {
   return (
@@ -10,13 +11,7 @@ const Footer = () => {
           <div className="max-w-xs">
             <div className="flex items-center gap-2 mb-4">
               {/* Logo icon */}
-              <div className="w-8 h-8 bg-black rounded-md flex items-center justify-center">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M3 14L9 4L15 14" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M5.5 10H12.5" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-base font-semibold text-gray-900 tracking-tight">Wedding Efficiency</span>
+                <img src={logo} alt="Efficiency Logo" className="h-16" />
             </div>
 
             <p className="text-sm text-gray-500 leading-relaxed mb-5">
