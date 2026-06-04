@@ -1,15 +1,12 @@
-import './App.css'
+import "./App.css";
+import ContactPage from "./components/ContactPage";
 
 function App() {
-
   return (
     <>
-      <div>
-        <p className='text-red-500'>Projet EFFICIENCY WEDDING</p>
-        <p> React Vite</p>
-      </div>
+      <ContactPage />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
