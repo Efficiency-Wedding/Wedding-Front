@@ -1,3 +1,16 @@
+import blog1 from "@/assets/images/blog/blog (1).jpeg";
+import blog2 from "@/assets/images/blog/blog (2).jpeg";
+import blog3 from "@/assets/images/blog/blog (3).jpeg";
+import blog4 from "@/assets/images/blog/blog (4).jpeg";
+import blog5 from "@/assets/images/blog/blog (5).jpeg";
+import blog6 from "@/assets/images/blog/blog (6).jpeg";
+import blog7 from "@/assets/images/blog/blog (7).jpeg";
+import blog8 from "@/assets/images/blog/blog (8).jpeg";
+import blog9 from "@/assets/images/blog/blog (9).jpeg";
+import blog10 from "@/assets/images/blog/blog (10).jpeg";
+import blog18 from "@/assets/images/blog/blog (18).jpeg";
+
+
 export type Article = {
   id: number;
   title: string;
@@ -5,7 +18,7 @@ export type Article = {
   content: string;
   date: string;
   category: string;
-  image: string;
+  image: any;
 };
 
 export const articles: Article[] = [
@@ -18,8 +31,7 @@ export const articles: Article[] = [
       "Le mariage champêtre est devenu une référence incontournable pour les couples en quête d'authenticité. Dans cet article, nous explorons dix idées florales qui transformeront votre lieu de réception en un véritable jardin enchanté. Des arches en eucalyptus aux centres de table en pivoines et lisianthus, chaque détail compte. Pensez également à intégrer des bougies chauffe-plat dans des photophores en verre pour une lumière douce à la tombée du jour. N'hésitez pas à mélanger les textures : lin brut, dentelle ancienne et vaisselle vintage pour un rendu chaleureux et intemporel.",
     date: "12 mai 2026",
     category: "Décoration",
-    image:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+    image: blog1,
   },
   {
     id: 2,
@@ -30,8 +42,7 @@ export const articles: Article[] = [
       "Le choix du lieu est l'une des décisions les plus importantes de votre organisation. Il définit l'atmosphère générale, le style de la décoration et même le menu. Commencez par établir une liste de critères essentiels : capacité d'accueil, distance, hébergement sur place, possibilité d'une cérémonie laïque en extérieur. Visitez toujours plusieurs lieux et imaginez-y votre journée du début à la fin. Posez les bonnes questions sur les prestataires imposés, les horaires et le couvre-feu sonore.",
     date: "28 avril 2026",
     category: "Conseils",
-    image:
-      "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1200&q=80",
+    image: blog10
   },
   {
     id: 3,
@@ -42,8 +53,7 @@ export const articles: Article[] = [
       "Camille et Antoine nous ont fait l'honneur de partager leur magnifique journée sous le soleil provençal. Tout a commencé par une cérémonie laïque au cœur d'une oliveraie centenaire, avec pour seul témoin le chant des cigales. La décoration mêlait lavande fraîche, branches d'olivier et nappes en lin écru. Le menu, signé par un chef étoilé local, célébrait les produits du terroir. Une soirée dansante sous les étoiles a clôturé cette journée pleine d'émotion et d'élégance simple.",
     date: "15 avril 2026",
     category: "Témoignages",
-    image:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1200&q=80",
+    image: blog8,
   },
   {
     id: 4,
@@ -54,8 +64,7 @@ export const articles: Article[] = [
       "La saison 2026 célèbre une mariée à la fois romantique et moderne. Les coupes fluides en mousseline de soie côtoient les bustiers structurés en mikado. Les manches bouffantes, les dos nus délicats et les capes amovibles permettent de transformer sa silhouette tout au long de la journée. Côté couleurs, le blanc cassé et les nuances poudrées dominent. Les accessoires se font discrets : un voile cathédrale, une paire de boucles d'oreilles vintage et un bouquet champêtre suffisent à parfaire la tenue.",
     date: "2 avril 2026",
     category: "Décoration",
-    image:
-      "https://images.unsplash.com/photo-1594552072238-5c4a26f10bf3?auto=format&fit=crop&w=1200&q=80",
+    image: blog18 
   },
 ];
 
