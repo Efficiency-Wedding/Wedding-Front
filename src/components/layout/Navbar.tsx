@@ -4,7 +4,7 @@ import Button from "@/components/ui/Button";
 import { FaBars, FaTimes } from "react-icons/fa";
 
 const menuItems = [
-    { id: "home", label: "Home" },
+    { id: "", label: "Home" },
     { id: "apropos", label: "A propos" },
     { id: "services", label: "Services" },
     { id: "gallery", label: "Gallery" },
@@ -26,7 +26,7 @@ export default function Navbar() {
             {menuItems.map((item) => (
                 <a
                     key={item.id}
-                    href={`#${item.id}`}
+                    href={`/${item.id}`}
                     onClick={() => {
                         onClick?.();
                         scrollTo(item.id);
@@ -48,7 +48,7 @@ export default function Navbar() {
             <nav className="flex justify-between items-center px-4 md:px-10 py-4">
 
                 <a
-                    href="#home"
+                    href="/"
                     className="flex items-center shrink-0 z-50"
                 >
                     <img
