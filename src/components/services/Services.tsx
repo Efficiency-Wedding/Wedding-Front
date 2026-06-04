@@ -434,7 +434,7 @@ function ServiceModal({ svc, onClose }: { svc: typeof services[0]; onClose: () =
             }}>
               {svc.gallery.map((g, i) => (
                 <motion.button
-                  key={g}
+                  key={g+' fff'}
                   onClick={() => setImgIdx(i)}
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.95 }}

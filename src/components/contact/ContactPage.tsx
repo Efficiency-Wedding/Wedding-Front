@@ -477,68 +477,6 @@ const ContactForm: React.FC = () => {
 
 /* CTA removed as requested */
 
-const Footer: React.FC = () => (
-  <footer className="bg-violet text-blanc pt-20 pb-10 px-6">
-    <div className="max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
-        <div>
-          <h4 className="text-jaune text-sm tracking-[0.3em] uppercase mb-6">
-            Contact
-          </h4>
-          <ul className="space-y-3 text-sm text-blanc/70">
-            <li>555 West Lane</li>
-            <li>Summerlin, CA 90210</li>
-            <li className="pt-2">034 91 880 43 / 033 07 373 09</li>
-            <li>efficiencyevent@gmail.com</li>
-          </ul>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-serif mb-4">
-            <span className="text-jaune">E</span>fficiency{" "}
-            <span className="text-jaune">O</span>rganization
-          </div>
-          <div className="w-16 h-[1px] bg-jaune/30 mx-auto mb-4"></div>
-          <p className="text-xs text-blanc/40 tracking-widest uppercase">
-            Wedding Planner Luxe
-          </p>
-        </div>
-        <div className="md:text-right">
-          <h4 className="text-jaune text-sm tracking-[0.3em] uppercase mb-6">
-            Quick Links
-          </h4>
-          <ul className="space-y-3 text-sm text-blanc/70">
-            <li>
-              <a href="#" className="hover:text-rose transition-colors">
-                Products
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-rose transition-colors">
-                Services
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-rose transition-colors">
-                Cart
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-rose transition-colors">
-                Checkout
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div className="border-t border-blanc/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p className="text-xs text-blanc/40">
-          © 2025 Efficiency Organization Event. All rights reserved.
-        </p>
-        <p className="text-xs text-blanc/40">Lavish Theme</p>
-      </div>
-    </div>
-  </footer>
-);
 
 export default function ContactPage() {
   return (
