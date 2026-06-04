@@ -44,7 +44,7 @@ export function BlogPage() {
           </div>
         )}
       </main>
-      <BlogFooter />
+      {!selected && <BlogFooter />}
     </div>
   );
 }
