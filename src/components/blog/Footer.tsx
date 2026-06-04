@@ -1,12 +1,14 @@
+import mariage from "@/assets/images/blog/blog1.jpeg";
+
 export function BlogFooter() {
   return (
     <>
       {/* Cinematic banner */}
       <section className="relative mt-24 h-[60vh] min-h-[420px] w-full overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=2400&q=80"
+          src={mariage}
           alt="Couple de mariés marchant dans un verger"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover blur-[1.5px]"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/40" />
@@ -34,49 +36,6 @@ export function BlogFooter() {
           </a>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-card/50">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-3">
-          <div>
-            <p className="font-serif text-xl italic text-primary">Efficiency</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Wedding planner & créatrice d'expériences sur-mesure.
-              Paris · Provence · Worldwide.
-            </p>
-          </div>
-          <div>
-            <p className="font-serif text-[10px] uppercase tracking-[0.4em] text-foreground">
-              Navigation
-            </p>
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary">Le Journal</a></li>
-              <li><a href="#" className="hover:text-primary">Services</a></li>
-              <li><a href="#" className="hover:text-primary">Portfolio</a></li>
-              <li><a href="#" className="hover:text-primary">Contact</a></li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-serif text-[10px] uppercase tracking-[0.4em] text-foreground">
-              Contact
-            </p>
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li>hello@efficiency.fr</li>
-              <li>+33 1 23 45 67 89</li>
-              <li>Antananarivo, Madagascar</li>
-            </ul>
-          </div>
-        </div>
-        <div className="border-t border-border">
-          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 py-6 text-xs text-muted-foreground md:flex-row">
-            <p>© {new Date().getFullYear()} Efficiency — Tous droits réservés.</p>
-            <nav className="flex gap-6">
-              <a href="#" className="hover:text-primary">Mentions légales</a>
-              <a href="#" className="hover:text-primary">Confidentialité</a>
-            </nav>
-          </div>
-        </div>
-      </footer>
     </>
   );
 }

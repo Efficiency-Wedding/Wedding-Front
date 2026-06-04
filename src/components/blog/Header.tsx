@@ -1,3 +1,6 @@
+import blog2 from "@/assets/images/blog/blog2.jpeg";
+import blog7 from "@/assets/images/blog/blog (7).jpeg";
+
 export function BlogHeader() {
   return (
     <header className="relative bg-[oklch(0.97_0.012_300)]">
@@ -33,7 +36,7 @@ export function BlogHeader() {
           <div className="mt-10 flex items-center gap-5">
             <div className="h-20 w-20 overflow-hidden rounded-full border border-accent/40 shadow-sm">
               <img
-                src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=300&q=80"
+                src={blog2}
                 alt="Détail de mariage"
                 className="h-full w-full object-cover"
               />
@@ -51,7 +54,7 @@ export function BlogHeader() {
           <div className="relative overflow-hidden border border-border bg-card p-3 shadow-sm">
             <div className="aspect-[4/5] overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1606800052052-a08af7148866?w=900&q=80"
+                src={blog7}
                 alt="Couple de mariés élégant"
                 className="h-full w-full object-cover"
               />
