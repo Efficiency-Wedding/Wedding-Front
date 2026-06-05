@@ -372,10 +372,6 @@ function ServiceModal({ svc, onClose }: { svc: typeof services[0]; onClose: () =
   const modalImages = svc.gallery.length > 0 ? svc.gallery : [svc.img];
 
   useEffect(() => {
-    setImgIdx(0);
-  }, [svc]);
-
-  useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
     document.body.style.overflow = "hidden";
