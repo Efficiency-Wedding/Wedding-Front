@@ -1,35 +1,28 @@
 /* Partial conversion of provided styles, scoped globally for the contact page */
-:root {
-  --violet: #3b2f8c;
-  --jaune: #ffe600;
-  --rose: #e91e63;
-  --blanc: #ffffff;
-  --noir: #1a1a1a;
-}
 .bg-violet {
-  background: var(--violet);
+  background: var(--color-violet);
 }
 .bg-violet-dark {
-  background: rgba(42, 31, 92, 0.95);
+  background: color-mix(in oklab, var(--color-violet-dark) 95%, black);
 }
 .text-violet {
-  color: var(--violet);
+  color: var(--color-violet);
 }
 .text-rose {
-  color: var(--rose);
+  color: var(--color-rose);
 }
 .text-jaune {
-  color: var(--jaune);
+  color: var(--color-jaune);
 }
 .text-blanc {
-  color: var(--blanc);
+  color: var(--color-blanc);
 }
 .glass {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
 }
 .glass-dark {
-  background: rgba(59, 47, 140, 0.85);
+  background: color-mix(in oklab, var(--color-violet) 85%, transparent);
   backdrop-filter: blur(16px);
 }
 .shine::before {
@@ -42,7 +35,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 230, 0, 0.4),
+    color-mix(in oklab, var(--color-jaune) 40%, transparent),
     transparent
   );
   transition: left 0.6s;
@@ -86,7 +79,7 @@
 
 /* utility borders used in component */
 .border-violet-dark {
-  border-color: rgba(42, 31, 92, 0.9);
+  border-color: color-mix(in oklab, var(--color-violet-dark) 90%, transparent);
 }
 
 /* small responsive tweaks */
@@ -106,14 +99,10 @@
 .rounded-2xl {
   border-radius: 0.75rem;
 }
-.font-serif {
-  font-family: "Playfair Display", serif;
-}
-
 /* Button color utilities used in the JSX (fallbacks when Tailwind classes are not available) */
 .bg-jaune {
-  background: var(--jaune) !important;
-  color: var(--noir) !important;
+  background: var(--color-jaune) !important;
+  color: var(--color-violet-dark) !important;
 }
 .bg-jaune:hover {
   filter: brightness(0.95);
@@ -121,7 +110,7 @@
 
 /* ensure violet text utility exists */
 .text-violet {
-  color: var(--violet) !important;
+  color: var(--color-violet) !important;
 }
 
 /* Input icon sizing */
@@ -171,7 +160,7 @@
 .heart {
   width: 28px;
   height: 28px;
-  color: var(--rose);
+  color: var(--color-rose);
   opacity: 0.95;
   transform-origin: center;
   animation: heartBeat 1.8s infinite;
@@ -210,5 +199,15 @@
   .heart {
     width: 20px;
     height: 20px;
+  }
+
+  .contact-root {
+    overflow-x: hidden;
+  }
+
+  .contact-root input,
+  .contact-root textarea,
+  .contact-root button {
+    max-width: 100%;
   }
 }

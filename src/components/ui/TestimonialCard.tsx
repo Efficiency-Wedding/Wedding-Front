@@ -22,7 +22,7 @@ export default function TestimonialCard({
     reverseImages = false,
 }: TestimonialCardProps) {
     return (
-        <div className="lg:px-[50px] py-6 flex flex-col lg:flex-row gap-8 items-center bg-primary-light rounded-3xl shadow-md hover:shadow-xl transition-shadow duration-500">
+        <div className="px-5 sm:px-8 lg:px-[50px] py-6 flex flex-col lg:flex-row gap-8 items-center bg-primary-light rounded-3xl shadow-md hover:shadow-xl transition-shadow duration-500">
             <div className="w-full lg:w-1/2 flex flex-col gap-3">
                 <div className="flex gap-1 text-yellow-400 text-sm">
                     {[...Array(5)].map((_, index) => (
@@ -33,7 +33,7 @@ export default function TestimonialCard({
                     ))}
                 </div>
 
-                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 transition-colors duration-300 hover:text-primary">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 transition-colors duration-300 hover:text-primary">
                     {name}
                 </h2>
 
@@ -53,7 +53,7 @@ export default function TestimonialCard({
             </div>
 
             <div
-                className={`w-full lg:w-1/2 flex gap-3 items-center scale-90 ${reverseImages ? "flex-row-reverse" : ""
+                className={`w-full lg:w-1/2 flex gap-3 items-center sm:scale-95 lg:scale-90 ${reverseImages ? "flex-row-reverse" : ""
                     }`}
             >
                 <div className="w-1/2 bg-white p-2 pb-6 rounded-xl shadow-lg transition-all duration-700 hover:rotate-2 hover:scale-105">
@@ -61,13 +61,13 @@ export default function TestimonialCard({
                         <img
                             src={image1}
                             alt="testimonial 1"
-                            className="w-full h-[260px] object-cover transition-transform duration-700 hover:scale-110"
+                            className="w-full h-[190px] sm:h-[240px] lg:h-[260px] object-cover transition-transform duration-700 hover:scale-110"
                         />
                     </div>
                 </div>
 
                 <div className="w-1/2 flex flex-col gap-2">
-                    <div className="w-full h-[200px] bg-white p-2 pb-6 rounded-xl shadow-lg transition-all duration-700 hover:scale-105 hover:shadow-2xl">
+                    <div className="w-full h-[150px] sm:h-[190px] lg:h-[200px] bg-white p-2 pb-6 rounded-xl shadow-lg transition-all duration-700 hover:scale-105 hover:shadow-2xl">
                         <img
                             src={image2}
                             alt="testimonial 2"

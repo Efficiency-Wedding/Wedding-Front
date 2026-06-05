@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./ContactPage.css";
 
+type ContactFormErrors = Partial<Record<"name" | "email" | "phone" | "message", string>>;
+
 const Counter: React.FC<{ end: number; suffix?: string; label: string }> = ({
   end,
   suffix,
@@ -33,7 +35,7 @@ const Counter: React.FC<{ end: number; suffix?: string; label: string }> = ({
 
 const HeroContact: React.FC = () => {
   return (
-    <section className="relative h-[60vh] w-full overflow-hidden flex items-center justify-center">
+    <section className="relative min-h-[520px] h-[60vh] w-full overflow-hidden flex items-center justify-center">
       <div className="absolute inset-0 w-full h-[130%] -top-[15%]">
         <img
           src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=80"
@@ -43,10 +45,10 @@ const HeroContact: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-violet/50 via-violet/30 to-violet/70"></div>
       </div>
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-        <p className="text-jaune tracking-[0.4em] uppercase text-sm mb-6 font-light">
+        <p className="text-jaune tracking-[0.22em] sm:tracking-[0.4em] uppercase text-xs sm:text-sm mb-6 font-light">
           Contactez-nous
         </p>
-        <h1 className="text-5xl md:text-7xl text-blanc font-serif leading-tight mb-6">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl text-blanc font-serif leading-tight mb-6">
           We'd Like To Hear <span className="italic text-jaune">From You</span>
         </h1>
         <p className="text-blanc/80 text-lg md:text-xl max-w-2xl mx-auto font-light">
@@ -62,25 +64,25 @@ const HeroContact: React.FC = () => {
 
 const ContactInfo: React.FC = () => {
   return (
-    <section className="py-24 px-6 bg-blanc relative">
+    <section className="py-16 sm:py-24 px-4 sm:px-6 bg-blanc relative">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className="space-y-8">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl img-zoom img-shimmer">
               <img
                 src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80"
                 alt="Couple"
-                className="w-full h-80 object-cover"
+                className="w-full h-64 sm:h-80 object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-violet/90 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 p-8 text-blanc">
+              <div className="absolute bottom-0 left-0 p-5 sm:p-8 text-blanc">
                 <h3 className="text-2xl font-serif mb-2">Notre Bureau</h3>
                 <p className="text-blanc/70 text-sm">
                   555 West Lane, Summerlin, CA
                 </p>
               </div>
             </div>
-            <div className="glass-dark rounded-2xl p-8 text-blanc">
+            <div className="glass-dark rounded-2xl p-6 sm:p-8 text-blanc">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <p className="text-jaune text-xs uppercase tracking-widest mb-2">
@@ -102,7 +104,7 @@ const ContactInfo: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 gap-8">
             <div className="mb-8">
-              <h2 className="text-4xl md:text-5xl font-serif text-violet mb-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-violet mb-4">
                 Une Expérience{" "}
                 <span className="text-rose italic">Exceptionnelle</span>
               </h2>
@@ -112,13 +114,13 @@ const ContactInfo: React.FC = () => {
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div className="bg-white rounded-2xl p-6 shadow-lg shadow-violet/5 border border-gray-200 hover:border-rose/30 transition-colors">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg shadow-violet/5 border border-gray-200 hover:border-rose/30 transition-colors">
                 <Counter end={500} suffix="+" label="Mariages organisés" />
               </div>
-              <div className="bg-white rounded-2xl p-6 shadow-lg shadow-violet/5 border border-gray-200 hover:border-rose/30 transition-colors">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg shadow-violet/5 border border-gray-200 hover:border-rose/30 transition-colors">
                 <Counter end={98} suffix="%" label="Satisfaction client" />
               </div>
-              <div className="bg-white rounded-2xl p-6 shadow-lg shadow-violet/5 border border-gray-200 hover:border-rose/30 transition-colors">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg shadow-violet/5 border border-gray-200 hover:border-rose/30 transition-colors">
                 <Counter end={10} suffix="+" label="Ans d'expérience" />
               </div>
             </div>
@@ -137,11 +139,11 @@ const ContactForm: React.FC = () => {
     url: "",
     message: "",
   });
-  const [errors, setErrors] = useState<any>({});
+  const [errors, setErrors] = useState<ContactFormErrors>({});
   const [submitted, setSubmitted] = useState(false);
 
   const validate = () => {
-    const newErrors: any = {};
+    const newErrors: ContactFormErrors = {};
     if (!formData.name.trim()) newErrors.name = "Le nom est requis";
     if (
       !formData.email.trim() ||
@@ -167,15 +169,20 @@ const ContactForm: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: null });
+    const field = e.target.name as keyof typeof formData;
+    setFormData({ ...formData, [field]: e.target.value });
+    if (field in errors) {
+      const nextErrors = { ...errors };
+      delete nextErrors[field as keyof ContactFormErrors];
+      setErrors(nextErrors);
+    }
   };
 
   if (submitted)
     return (
-      <section className="py-24 px-6 bg-violet-dark">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-violet-dark">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-violet rounded-3xl p-12 shadow-2xl border border-rose/30">
+          <div className="bg-violet rounded-3xl p-6 sm:p-12 shadow-2xl border border-rose/30">
             <div className="w-20 h-20 bg-rose/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg
                 className="w-10 h-10 text-rose"
@@ -219,9 +226,9 @@ const ContactForm: React.FC = () => {
     );
 
   return (
-    <section className="py-24 px-6 bg-violet-dark relative overflow-hidden">
+    <section className="py-16 sm:py-24 px-4 sm:px-6 bg-violet-dark relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 sm:mb-16">
           <div className="hearts-row mb-4" aria-hidden>
             <svg className="heart" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 21s-7-4.35-9.19-6.42C1.26 12.95 1 10.99 2.1 9.7 3.18 8.44 4.7 8 6 8c1.6 0 2.9.9 3.6 1.6C10.1 8.9 11.4 8 13 8c1.3 0 2.82.44 3.9 1.7 1.1 1.29.84 3.25-.71 5.88C19 16.65 12 21 12 21z" />
@@ -233,10 +240,10 @@ const ContactForm: React.FC = () => {
               <path d="M12 21s-7-4.35-9.19-6.42C1.26 12.95 1 10.99 2.1 9.7 3.18 8.44 4.7 8 6 8c1.6 0 2.9.9 3.6 1.6C10.1 8.9 11.4 8 13 8c1.3 0 2.82.44 3.9 1.7 1.1 1.29.84 3.25-.71 5.88C19 16.65 12 21 12 21z" />
             </svg>
           </div>
-          <p className="text-rose tracking-[0.3em] uppercase text-sm mb-4">
+          <p className="text-rose tracking-[0.2em] sm:tracking-[0.3em] uppercase text-xs sm:text-sm mb-4">
             Contact
           </p>
-          <h2 className="text-4xl md:text-6xl text-blanc font-serif mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-6xl text-blanc font-serif mb-4">
             Send Us a Message
           </h2>
           <p className="text-blanc/60 max-w-xl mx-auto">
@@ -244,8 +251,8 @@ const ContactForm: React.FC = () => {
             possible.
           </p>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start max-w-6xl mx-auto">
-          <div className="bg-violet rounded-3xl p-8 md:p-12 shadow-2xl shadow-black/20 border border-white/10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start max-w-6xl mx-auto">
+          <div className="bg-violet rounded-3xl p-5 sm:p-8 md:p-12 shadow-2xl shadow-black/20 border border-white/10">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 gap-5">
                 <div className="relative group">
@@ -422,7 +429,7 @@ const ContactForm: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full bg-jaune text-violet py-5 rounded-2xl font-bold text-lg transition-all duration-300 shine flex items-center justify-center gap-3 shadow-lg shadow-jaune/30"
+                className="w-full bg-jaune text-violet py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 shine flex items-center justify-center gap-3 shadow-lg shadow-jaune/30"
               >
                 Demander un devis gratuit
               </button>
@@ -476,7 +483,6 @@ const ContactForm: React.FC = () => {
 };
 
 /* CTA removed as requested */
-
 
 export default function ContactPage() {
   return (

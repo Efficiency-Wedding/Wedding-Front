@@ -19,14 +19,14 @@ export function BlogPost({ article, onBack }: Props) {
         <ArrowLeft className="h-4 w-4" /> Retour au blog
       </button>
 
-      <div className="mt-8 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
+      <div className="mt-8 flex flex-wrap items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
         <span className="rounded-full bg-secondary px-3 py-1 text-secondary-foreground">
           {article.category}
         </span>
         <time>{article.date}</time>
       </div>
 
-      <h1 className="mt-4 font-serif text-4xl font-light leading-tight text-foreground md:text-5xl">
+      <h1 className="mt-4 font-serif text-3xl font-light leading-tight text-foreground sm:text-4xl md:text-5xl">
         {article.title}
       </h1>
 
@@ -34,7 +34,7 @@ export function BlogPost({ article, onBack }: Props) {
         <img
           src={selectedImage}
           alt={article.title}
-          className="h-[420px] w-full object-cover"
+          className="h-[260px] w-full object-cover sm:h-[360px] md:h-[420px]"
         />
       </div>
 
@@ -51,8 +51,8 @@ export function BlogPost({ article, onBack }: Props) {
         ))}
       </div>
 
-      <div className="prose prose-lg mt-10 max-w-none font-light text-foreground">
-        <p className="text-lg italic text-muted-foreground">{article.excerpt}</p>
+      <div className="prose prose-base sm:prose-lg mt-10 max-w-none font-light text-foreground">
+        <p className="text-base italic text-muted-foreground sm:text-lg">{article.excerpt}</p>
         <p className="mt-6 leading-relaxed">{article.content}</p>
         <p className="mt-6 leading-relaxed">
           Chaque mariage est une histoire unique, tissée de détails, de regards

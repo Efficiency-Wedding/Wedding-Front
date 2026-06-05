@@ -17,7 +17,6 @@ const C = {
   shadowFrame: "0 10px 40px -10px rgba(180,100,100,0.28)",
 };
 
-
 const IMG = {
   hero:   new URL("../../assets/mar9.jpg", import.meta.url).href,
   arch:   new URL("../../assets/mar17.jpg", import.meta.url).href,
@@ -77,7 +76,7 @@ export default function Perfume() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: C.ivory, color: C.muted }} className="page-entrance overflow-x-hidden">
+    <div style={{ backgroundColor: C.ivory, color: C.muted }} className="about-page page-entrance overflow-x-hidden">
 
       {/* ══ HERO — fond original #FFF9F5 avec image bg ══ */}
       <section
@@ -117,7 +116,7 @@ export default function Perfume() {
         <div className="max-w-[1200px] mx-auto grid md:grid-cols-2 gap-12 items-center">
 
           {/* Collage — formes originales + zoom intérieur */}
-          <div className="relative reveal" ref={addReveal} style={{ height: "620px" }}>
+          <div className="about-collage relative reveal" ref={addReveal} style={{ height: "620px" }}>
 
             {/* arch — arche arrondie en haut */}
             <ZoomImg
@@ -233,7 +232,7 @@ export default function Perfume() {
             </div>
 
             <button
-              onClick={() => navigate("/Travail")}
+              onClick={() => navigate("/travail")}
               style={{
                 marginTop: "0.5rem",
                 backgroundColor: "transparent",
@@ -304,7 +303,7 @@ function StorySection({ onReadStory }: StorySectionProps) {
               onMouseLeave={e => { e.currentTarget.style.backgroundColor="oklch(0.45 0.06 250)"; e.currentTarget.style.transform="translateY(0)"; }}
             >Lire mon histoire <span aria-hidden>→</span></button>
           ) : (
-            <Link to="/Histoirepage"
+            <Link to="/histoire"
               style={{ marginTop:"2.5rem", display:"inline-flex", alignItems:"center", gap:"0.75rem", backgroundColor:"oklch(0.45 0.06 250)", color:"oklch(0.985 0.008 75)", padding:"1rem 2rem", fontSize:"0.7rem", fontWeight:600, letterSpacing:"0.25em", textTransform:"uppercase", textDecoration:"none", borderRadius:"2px", transition:"background-color 0.25s, transform 0.2s" }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor="oklch(0.72 0.09 15)"; e.currentTarget.style.transform="translateY(-2px)"; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor="oklch(0.45 0.06 250)"; e.currentTarget.style.transform="translateY(0)"; }}

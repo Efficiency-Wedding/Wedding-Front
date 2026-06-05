@@ -19,14 +19,14 @@ export default function Card({
                 <img
                     src={image}
                     alt={title}
-                    className="w-full h-64 object-cover rounded-2xl"
+                    className="w-full h-56 sm:h-64 object-cover rounded-2xl"
                 />
-                <div className="absolute -bottom-8 right-16 w-20 h-20 rounded-full bg-primary-dark shadow-lg flex items-center justify-center bg-pink-100">
-                    <Icon className="text-primary text-3xl" />
+                <div className="absolute -bottom-8 right-8 sm:right-16 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary-dark shadow-lg flex items-center justify-center bg-pink-100">
+                    <Icon className="text-primary text-2xl sm:text-3xl" />
                 </div>
             </div>
-            <div className="pt-16 p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            <div className="pt-14 sm:pt-16 p-6 sm:p-8">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
                     {title}
                 </h3>
 

@@ -30,13 +30,13 @@ export function BlogList({ articles, onOpen }: Props) {
             />
           </div>
           <div className="flex flex-1 flex-col p-6">
-            <div className="flex items-center justify-between text-xs uppercase tracking-widest text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs uppercase tracking-widest text-muted-foreground">
               <span className="rounded-full bg-secondary px-3 py-1 text-secondary-foreground">
                 {a.category}
               </span>
               <time>{a.date}</time>
             </div>
-            <h2 className="mt-4 font-serif text-xl leading-snug text-foreground">
+            <h2 className="mt-4 font-serif text-lg leading-snug text-foreground sm:text-xl">
               {a.title}
             </h2>
             <p className="mt-3 flex-1 text-sm text-muted-foreground">

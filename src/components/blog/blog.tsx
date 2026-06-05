@@ -34,11 +34,11 @@ export function BlogPage() {
   return (
     <div className="min-h-screen bg-background font-sans">
       {!selected && <BlogHeader />}
-      <main className="mx-auto max-w-7xl px-6 py-16">
+      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16">
         {selected ? (
           <BlogPost article={selected} onBack={handleBack} />
         ) : (
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_320px]">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-12">
             <BlogList articles={filtered} onOpen={handleOpen} />
             <Sidebar search={search} onSearchChange={setSearch} />
           </div>

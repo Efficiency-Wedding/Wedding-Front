@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import Button from "@/components/ui/Button";
 import bg from "@/assets/images/home/home.jpg";
 import photo1 from "@/assets/images/home/photo.jpg";
@@ -31,11 +30,9 @@ import Card from "../ui/Card";
 import StatCard from "../ui/StatCard";
 import TestimonialCard from "../ui/TestimonialCard";
 
-type Props = {};
-
 const weddingImages: string[] = [photo20, photo21, photo22];
 const photoeImages: string[] = [photo1, photo2, photo3];
-export const stats: {
+const stats: {
     number: string;
     label: string;
 }[] = [
@@ -57,16 +54,16 @@ export const stats: {
         },
     ];
 
-const Home: FC<Props> = () => {
+const Home = () => {
     return (
         <section
             id="home"
-            className="flex flex-col bg-background overflow-x-hidden px-4 sm:px-6 lg:px-[100px]"
+            className="flex flex-col bg-background overflow-x-hidden px-4 sm:px-6 lg:px-12 xl:px-[100px]"
         >
-            <div className="flex flex-col lg:flex-row py-10 gap-10 lg:gap-0 mt-10">
-                <div className="w-full lg:w-1/3 flex items-center px-4 sm:px-10 py-8">
+            <div className="flex flex-col lg:flex-row py-8 sm:py-10 gap-10 lg:gap-6 mt-6 sm:mt-10">
+                <div className="w-full lg:w-1/3 flex items-center px-1 sm:px-6 lg:px-4 py-4 sm:py-8">
                     <div>
-                        <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6 tracking-tight text-left">
+                        <h1 className="text-3xl sm:text-4xl xl:text-6xl font-bold text-gray-900 leading-tight mb-6 tracking-tight text-left">
                             Dites Oui à l'Amour, Nous Faisons le Reste
                         </h1>
                         <p className="text-gray-600 text-base sm:text-lg mb-6 text-justify">
@@ -110,7 +107,7 @@ const Home: FC<Props> = () => {
                     </div>
                 </div>
 
-                <div className="w-full lg:w-1/3 px-4 sm:px-8 py-8 flex flex-col justify-center">
+                <div className="w-full lg:w-1/3 px-1 sm:px-6 lg:px-4 py-8 flex flex-col justify-center">
                     <h2 className="text-2xl sm:text-3xl font-bold mb-2">
                         Mariages de Rêve
                     </h2>
@@ -173,14 +170,14 @@ const Home: FC<Props> = () => {
 
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-10 py-20 items-center">
+            <div className="flex flex-col lg:flex-row gap-10 py-14 sm:py-20 items-center">
                 <div className="w-full lg:w-1/2 flex gap-4 items-end">
 
                     <div className="w-full bg-white p-2 pb-4 rounded-xl shadow-md transition-all duration-700 hover:scale-105 hover:shadow-2xl">
                         <img
                             src={photo7}
                             alt="Mariage"
-                            className="w-full h-[350px] object-cover rounded-2xl"
+                            className="w-full h-[240px] sm:h-[350px] object-cover rounded-2xl"
                         />
                     </div>
 
@@ -188,7 +185,7 @@ const Home: FC<Props> = () => {
                         <img
                             src={photo4}
                             alt="Mariage"
-                            className="w-full h-[250px] object-cover rounded-2xl"
+                            className="w-full h-[190px] sm:h-[250px] object-cover rounded-2xl"
                         />
                     </div>
 
@@ -198,11 +195,11 @@ const Home: FC<Props> = () => {
                     <div className="flex items-center text-sm font-semibold text-primary pb-5">
                         <span>01</span>
 
-                        <span className="mx-3 w-100 border-b border-dotted border-primary/40" />
+                        <span className="mx-3 min-w-0 flex-1 border-b border-dotted border-primary/40" />
 
                         <span>A propos</span>
                     </div>
-                    <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6">
                         Nous Créons des Mariages Élégants et Inoubliables
                     </h2>
                     <p className="text-gray-600 leading-relaxed mb-8">
@@ -219,23 +216,23 @@ const Home: FC<Props> = () => {
             </div>
 
             <div className="pb-20">
-                <div className="flex justify-between items-end mb-12">
+                <div className="flex flex-col gap-6 md:flex-row md:justify-between md:items-end mb-12">
 
                     <div className="max-w-2xl">
-                        <h2 className="text-4xl font-bold text-gray-900">
+                        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
                             Pour votre grand jour
                         </h2>
                     </div>
-                    <div className="flex flex-col items-end gap-3">
+                    <div className="flex flex-col items-start md:items-end gap-3">
                         <div className="flex items-center text-sm font-semibold text-primary">
                             <span>03</span>
 
-                            <span className="mx-3 w-64 border-b border-dotted border-primary/40" />
+                            <span className="mx-3 w-24 sm:w-40 md:w-64 border-b border-dotted border-primary/40" />
 
                             <span>Prestations</span>
                         </div>
 
-                        <p className="text-gray-600 text-sm text-right max-w-xs">
+                        <p className="text-gray-600 text-sm text-left md:text-right max-w-xs">
                             Des prestations soignées pour un mariage inoubliable, élégant et plein d’émotions.
                         </p>
                     </div>
@@ -268,7 +265,7 @@ const Home: FC<Props> = () => {
                     />
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 text-center mt-16 bg-primary-light p-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 text-center mt-16 bg-primary-light p-4 sm:p-8 rounded-xl">
 
                     {stats.map((stat, index) => (
                         <div
@@ -288,23 +285,23 @@ const Home: FC<Props> = () => {
             </div>
 
             <div className="py-20 flex flex-col gap-6">
-                <div className="flex justify-between items-end mb-12">
+                <div className="flex flex-col gap-6 md:flex-row md:justify-between md:items-end mb-12">
 
                     <div className="max-w-2xl">
-                        <h2 className="text-4xl font-bold text-gray-900">
+                        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
                             Histoires vécues par nos clients
                         </h2>
                     </div>
-                    <div className="flex flex-col items-end gap-3">
+                    <div className="flex flex-col items-start md:items-end gap-3">
                         <div className="flex items-center text-sm font-semibold text-primary">
                             <span>03</span>
 
-                            <span className="mx-3 w-64 border-b border-dotted border-primary/40" />
+                            <span className="mx-3 w-24 sm:w-40 md:w-64 border-b border-dotted border-primary/40" />
 
                             <span>Témoignages</span>
                         </div>
 
-                        <p className="text-gray-600 text-sm text-right max-w-xs">
+                        <p className="text-gray-600 text-sm text-left md:text-right max-w-xs">
                             Des couples heureux partagent leur expérience et les moments inoubliables de leur mariage.
                         </p>
                     </div>

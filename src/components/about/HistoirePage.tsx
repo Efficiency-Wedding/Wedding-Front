@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
-const portrait = new URL("../assets/mar4.jpg", import.meta.url).href;
-const work = new URL("../assets/mar3.jpg", import.meta.url).href;
-const joy = new URL("../assets/mar2.jpg", import.meta.url).href;
+const portrait = new URL("../../assets/mar4.jpg", import.meta.url).href;
+const work = new URL("../../assets/mar3.jpg", import.meta.url).href;
+const joy = new URL("../../assets/mar2.jpg", import.meta.url).href;
 
 /* ── Valeurs oklch identiques à StorySection ──────────────────
    or (gold)          : oklch(0.78 0.09 85)
@@ -30,7 +30,6 @@ const C = {
   shadowFrame:"0 10px 40px -10px rgba(180,100,100,0.28)",
 };
 
-
 export default function HistoirePage() {
   const revealRefs = useRef<HTMLElement[]>([]);
 
@@ -54,7 +53,7 @@ export default function HistoirePage() {
   }, []);
 
   return (
-    <main className="page-entrance" style={{ minHeight: "100vh", backgroundColor: C.ivory, color: C.blue }}>
+    <main className="history-page page-entrance" style={{ minHeight: "100vh", backgroundColor: C.ivory, color: C.blue }}>
 
       {/* ── HERO ── */}
       <section className="reveal" ref={addReveal} style={{ position: "relative", height: "60vh", minHeight: "450px", overflow: "hidden" }}>
@@ -86,13 +85,13 @@ export default function HistoirePage() {
           <h1 className="font-serif" style={{
             fontSize: "clamp(2rem,5vw,3.5rem)",
             fontWeight: 600,
-            letterSpacing: "0.2em",
+            letterSpacing: "clamp(0.08em, 2vw, 0.2em)",
             marginTop: "1rem",
             color: C.white,
           }}>
             DERRIÈRE CHAQUE MARIAGE
           </h1>
-          <p style={{ marginTop: "1rem", fontSize: "0.7rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.8)" }}>
+          <p style={{ marginTop: "1rem", fontSize: "0.7rem", letterSpacing: "clamp(0.12em, 3vw, 0.35em)", textTransform: "uppercase", color: "rgba(255,255,255,0.8)" }}>
             Passion • Élégance • Excellence
           </p>
         </div>
@@ -103,7 +102,7 @@ export default function HistoirePage() {
         <div style={{
           maxWidth: "1100px", margin: "0 auto",
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))",
           alignItems: "center",
           gap: "3.5rem",
         }}>
@@ -130,7 +129,7 @@ export default function HistoirePage() {
             alt="Préparation mariage"
             style={{
               maxWidth: "440px", width: "100%",
-              height: "460px", objectFit: "cover",
+              height: "min(460px, 75vw)", objectFit: "cover",
               margin: "0 auto", display: "block",
               border: "4px solid white",
               borderRadius: "2px",
@@ -149,7 +148,7 @@ export default function HistoirePage() {
         <div style={{
           maxWidth: "1100px", margin: "0 auto",
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))",
           alignItems: "center",
           gap: "3.5rem",
         }}>
@@ -159,7 +158,7 @@ export default function HistoirePage() {
             alt="Couple heureux"
             style={{
               maxWidth: "440px", width: "100%",
-              height: "460px", objectFit: "cover",
+              height: "min(460px, 75vw)", objectFit: "cover",
               margin: "0 auto", display: "block",
               border: "4px solid white",
               borderRadius: "2px",

@@ -651,7 +651,6 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
 
   return (
     <motion.div
-      className="services-package-card"
       ref={ref}
       initial={{ opacity: 0, x: isEven ? -70 : 70 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
@@ -684,7 +683,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
       )}
 
       {/* Photo side */}
-      <div className="services-package-image" style={{
+      <div style={{
         width: "40%",
         flexShrink: 0,
         position: "relative",
@@ -720,7 +719,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
       </div>
 
       {/* Content side */}
-      <div className="services-package-content" style={{ flex: 1, padding: "40px 44px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+      <div style={{ flex: 1, padding: "40px 44px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 10 }}>
           <div style={{
             width: 8, height: 48, borderRadius: 4,
@@ -738,7 +737,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
         </div>
         <p style={{ fontSize: 14, color: "#888", lineHeight: 1.6, marginBottom: 22 }}>{pkg.desc}</p>
 
-        <div className="services-package-features" style={{ display: "flex", gap: 36 }}>
+        <div style={{ display: "flex", gap: 36 }}>
           {pkg.cols.map((col, ci) => (
             <ul key={ci} style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 9 }}>
               {col.map((item, ii) => (
@@ -836,7 +835,7 @@ export default function WeddingServices() {
   const [modalSvc, setModalSvc] = useState<typeof services[0] | null>(null);
 
   return (
-    <div className="services-page" style={{ minHeight: "100vh", background: LIGHT, fontFamily: "'Segoe UI', 'Helvetica Neue', sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: LIGHT, fontFamily: "'Segoe UI', 'Helvetica Neue', sans-serif" }}>
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <div style={{
@@ -880,14 +879,13 @@ export default function WeddingServices() {
           </motion.span>
         ))}
 
-        <div className="services-hero-inner" style={{
+        <div style={{
           maxWidth: 1140, margin: "0 auto", padding: "56px 48px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           gap: 40, position: "relative", zIndex: 1,
         }}>
           {/* Left text */}
           <motion.div
-            className="services-hero-text"
             initial={{ opacity: 0, x: -60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
@@ -925,7 +923,7 @@ export default function WeddingServices() {
             <p style={{ fontSize: 15.5, color: "#666", lineHeight: 1.75, maxWidth: 380 }}>
               Découvrez tous les services dont vous avez besoin pour faire de votre mariage un moment absolument inoubliable.
             </p>
-            <div className="services-hero-actions" style={{ display: "flex", gap: 12, marginTop: 30 }}>
+            <div style={{ display: "flex", gap: 12, marginTop: 30 }}>
               <motion.button
                 whileHover={{ scale: 1.04, boxShadow: "0 10px 36px rgba(233,30,140,0.5)" }}
                 whileTap={{ scale: 0.97 }}
@@ -957,13 +955,12 @@ export default function WeddingServices() {
 
           {/* Right image + badge */}
           <motion.div
-            className="services-hero-media"
             initial={{ opacity: 0, scale: 0.85, rotate: -3 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 0.95, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             style={{ position: "relative", flexShrink: 0 }}
           >
-            <div className="services-hero-image" style={{
+            <div style={{
               width: 380, height: 270, borderRadius: 26, overflow: "hidden",
               boxShadow: "0 28px 80px rgba(233,30,140,0.28), 0 6px 28px rgba(0,0,0,0.14)",
             }}>
@@ -1020,13 +1017,12 @@ export default function WeddingServices() {
         borderBottom: "1px solid #fce4ec",
         borderTop: "1px solid #fce4ec",
       }}>
-        <div className="services-section-wrap services-stats-wrap" style={{ maxWidth: 1140, margin: "0 auto", padding: "28px 48px" }}>
+        <div style={{ maxWidth: 1140, margin: "0 auto", padding: "28px 48px" }}>
           <motion.div
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="services-stats-grid"
             style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 0 }}
           >
             {stats.map((s, i) => (
@@ -1048,7 +1044,7 @@ export default function WeddingServices() {
       </div>
 
       {/* ── SERVICES GRID ────────────────────────────────────────────────── */}
-      <div className="services-section-wrap" style={{ maxWidth: 1140, margin: "0 auto", padding: "88px 48px 70px" }}>
+      <div style={{ maxWidth: 1140, margin: "0 auto", padding: "88px 48px 70px" }}>
         <SectionTitle sub="Tout ce dont vous avez besoin pour un mariage parfait">
           Tous nos services
         </SectionTitle>
@@ -1057,7 +1053,6 @@ export default function WeddingServices() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
-          className="services-cards-grid"
           style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}
         >
           {services.map((svc, i) => (
@@ -1067,7 +1062,7 @@ export default function WeddingServices() {
       </div>
 
       {/* ── HOW IT WORKS ─────────────────────────────────────────────────── */}
-      <div className="services-process-section" style={{
+      <div style={{
         background: "linear-gradient(140deg, #fff0f7 0%, #fce4ec 100%)",
         padding: "80px 48px",
       }}>
@@ -1075,7 +1070,7 @@ export default function WeddingServices() {
           <SectionTitle sub="Un processus simple et transparent en 4 étapes">
             Comment ça marche ?
           </SectionTitle>
-          <div className="services-timeline" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
             {timeline.map((step, i) => (
               <TimelineStep key={i} step={step} index={i} total={timeline.length} />
             ))}
@@ -1084,7 +1079,7 @@ export default function WeddingServices() {
       </div>
 
       {/* ── PACKAGES ─────────────────────────────────────────────────────── */}
-      <div className="services-section-wrap" style={{ maxWidth: 1140, margin: "0 auto", padding: "88px 48px 70px" }}>
+      <div style={{ maxWidth: 1140, margin: "0 auto", padding: "88px 48px 70px" }}>
         <SectionTitle sub="Des formules complètes pour chaque envie et chaque budget">
           Nos Packages
         </SectionTitle>
@@ -1096,13 +1091,12 @@ export default function WeddingServices() {
       </div>
 
       {/* ── BOTTOM CTA ───────────────────────────────────────────────────── */}
-      <div className="services-section-wrap services-bottom-wrap" style={{ maxWidth: 1140, margin: "0 auto", padding: "0 48px 100px" }}>
+      <div style={{ maxWidth: 1140, margin: "0 auto", padding: "0 48px 100px" }}>
         <motion.div
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.65 }}
-          className="services-bottom-grid"
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}
         >
           {/* Contact card */}
