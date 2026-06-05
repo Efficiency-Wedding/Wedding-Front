@@ -663,7 +663,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
         display: "flex",
         flexDirection: isEven ? "row" : "row-reverse",
         borderRadius: 28,
-        overflow: "hidden",
+        overflow: "visible",
         background: "#fff",
         boxShadow: pkg.popular
           ? `0 12px 56px rgba(233,30,140,0.22), 0 4px 24px rgba(0,0,0,0.1)`
@@ -675,7 +675,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
     >
       {pkg.popular && (
         <div style={{
-          position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)",
+          position: "absolute", top: 0, left: "50%", transform: "translate(-50%, -50%)",
           background: "linear-gradient(135deg, #e91e8c, #c2185b)",
           color: "#fff", fontSize: 12, fontWeight: 800, padding: "5px 20px",
           borderRadius: 100, zIndex: 10, whiteSpace: "nowrap",
@@ -687,7 +687,16 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
       )}
 
       {/* Photo side */}
-      <div style={{ width: "40%", flexShrink: 0, position: "relative", overflow: "hidden" }}>
+      <div style={{
+        width: "40%",
+        flexShrink: 0,
+        position: "relative",
+        overflow: "hidden",
+        borderTopLeftRadius: isEven ? 26 : 0,
+        borderBottomLeftRadius: isEven ? 26 : 0,
+        borderTopRightRadius: isEven ? 0 : 26,
+        borderBottomRightRadius: isEven ? 0 : 26,
+      }}>
         <motion.img
           src={pkg.img}
           alt={pkg.name}
