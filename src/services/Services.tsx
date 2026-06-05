@@ -1,6 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, useInView, AnimatePresence } from "motion/react";
+import {
+  CalendarHeart,
+  Clock3,
+  Flower2,
+  Gem,
+  Gift,
+  Heart,
+  Sparkles,
+  Star,
+  Trophy,
+  Users,
+} from "lucide-react";
 import homeHero from "@/assets/images/home/home.jpg";
 import bouquet from "@/assets/images/home/bouquet.jpg";
 import verre from "@/assets/images/home/verre.jpg";
@@ -297,11 +309,13 @@ const timeline = [
 ];
 
 const stats = [
-  { num: "+1 200", label: "Mariages réalisés", emoji: "💍" },
-  { num: "98%",    label: "Clients satisfaits", emoji: "⭐" },
-  { num: "+50",    label: "Prestataires experts", emoji: "🏆" },
-  { num: "10 ans", label: "D'expérience",       emoji: "🎊" },
+  { num: "+1 200", label: "Mariages réalisés", Icon: Gem },
+  { num: "98%",    label: "Clients satisfaits", Icon: Star },
+  { num: "+50",    label: "Prestataires experts", Icon: Trophy },
+  { num: "10 ans", label: "D'expérience", Icon: CalendarHeart },
 ];
+
+const floatingAccents = [Flower2, Sparkles, Heart, Flower2, Sparkles, Heart, Flower2];
 
 // ── Colors ──────────────────────────────────────────────────────────────────
 const PINK   = "#e91e8c";
@@ -325,18 +339,20 @@ const staggerItem = {
 // ── Section heading ──────────────────────────────────────────────────────────
 function SectionTitle({ children, sub }: { children: React.ReactNode; sub?: string }) {
   return (
-    <div className="text-center mb-14">
+    <div className="services-section-title text-center mb-14">
       <motion.p
         {...fadeUp(0.05)}
+        className="services-kicker"
         style={{
-          display: "inline-block", marginBottom: 10,
+          display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 10,
           background: "rgba(233,30,140,0.1)",
           color: PINK, fontSize: 12, fontWeight: 700, letterSpacing: "0.12em",
           textTransform: "uppercase", padding: "5px 16px", borderRadius: 100,
           border: "1px solid rgba(233,30,140,0.2)",
         }}
       >
-        ✦ Nos prestations
+        <Sparkles size={14} strokeWidth={2.1} />
+        Nos prestations
       </motion.p>
       <motion.h2
         {...fadeUp(0.1)}
@@ -358,8 +374,10 @@ function SectionTitle({ children, sub }: { children: React.ReactNode; sub?: stri
         <motion.span
           animate={{ scale: [1, 1.4, 1] }}
           transition={{ repeat: Infinity, duration: 2.4, ease: "easeInOut" }}
-          style={{ color: PINK, fontSize: 20 }}
-        >♥</motion.span>
+          style={{ color: PINK, display: "inline-flex" }}
+        >
+          <Heart size={20} fill={PINK} strokeWidth={1.8} />
+        </motion.span>
         <div style={{ height: 1, width: 48, background: `linear-gradient(to left, transparent, ${PINK})` }} />
       </motion.div>
     </div>
@@ -461,11 +479,11 @@ function ServiceModal({ svc, onClose }: { svc: typeof services[0]; onClose: () =
 
           <div className="mb-6 grid gap-3 sm:grid-cols-2">
             {[
-              { label: "Durée", val: svc.duration, emoji: "⏱" },
-              { label: "Invités", val: svc.guests, emoji: "👥" },
+              { label: "Durée", val: svc.duration, Icon: Clock3 },
+              { label: "Invités", val: svc.guests, Icon: Users },
             ].map((m, i) => (
               <div key={i} className="flex items-center gap-3 rounded-2xl border border-[#fce4ec] bg-[#fdf6f9] px-4 py-3">
-                <span className="text-xl">{m.emoji}</span>
+                <m.Icon size={22} color={PINK} strokeWidth={2} />
                 <div>
                   <p className="m-0 text-[11px] uppercase tracking-[0.06em] text-[#aaa]">{m.label}</p>
                   <p className="m-0 text-sm font-bold" style={{ color: DARK }}>{m.val}</p>
@@ -651,6 +669,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
 
   return (
     <motion.div
+      className="services-package-card"
       ref={ref}
       initial={{ opacity: 0, x: isEven ? -70 : 70 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
@@ -677,13 +696,15 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
           borderRadius: 100, zIndex: 10, whiteSpace: "nowrap",
           boxShadow: "0 4px 16px rgba(233,30,140,0.4)",
           letterSpacing: "0.06em", textTransform: "uppercase",
+          display: "inline-flex", alignItems: "center", gap: 7,
         }}>
-          ⭐ Le plus populaire
+          <Star size={14} fill="#fff" strokeWidth={2.2} />
+          Le plus populaire
         </div>
       )}
 
       {/* Photo side */}
-      <div style={{
+      <div className="services-package-image" style={{
         width: "40%",
         flexShrink: 0,
         position: "relative",
@@ -719,7 +740,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
       </div>
 
       {/* Content side */}
-      <div style={{ flex: 1, padding: "40px 44px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+      <div className="services-package-content" style={{ flex: 1, padding: "40px 44px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 10 }}>
           <div style={{
             width: 8, height: 48, borderRadius: 4,
@@ -737,7 +758,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
         </div>
         <p style={{ fontSize: 14, color: "#888", lineHeight: 1.6, marginBottom: 22 }}>{pkg.desc}</p>
 
-        <div style={{ display: "flex", gap: 36 }}>
+        <div className="services-package-features" style={{ display: "flex", gap: 36 }}>
           {pkg.cols.map((col, ci) => (
             <ul key={ci} style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 9 }}>
               {col.map((item, ii) => (
@@ -789,9 +810,10 @@ function TimelineStep({ step, index, total }: { step: typeof timeline[0]; index:
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
-    <div ref={ref} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, position: "relative" }}>
+    <div className="services-timeline-step" ref={ref} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, position: "relative" }}>
       {index < total - 1 && (
         <motion.div
+          className="services-timeline-line"
           initial={{ scaleX: 0 }}
           animate={inView ? { scaleX: 1 } : {}}
           transition={{ duration: 0.9, delay: 0.5 }}
@@ -835,7 +857,7 @@ export default function WeddingServices() {
   const [modalSvc, setModalSvc] = useState<typeof services[0] | null>(null);
 
   return (
-    <div style={{ minHeight: "100vh", background: LIGHT, fontFamily: "'Segoe UI', 'Helvetica Neue', sans-serif" }}>
+    <div className="services-page" style={{ minHeight: "100vh", background: LIGHT, fontFamily: "'Segoe UI', 'Helvetica Neue', sans-serif" }}>
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <div style={{
@@ -863,47 +885,53 @@ export default function WeddingServices() {
           />
         ))}
         {/* Floating petals */}
-        {["🌸", "🌹", "🌸", "💐", "🌸", "🌹", "💮"].map((p, i) => (
+        {floatingAccents.map((AccentIcon, i) => (
           <motion.span
             key={i}
+            className="services-floating-accent"
             style={{
               position: "absolute", left: `${6 + i * 13}%`,
               top: `${8 + (i % 3) * 28}%`,
-              fontSize: 18 + (i % 3) * 8,
+              width: 18 + (i % 3) * 6,
+              height: 18 + (i % 3) * 6,
+              color: PINK,
               opacity: 0.22, pointerEvents: "none",
             }}
             animate={{ y: [0, -12, 0], rotate: [0, 15, 0] }}
             transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut", delay: i * 0.45 }}
           >
-            {p}
+            <AccentIcon size="100%" strokeWidth={1.6} />
           </motion.span>
         ))}
 
-        <div style={{
+        <div className="services-hero-inner" style={{
           maxWidth: 1140, margin: "0 auto", padding: "56px 48px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           gap: 40, position: "relative", zIndex: 1,
         }}>
           {/* Left text */}
           <motion.div
+            className="services-hero-text"
             initial={{ opacity: 0, x: -60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
             style={{ maxWidth: 460 }}
           >
             <motion.span
+              className="services-hero-kicker"
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               style={{
-                display: "inline-block", marginBottom: 14,
+                display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 14,
                 background: "rgba(233,30,140,0.1)",
                 color: PINK, fontSize: 12, fontWeight: 700, letterSpacing: "0.12em",
                 textTransform: "uppercase", padding: "5px 16px", borderRadius: 100,
                 border: "1px solid rgba(233,30,140,0.22)",
               }}
             >
-              ✦ Wedding Planner Premium
+              <Sparkles size={14} strokeWidth={2.1} />
+              Wedding Planner Premium
             </motion.span>
             <h1 style={{
               fontSize: "clamp(46px, 6vw, 68px)",
@@ -923,7 +951,7 @@ export default function WeddingServices() {
             <p style={{ fontSize: 15.5, color: "#666", lineHeight: 1.75, maxWidth: 380 }}>
               Découvrez tous les services dont vous avez besoin pour faire de votre mariage un moment absolument inoubliable.
             </p>
-            <div style={{ display: "flex", gap: 12, marginTop: 30 }}>
+            <div className="services-hero-actions" style={{ display: "flex", gap: 12, marginTop: 30 }}>
               <motion.button
                 whileHover={{ scale: 1.04, boxShadow: "0 10px 36px rgba(233,30,140,0.5)" }}
                 whileTap={{ scale: 0.97 }}
@@ -955,12 +983,13 @@ export default function WeddingServices() {
 
           {/* Right image + badge */}
           <motion.div
+            className="services-hero-media"
             initial={{ opacity: 0, scale: 0.85, rotate: -3 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 0.95, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             style={{ position: "relative", flexShrink: 0 }}
           >
-            <div style={{
+            <div className="services-hero-image" style={{
               width: 380, height: 270, borderRadius: 26, overflow: "hidden",
               boxShadow: "0 28px 80px rgba(233,30,140,0.28), 0 6px 28px rgba(0,0,0,0.14)",
             }}>
@@ -972,6 +1001,7 @@ export default function WeddingServices() {
             </div>
             {/* Floating stats */}
             <motion.div
+              className="services-hero-stat services-hero-stat-weddings"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.75 }}
@@ -983,13 +1013,14 @@ export default function WeddingServices() {
                 display: "flex", alignItems: "center", gap: 12,
               }}
             >
-              <span style={{ fontSize: 28 }}>💍</span>
+              <Gem size={30} color={PINK} strokeWidth={1.9} />
               <div>
                 <p style={{ fontSize: 11, color: "#bbb", margin: "0 0 1px", textTransform: "uppercase", letterSpacing: "0.07em" }}>Mariages réalisés</p>
                 <p style={{ fontSize: 22, fontWeight: 900, color: PINK, margin: 0 }}>+1 200</p>
               </div>
             </motion.div>
             <motion.div
+              className="services-hero-stat services-hero-stat-satisfaction"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9 }}
@@ -1001,7 +1032,7 @@ export default function WeddingServices() {
                 display: "flex", alignItems: "center", gap: 8,
               }}
             >
-              <span style={{ fontSize: 20 }}>⭐</span>
+              <Star size={22} color="#fff" fill="rgba(255,255,255,0.22)" strokeWidth={2.1} />
               <div>
                 <p style={{ fontSize: 10, color: "rgba(255,255,255,0.8)", margin: "0 0 1px" }}>Satisfaction</p>
                 <p style={{ fontSize: 18, fontWeight: 900, color: "#fff", margin: 0 }}>98%</p>
@@ -1017,24 +1048,26 @@ export default function WeddingServices() {
         borderBottom: "1px solid #fce4ec",
         borderTop: "1px solid #fce4ec",
       }}>
-        <div style={{ maxWidth: 1140, margin: "0 auto", padding: "28px 48px" }}>
+        <div className="services-section-wrap services-stats-wrap" style={{ maxWidth: 1140, margin: "0 auto", padding: "28px 48px" }}>
           <motion.div
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
+            className="services-stats-grid"
             style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 0 }}
           >
             {stats.map((s, i) => (
               <motion.div
                 key={i}
+                className="services-stat-card"
                 variants={staggerItem}
                 style={{
                   textAlign: "center", padding: "12px 16px",
                   borderRight: i < 3 ? "1px solid #fce4ec" : "none",
                 }}
               >
-                <span style={{ fontSize: 26, display: "block", marginBottom: 4 }}>{s.emoji}</span>
+                <s.Icon size={28} color={PINK} strokeWidth={1.9} style={{ display: "block", margin: "0 auto 8px" }} />
                 <p style={{ fontSize: 26, fontWeight: 900, color: PINK, margin: "0 0 2px", lineHeight: 1 }}>{s.num}</p>
                 <p style={{ fontSize: 13, color: "#aaa", margin: 0 }}>{s.label}</p>
               </motion.div>
@@ -1044,7 +1077,7 @@ export default function WeddingServices() {
       </div>
 
       {/* ── SERVICES GRID ────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1140, margin: "0 auto", padding: "88px 48px 70px" }}>
+      <div className="services-section-wrap" style={{ maxWidth: 1140, margin: "0 auto", padding: "88px 48px 70px" }}>
         <SectionTitle sub="Tout ce dont vous avez besoin pour un mariage parfait">
           Tous nos services
         </SectionTitle>
@@ -1053,6 +1086,7 @@ export default function WeddingServices() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
+          className="services-cards-grid"
           style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}
         >
           {services.map((svc, i) => (
@@ -1062,7 +1096,7 @@ export default function WeddingServices() {
       </div>
 
       {/* ── HOW IT WORKS ─────────────────────────────────────────────────── */}
-      <div style={{
+      <div className="services-process-section" style={{
         background: "linear-gradient(140deg, #fff0f7 0%, #fce4ec 100%)",
         padding: "80px 48px",
       }}>
@@ -1070,7 +1104,7 @@ export default function WeddingServices() {
           <SectionTitle sub="Un processus simple et transparent en 4 étapes">
             Comment ça marche ?
           </SectionTitle>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+          <div className="services-timeline" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
             {timeline.map((step, i) => (
               <TimelineStep key={i} step={step} index={i} total={timeline.length} />
             ))}
@@ -1079,7 +1113,7 @@ export default function WeddingServices() {
       </div>
 
       {/* ── PACKAGES ─────────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1140, margin: "0 auto", padding: "88px 48px 70px" }}>
+      <div className="services-section-wrap" style={{ maxWidth: 1140, margin: "0 auto", padding: "88px 48px 70px" }}>
         <SectionTitle sub="Des formules complètes pour chaque envie et chaque budget">
           Nos Packages
         </SectionTitle>
@@ -1091,12 +1125,13 @@ export default function WeddingServices() {
       </div>
 
       {/* ── BOTTOM CTA ───────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1140, margin: "0 auto", padding: "0 48px 100px" }}>
+      <div className="services-section-wrap services-bottom-wrap" style={{ maxWidth: 1140, margin: "0 auto", padding: "0 48px 100px" }}>
         <motion.div
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.65 }}
+          className="services-bottom-grid"
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}
         >
           {/* Contact card */}
@@ -1169,10 +1204,13 @@ export default function WeddingServices() {
             <div style={{ position: "relative", zIndex: 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                 <motion.span
+                  className="services-promo-icon"
                   animate={{ rotate: [0, 18, -12, 0], scale: [1, 1.15, 1] }}
                   transition={{ repeat: Infinity, duration: 2.6, ease: "easeInOut" }}
-                  style={{ fontSize: 34 }}
-                >🎁</motion.span>
+                  style={{ display: "inline-flex", color: "#fff" }}
+                >
+                  <Gift size={34} strokeWidth={1.9} />
+                </motion.span>
                 <div>
                   <h4 style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: 0, letterSpacing: "-0.02em" }}>Offre spéciale</h4>
                   <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: 0 }}>Durée limitée</p>

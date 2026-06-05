@@ -1,6 +1,7 @@
 import { type CSSProperties, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Heart, Calendar, Star } from "lucide-react";
+import "./about.css";
 
 const C = {
   gold:        "oklch(0.78 0.09 85)",
@@ -112,8 +113,8 @@ export default function Perfume() {
       </section>
 
       {/* ══ SECTION WEDDING ══ */}
-      <section style={{ backgroundColor: "#FFF9F5", padding: "5rem 2.5rem" }}>
-        <div className="max-w-[1200px] mx-auto grid md:grid-cols-2 gap-12 items-center">
+      <section className="about-wedding-section" style={{ backgroundColor: "#FFF9F5", padding: "5rem 2.5rem" }}>
+        <div className="about-wedding-grid max-w-[1200px] mx-auto grid md:grid-cols-2 gap-12 items-center">
 
           {/* Collage — formes originales + zoom intérieur */}
           <div className="about-collage relative reveal" ref={addReveal} style={{ height: "620px" }}>
@@ -180,8 +181,8 @@ export default function Perfume() {
           </div>
 
           {/* Texte */}
-          <div className="reveal" ref={addReveal}>
-            <span style={{
+          <div className="about-copy reveal" ref={addReveal}>
+            <span className="about-badge" style={{
               display: "inline-block",
               backgroundColor: `color-mix(in oklab, ${C.rose} 15%, transparent)`,
               color: C.rose,
@@ -195,7 +196,7 @@ export default function Perfume() {
               ✦ Notre promesse ✦
             </span>
 
-            <h2 className="font-serif" style={{
+            <h2 className="about-title font-serif" style={{
               fontSize: "clamp(1.6rem,3vw,2rem)",
               fontWeight: 600,
               lineHeight: 1.25,
@@ -219,7 +220,7 @@ export default function Perfume() {
               mariage sans stress, élégant et inoubliable.
             </p>
 
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem", margin: "1.5rem 0" }}>
+            <div className="about-feature-list" style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem", margin: "1.5rem 0" }}>
               {[
                 { Icon: Calendar, label: "Planification sur mesure" },
                 { Icon: Star,     label: "Prestataires de qualité"  },
@@ -233,6 +234,7 @@ export default function Perfume() {
 
             <button
               onClick={() => navigate("/travail")}
+              className="about-action"
               style={{
                 marginTop: "0.5rem",
                 backgroundColor: "transparent",
@@ -273,7 +275,7 @@ function StorySection({ onReadStory }: StorySectionProps) {
     <section
       id="notre-histoire"
       style={{ backgroundColor: "oklch(0.94 0.025 15)" }}
-      className="relative overflow-hidden px-6 py-24 md:px-12 lg:px-20"
+      className="about-story-section relative overflow-hidden px-6 py-24 md:px-12 lg:px-20"
     >
       <div aria-hidden style={{ backgroundColor: "oklch(0.95 0.035 85)" }}
         className="pointer-events-none absolute -left-20 top-10 h-72 w-72 rounded-full blur-3xl opacity-60" />
@@ -282,7 +284,7 @@ function StorySection({ onReadStory }: StorySectionProps) {
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2">
 
-        <div className="order-2 lg:order-1">
+        <div className="about-story-copy order-2 lg:order-1">
           <p className="font-script" style={{ fontSize: "clamp(3rem,6vw,4rem)", color: "oklch(0.78 0.09 85)", lineHeight: 1.1, marginBottom: "0.5rem" }}>
             Bonjour&nbsp;!
           </p>
@@ -298,12 +300,14 @@ function StorySection({ onReadStory }: StorySectionProps) {
 
           {onReadStory ? (
             <button onClick={onReadStory}
+              className="about-action"
               style={{ marginTop:"2.5rem", display:"inline-flex", alignItems:"center", gap:"0.75rem", backgroundColor:"oklch(0.45 0.06 250)", color:"oklch(0.985 0.008 75)", padding:"1rem 2rem", fontSize:"0.7rem", fontWeight:600, letterSpacing:"0.25em", textTransform:"uppercase", border:"none", cursor:"pointer", borderRadius:"2px", transition:"background-color 0.25s, transform 0.2s" }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor="oklch(0.72 0.09 15)"; e.currentTarget.style.transform="translateY(-2px)"; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor="oklch(0.45 0.06 250)"; e.currentTarget.style.transform="translateY(0)"; }}
             >Lire mon histoire <span aria-hidden>→</span></button>
           ) : (
             <Link to="/histoire"
+              className="about-action"
               style={{ marginTop:"2.5rem", display:"inline-flex", alignItems:"center", gap:"0.75rem", backgroundColor:"oklch(0.45 0.06 250)", color:"oklch(0.985 0.008 75)", padding:"1rem 2rem", fontSize:"0.7rem", fontWeight:600, letterSpacing:"0.25em", textTransform:"uppercase", textDecoration:"none", borderRadius:"2px", transition:"background-color 0.25s, transform 0.2s" }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor="oklch(0.72 0.09 15)"; e.currentTarget.style.transform="translateY(-2px)"; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor="oklch(0.45 0.06 250)"; e.currentTarget.style.transform="translateY(0)"; }}
@@ -312,22 +316,22 @@ function StorySection({ onReadStory }: StorySectionProps) {
         </div>
 
         {/* COLLAGE StorySection — zoom intérieur */}
-        <div className="order-1 lg:order-2 mx-auto" style={{ position:"relative", width:"520px", height:"500px", maxWidth:"100%", flexShrink:0 }}>
+        <div className="about-story-collage order-1 lg:order-2 mx-auto" style={{ position:"relative", width:"520px", height:"500px", maxWidth:"100%", flexShrink:0 }}>
 
           <ZoomImg src={IMG.mar12}
             alt="Wedding planner au travail"
-            className="image-float"
+            className="image-float about-story-image about-story-image-planner"
             wrapStyle={{ position:"absolute", left:0, top:"30px", width:"240px", height:"280px", borderRadius:"16px", border:"5px solid white", boxShadow:"0 8px 30px rgba(0,0,0,0.15)", zIndex:1 }}
           />
           <ZoomImg src={IMG.mar10}
             alt="Portrait de la wedding planner"
-            className="image-float"
+            className="image-float about-story-image about-story-image-portrait"
             wrapStyle={{ position:"absolute", right:0, top:0, width:"265px", height:"480px", borderRadius:"16px", border:"5px solid white", boxShadow:"0 8px 30px rgba(0,0,0,0.15)", zIndex:2 }}
             imgStyle={{ objectPosition:"top center" }}
           />
           <ZoomImg src={IMG.mar13}
             alt="Couple joyeux dans un champ de fleurs"
-            className="image-float"
+            className="image-float about-story-image about-story-image-couple"
             wrapStyle={{ position:"absolute", left:"30px", bottom:0, width:"225px", height:"210px", borderRadius:"16px", border:"5px solid white", boxShadow:"0 8px 30px rgba(0,0,0,0.15)", zIndex:3 }}
             imgStyle={{ objectPosition:"top center" }}
           />
