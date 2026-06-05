@@ -318,39 +318,45 @@ export default function Travail() {
 
       <section 
 
-        className="relative text-center text-white py-24 sm:py-[120px] lg:py-[140px] px-4 sm:px-6 md:px-12 hero-entrance"
+        className="relative flex min-h-[520px] flex-col justify-center overflow-hidden text-center text-white py-24 sm:py-[120px] lg:py-[140px] px-4 sm:px-6 md:px-12 hero-entrance"
 
         style={{
 
-          background: `linear-gradient(color-mix(in oklab, var(--color-rose) 68%, transparent), color-mix(in oklab, var(--color-violet) 70%, transparent)), url("https://images.unsplash.com/photo-1519741497674-611481863552?w=1800&q=80") center/cover no-repeat`
+          background: `linear-gradient(135deg, rgba(61, 49, 98, 0.78), rgba(171, 78, 111, 0.68)), url("https://images.unsplash.com/photo-1519741497674-611481863552?w=1800&q=80") center/cover no-repeat`
 
         }}
 
       >
 
-        <h1 className="font-serif text-champagne-soft text-[30px] sm:text-[40px] lg:text-[60px] font-light tracking-[4px] sm:tracking-[6px] lg:tracking-[10px] uppercase mb-5">
+        <div className="absolute inset-0 bg-[rgba(28,22,45,0.18)]" />
 
-          Travailler avec nous
+        <div className="relative z-10">
 
-        </h1>
+          <h1 className="font-serif text-white text-[30px] sm:text-[40px] lg:text-[60px] font-light tracking-[4px] sm:tracking-[6px] lg:tracking-[10px] uppercase mb-5 drop-shadow-[0_3px_14px_rgba(0,0,0,0.35)]">
 
-        <p className="max-w-[640px] mx-auto text-sm leading-relaxed tracking-[1px] opacity-90">
+            Travailler avec nous
 
-          Chaque histoire mérite d'être racontée avec élégance. Découvrez nos
+          </h1>
 
-          formules pensées pour sublimer vos plus beaux instants, du quotidien
+          <p className="max-w-[680px] mx-auto text-sm sm:text-base leading-relaxed tracking-[1px] text-white opacity-95 drop-shadow-[0_2px_10px_rgba(0,0,0,0.36)]">
 
-          intime aux célébrations d'exception.
+            Chaque histoire mérite d'être racontée avec élégance. Découvrez nos
 
-        </p>
+            formules pensées pour sublimer vos plus beaux instants, du quotidien
 
-        <div className="flex items-center justify-center gap-4 mt-7 text-champagne-soft">
+            intime aux célébrations d'exception.
 
-          <span className="w-[60px] h-px bg-champagne-soft" />
+          </p>
 
-          <Heart size={14} />
+          <div className="flex items-center justify-center gap-4 mt-7 text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
 
-          <span className="w-[60px] h-px bg-champagne-soft" />
+            <span className="w-[60px] h-px bg-white/80" />
+
+            <Heart size={14} />
+
+            <span className="w-[60px] h-px bg-white/80" />
+
+          </div>
 
         </div>
 
