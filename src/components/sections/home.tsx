@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import Button from "@/components/ui/Button";
 import bg from "@/assets/images/home/home.jpg";
 import photo1 from "@/assets/images/home/photo.jpg";
@@ -31,11 +30,9 @@ import Card from "../ui/Card";
 import StatCard from "../ui/StatCard";
 import TestimonialCard from "../ui/TestimonialCard";
 
-type Props = {};
-
 const weddingImages: string[] = [photo20, photo21, photo22];
 const photoeImages: string[] = [photo1, photo2, photo3];
-export const stats: {
+const stats: {
     number: string;
     label: string;
 }[] = [
@@ -57,7 +54,7 @@ export const stats: {
         },
     ];
 
-const Home: FC<Props> = () => {
+const Home = () => {
     return (
         <section
             id="home"

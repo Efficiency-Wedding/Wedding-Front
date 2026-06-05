@@ -20,8 +20,8 @@ export type Article = {
   content: string;
   date: string;
   category: string;
-  image: any;
-  gallery?: any[];
+  image: string;
+  gallery?: string[];
 };
 
 export const articles: Article[] = [

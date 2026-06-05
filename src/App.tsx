@@ -1,6 +1,8 @@
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { AnimatePresence } from "motion/react";
 import Navbar from "./components/layout/Navbar";
+import PageTransition from "./components/layout/PageTransition";
 import Home from "./components/sections/home";
 import { BlogPage } from "@/components/blog/blog";
 import Footer from "./components/layout/Footer";
@@ -11,44 +13,44 @@ import HistoirePage from "./components/about/HistoirePage";
 import Travail from "./components/about/Travail";
 
 function App() {
+  const location = useLocation();
+
   return (
     <>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route
-          path="/apropos"
-          element={<Perfume/>}
-        />
-        <Route
-          path="/histoire"
-          element={<HistoirePage/>}
-        />
-        <Route
-          path="/travail"
-          element={<Travail/>}
-        />
-        <Route
-          path="/apropos"
-          element={<Perfume/>}
-        />
-        <Route
-          path="/services"
-          element={<WeddingServices/>}
-        />
-        <Route
-          path="/gallery"
-          element={<Home/>}
-        />
-        <Route
-          path="/blog"
-          element={<BlogPage/>}
-        />
-        <Route
-          path="/contact"
-          element={<ContactPage/>}
-        />
-      </Routes>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageTransition><Home /></PageTransition>} />
+          <Route
+            path="/apropos"
+            element={<PageTransition><Perfume /></PageTransition>}
+          />
+          <Route
+            path="/histoire"
+            element={<PageTransition><HistoirePage /></PageTransition>}
+          />
+          <Route
+            path="/travail"
+            element={<PageTransition><Travail /></PageTransition>}
+          />
+          <Route
+            path="/services"
+            element={<PageTransition><WeddingServices /></PageTransition>}
+          />
+          <Route
+            path="/gallery"
+            element={<PageTransition><Home /></PageTransition>}
+          />
+          <Route
+            path="/blog"
+            element={<PageTransition><BlogPage /></PageTransition>}
+          />
+          <Route
+            path="/contact"
+            element={<PageTransition><ContactPage /></PageTransition>}
+          />
+        </Routes>
+      </AnimatePresence>
       <Footer />
     </>
   );

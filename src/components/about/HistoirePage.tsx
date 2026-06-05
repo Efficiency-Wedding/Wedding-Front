@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
-const portrait = new URL("../assets/mar4.jpg", import.meta.url).href;
-const work = new URL("../assets/mar3.jpg", import.meta.url).href;
-const joy = new URL("../assets/mar2.jpg", import.meta.url).href;
+const portrait = new URL("../../assets/mar4.jpg", import.meta.url).href;
+const work = new URL("../../assets/mar3.jpg", import.meta.url).href;
+const joy = new URL("../../assets/mar2.jpg", import.meta.url).href;
 
 /* ── Valeurs oklch identiques à StorySection ──────────────────
    or (gold)          : oklch(0.78 0.09 85)
@@ -29,10 +29,6 @@ const C = {
   shadowSoft: "0 20px 60px -20px rgba(60,80,130,0.18)",
   shadowFrame:"0 10px 40px -10px rgba(180,100,100,0.28)",
 };
-
-const serif   = '"Cormorant Garamond", Georgia, serif';
-const script  = '"Great Vibes", cursive';
-const sans    = '"Inter", system-ui, sans-serif';
 
 export default function HistoirePage() {
   const revealRefs = useRef<HTMLElement[]>([]);
