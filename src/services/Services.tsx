@@ -1,5 +1,36 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, useInView, AnimatePresence } from "motion/react";
+import homeHero from "@/assets/images/home/home.jpg";
+import bouquet from "@/assets/images/home/bouquet.jpg";
+import verre from "@/assets/images/home/verre.jpg";
+import photo from "@/assets/images/home/photo.jpg";
+import photo1 from "@/assets/images/home/photo1.jpg";
+import photo2 from "@/assets/images/home/photo2.jpg";
+import photo3 from "@/assets/images/home/photo3.jpg";
+import photo4 from "@/assets/images/home/photo4.jpg";
+import photo5 from "@/assets/images/home/photo5.jpg";
+import photo6 from "@/assets/images/home/photo6.jpg";
+import photo7 from "@/assets/images/home/photo7.jpg";
+import photo8 from "@/assets/images/home/photo8.jpg";
+import photo9 from "@/assets/images/home/photo9.jpg";
+import photo10 from "@/assets/images/home/photo10.jpg";
+import photo11 from "@/assets/images/home/photo11.jpg";
+import photo14 from "@/assets/images/home/photo14.jpg";
+import photo15 from "@/assets/images/home/photo15.jpg";
+import photo16 from "@/assets/images/home/photo16.jpg";
+import photo17 from "@/assets/images/home/photo17.jpg";
+import photo18 from "@/assets/images/home/photo18.jpg";
+import blog1 from "@/assets/images/blog/blog1.jpeg";
+import blog2 from "@/assets/images/blog/blog2.jpeg";
+import blog4 from "@/assets/images/blog/blog (4).jpeg";
+import blog5 from "@/assets/images/blog/blog (5).jpeg";
+import blog6 from "@/assets/images/blog/blog (6).jpeg";
+import blog7 from "@/assets/images/blog/blog (7).jpeg";
+import blog8 from "@/assets/images/blog/blog (8).jpeg";
+import blog9 from "@/assets/images/blog/blog (9).jpeg";
+import blog17 from "@/assets/images/blog/blog (17).jpeg";
+import blog18 from "@/assets/images/blog/blog (18).jpeg";
 
 // ── SVG Icon helper ─────────────────────────────────────────────────────────
 type IconProps = {
@@ -44,12 +75,8 @@ const services = [
     title: "Traiteur",
     desc: "Menus variés et raffinés pour ravir vos invités.",
     price: "1 200 €",
-    img: "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800&h=500&fit=crop&q=85",
-    gallery: [
-      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1555244162-803834f70033?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=700&h=400&fit=crop&q=80",
-    ],
+    img: verre,
+    gallery: [verre, photo10, blog1],
     details: [
       "Menus personnalisés selon vos goûts",
       "Cuisine française, orientale ou fusion",
@@ -68,12 +95,8 @@ const services = [
     title: "Salle de réception",
     desc: "Salles élégantes adaptées à votre événement.",
     price: "1 500 €",
-    img: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=500&fit=crop&q=85",
-    gallery: [
-      "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=700&h=400&fit=crop&q=80",
-    ],
+    img: homeHero,
+    gallery: [homeHero, photo11, photo16],
     details: [
       "Capacité de 50 à 600 invités",
       "Salles climatisées et chauffées",
@@ -92,12 +115,8 @@ const services = [
     title: "Photographe & Vidéaste",
     desc: "Immortalisez chaque instant de votre mariage.",
     price: "800 €",
-    img: "https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=800&h=500&fit=crop&q=85",
-    gallery: [
-      "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=700&h=400&fit=crop&q=80",
-    ],
+    img: photo8,
+    gallery: [photo8, photo9, photo15],
     details: [
       "Photographie HD & drone",
       "Vidéo cinématographique 4K",
@@ -116,12 +135,8 @@ const services = [
     title: "DJ & Animation",
     desc: "Ambiance garantie avec nos DJ et animateurs.",
     price: "600 €",
-    img: "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=800&h=500&fit=crop&q=85",
-    gallery: [
-      "https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=700&h=400&fit=crop&q=80",
-    ],
+    img: blog9,
+    gallery: [blog9, blog17, photo7],
     details: [
       "DJ professionnel toutes musiques",
       "Sonorisation haut de gamme",
@@ -140,12 +155,8 @@ const services = [
     title: "Décoration florale",
     desc: "Décorations personnalisées selon votre thème.",
     price: "400 €",
-    img: "https://images.unsplash.com/photo-1501446529957-6226b37c0501?w=800&h=500&fit=crop&q=85",
-    gallery: [
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1520763185298-1b434c919102?w=700&h=400&fit=crop&q=80",
-    ],
+    img: bouquet,
+    gallery: [bouquet, blog4, photo4],
     details: [
       "Fleurs fraîches de saison",
       "Arche florale sur mesure",
@@ -164,12 +175,8 @@ const services = [
     title: "Transport de luxe",
     desc: "Voitures de luxe et transport de vos invités.",
     price: "300 €",
-    img: "https://images.unsplash.com/photo-1562141961-b68703e1e1d9?w=800&h=500&fit=crop&q=85",
-    gallery: [
-      "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=700&h=400&fit=crop&q=80",
-    ],
+    img: photo1,
+    gallery: [photo1, photo2, photo3],
     details: [
       "Limousines, Rolls-Royce, Bentley",
       "Voitures anciennes et collection",
@@ -188,12 +195,8 @@ const services = [
     title: "Beauté & Stylisme",
     desc: "Coiffure et maquillage pour la mariée et ses proches.",
     price: "350 €",
-    img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&h=500&fit=crop&q=85",
-    gallery: [
-      "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1560869713-7d0a29430803?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?w=700&h=400&fit=crop&q=80",
-    ],
+    img: blog8,
+    gallery: [blog8, blog7, blog6],
     details: [
       "Essai beauté préalable inclus",
       "Coiffure et mise en plis",
@@ -212,12 +215,8 @@ const services = [
     title: "Wedding Cake",
     desc: "Gâteaux sur mesure à votre goût.",
     price: "250 €",
-    img: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&h=500&fit=crop&q=85",
-    gallery: [
-      "https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=700&h=400&fit=crop&q=80",
-    ],
+    img: blog5,
+    gallery: [blog5, photo5, photo6],
     details: [
       "Design entièrement personnalisé",
       "Saveurs au choix : chocolat, vanille…",
@@ -236,12 +235,8 @@ const services = [
     title: "Animations spéciales",
     desc: "Feux d'artifice, effets spéciaux et surprises uniques.",
     price: "500 €",
-    img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=500&fit=crop&q=85",
-    gallery: [
-      "https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1544928147-79a2dbc1f389?w=700&h=400&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=700&h=400&fit=crop&q=80",
-    ],
+    img: photo17,
+    gallery: [photo17, photo18, blog18],
     details: [
       "Feux d'artifice personnalisés",
       "Fontaines de scène et cold sparks",
@@ -263,7 +258,7 @@ const packages = [
     badge: "54 000 Ar",
     color: "#c2185b",
     gradient: "linear-gradient(135deg, #e91e8c 0%, #c2185b 100%)",
-    img: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800&h=600&fit=crop&q=85",
+    img: photo,
     desc: "La formule idéale pour un mariage élégant et intimiste.",
     cols: [["3 jours de photographie", "Portraits", "Solo shoot", "Couple shoot", "Family shoot"]],
   },
@@ -272,7 +267,7 @@ const packages = [
     badge: "78 000 Ar",
     color: "#8e24aa",
     gradient: "linear-gradient(135deg, #ab47bc 0%, #6a1b9a 100%)",
-    img: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800&h=600&fit=crop&q=85",
+    img: blog2,
     desc: "Le choix parfait pour un mariage mémorable avec tous les essentiels.",
     cols: [
       ["3 jours de photographie", "2 Albums luxe", "Portraits", "Family portraits", "Solo shoot"],
@@ -284,7 +279,7 @@ const packages = [
     badge: "155 000 Ar",
     color: "#b71c1c",
     gradient: "linear-gradient(135deg, #e53935 0%, #880e4f 100%)",
-    img: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop&q=85",
+    img: photo14,
     desc: "L'expérience ultime pour un mariage de rêve inoubliable.",
     cols: [
       ["3 jours de photo + vidéo", "3 Albums luxe", "Portraits artistiques", "Solo & couple shoots", "Outdoor shoot", "Highlights vidéo", "Wall frame OFFERT"],
@@ -312,18 +307,19 @@ const stats = [
 const PINK   = "#e91e8c";
 const DARK   = "#1a0a14";
 const LIGHT  = "#fdf6f9";
+const springEase = [0.22, 1, 0.36, 1] as const;
 
 // ── Animation presets ───────────────────────────────────────────────────────
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 36 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as any, delay },
+  transition: { duration: 0.7, ease: springEase, delay },
 });
 
 const staggerContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } };
 const staggerItem = {
   hidden: { opacity: 0, y: 30, scale: 0.96 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as any } },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: springEase } },
 };
 
 // ── Section heading ──────────────────────────────────────────────────────────
@@ -373,234 +369,163 @@ function SectionTitle({ children, sub }: { children: React.ReactNode; sub?: stri
 // ── Service Modal ────────────────────────────────────────────────────────────
 function ServiceModal({ svc, onClose }: { svc: typeof services[0]; onClose: () => void }) {
   const [imgIdx, setImgIdx] = useState(0);
+  const modalImages = svc.gallery.length > 0 ? svc.gallery : [svc.img];
+
+  useEffect(() => {
+    setImgIdx(0);
+  }, [svc]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
     document.body.style.overflow = "hidden";
     return () => { document.removeEventListener("keydown", handler); document.body.style.overflow = ""; };
-  }, []);
+  }, [onClose]);
 
-  return (
-    <AnimatePresence>
+  return createPortal(
+    <motion.div
+      className="fixed inset-0 flex items-start justify-center overflow-y-auto p-3 md:p-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+      style={{ background: "rgba(10,0,6,0.82)", backdropFilter: "blur(8px)", zIndex: 10000 }}
+    >
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        style={{
-          position: "fixed", inset: 0, zIndex: 1000,
-          background: "rgba(10,0,6,0.82)",
-          backdropFilter: "blur(8px)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          padding: "20px",
-        }}
+        className="my-3 max-h-[calc(100vh-24px)] w-full max-w-4xl overflow-y-auto overflow-x-hidden rounded-[24px] bg-white shadow-2xl md:my-6 md:max-h-[calc(100vh-48px)] md:rounded-[28px]"
+        initial={{ opacity: 0, scale: 0.94, y: 28 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.94, y: 18 }}
+        transition={{ type: "spring", stiffness: 260, damping: 26 }}
+        onClick={e => e.stopPropagation()}
+        style={{ boxShadow: "0 40px 100px rgba(233,30,140,0.25), 0 8px 40px rgba(0,0,0,0.3)" }}
       >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          transition={{ type: "spring", stiffness: 260, damping: 26 }}
-          onClick={e => e.stopPropagation()}
-          style={{
-            background: "#fff",
-            borderRadius: 28,
-            maxWidth: 860,
-            width: "100%",
-            maxHeight: "90vh",
-            overflowY: "auto",
-            boxShadow: "0 40px 100px rgba(233,30,140,0.25), 0 8px 40px rgba(0,0,0,0.3)",
-          }}
-        >
-          {/* Header Image */}
-          <div style={{ position: "relative", height: 280, overflow: "hidden", borderRadius: "28px 28px 0 0" }}>
-            <motion.img
-              key={imgIdx}
-              initial={{ opacity: 0, scale: 1.05 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              src={svc.gallery[imgIdx]}
-              alt={svc.title}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-            />
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%)",
-            }} />
-            {/* Gallery thumbs */}
-            <div style={{
-              position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)",
-              display: "flex", gap: 8,
-            }}>
-              {svc.gallery.map((g, i) => (
-                <motion.button
+        <div className="relative h-[220px] overflow-hidden md:h-[320px]">
+          <motion.img
+            key={`${svc.title}-${imgIdx}`}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            src={modalImages[imgIdx]}
+            alt={svc.title}
+            className="block h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/55" />
+
+          <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+            {modalImages.map((_, i) => (
+              <motion.button
+                key={i}
+                onClick={() => setImgIdx(i)}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.95 }}
+                className="h-2 cursor-pointer rounded border-0 p-0 transition-all"
+                style={{
+                  width: i === imgIdx ? 28 : 8,
+                  background: i === imgIdx ? "#fff" : "rgba(255,255,255,0.5)",
+                }}
+                aria-label={`Voir l'image ${i + 1}`}
+              />
+            ))}
+          </div>
+
+          {svc.tag && (
+            <div className="absolute left-4 top-4 rounded-full px-3.5 py-1.5 text-xs font-bold text-white shadow-lg md:left-[18px] md:top-[18px]" style={{ background: "linear-gradient(135deg, #e91e8c, #f06292)" }}>
+              {svc.tag}
+            </div>
+          )}
+
+          <button
+            onClick={onClose}
+            className="absolute right-4 top-4 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/30 bg-white/20 text-white backdrop-blur-md"
+            aria-label="Fermer la modale"
+          >
+            <Icon d={icons.close} size={18} stroke="#fff" />
+          </button>
+        </div>
+
+        <div className="p-5 md:p-9">
+          <div className="mb-6 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+            <div>
+              <div className="mb-2 flex items-center gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full shadow-md" style={{ background: "linear-gradient(135deg, #e91e8c, #f06292)" }}>
+                  <Icon d={icons[svc.icon as keyof typeof icons]} size={20} stroke="#fff" />
+                </div>
+                <h2 className="m-0 font-serif text-2xl font-black leading-tight md:text-[28px]" style={{ color: DARK }}>
+                  {svc.title}
+                </h2>
+              </div>
+              <p className="m-0 text-sm leading-6 text-[#777]">{svc.desc}</p>
+            </div>
+            <div className="shrink-0 rounded-2xl bg-[#fdf6f9] px-4 py-3 text-left md:text-right">
+              <p className="m-0 mb-1 text-[11px] uppercase tracking-[0.08em] text-[#aaa]">À partir de</p>
+              <p className="m-0 text-3xl font-black leading-none" style={{ color: PINK }}>{svc.price}</p>
+            </div>
+          </div>
+
+          <div className="mb-6 grid gap-3 sm:grid-cols-2">
+            {[
+              { label: "Durée", val: svc.duration, emoji: "⏱" },
+              { label: "Invités", val: svc.guests, emoji: "👥" },
+            ].map((m, i) => (
+              <div key={i} className="flex items-center gap-3 rounded-2xl border border-[#fce4ec] bg-[#fdf6f9] px-4 py-3">
+                <span className="text-xl">{m.emoji}</span>
+                <div>
+                  <p className="m-0 text-[11px] uppercase tracking-[0.06em] text-[#aaa]">{m.label}</p>
+                  <p className="m-0 text-sm font-bold" style={{ color: DARK }}>{m.val}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mb-6">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.1em] text-[#aaa]">Ce qui est inclus</p>
+            <div className="grid gap-3 md:grid-cols-2">
+              {svc.details.map((d, i) => (
+                <motion.div
                   key={i}
-                  onClick={() => setImgIdx(i)}
-                  whileHover={{ scale: 1.15 }}
-                  whileTap={{ scale: 0.95 }}
-                  style={{
-                    width: i === imgIdx ? 28 : 8,
-                    height: 8,
-                    borderRadius: 4,
-                    background: i === imgIdx ? "#fff" : "rgba(255,255,255,0.5)",
-                    border: "none", cursor: "pointer",
-                    padding: 0, transition: "all 0.3s ease",
-                  }}
-                />
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  className="flex items-center gap-2.5 text-sm text-[#444]"
+                >
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full" style={{ background: "linear-gradient(135deg, rgba(233,30,140,0.15), rgba(233,30,140,0.25))" }}>
+                    <Icon d={icons.check} size={11} stroke={PINK} strokeWidth={2.5} />
+                  </span>
+                  {d}
+                </motion.div>
               ))}
             </div>
-            {/* Tag badge */}
-            {svc.tag && (
-              <div style={{
-                position: "absolute", top: 18, left: 18,
-                background: "linear-gradient(135deg, #e91e8c, #f06292)",
-                color: "#fff", fontSize: 12, fontWeight: 700,
-                padding: "5px 14px", borderRadius: 100,
-                boxShadow: "0 4px 16px rgba(233,30,140,0.5)",
-              }}>
-                ✦ {svc.tag}
-              </div>
-            )}
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              style={{
-                position: "absolute", top: 16, right: 16,
-                width: 40, height: 40, borderRadius: "50%",
-                background: "rgba(255,255,255,0.2)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255,255,255,0.3)",
-                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                color: "#fff",
-              }}
+          </div>
+
+          <div className="mb-6 rounded-2xl border-l-4 p-5" style={{ background: "linear-gradient(135deg, #fff0f7 0%, #fce4ec 100%)", borderLeftColor: PINK }}>
+            <Icon d={icons.quote} size={22} stroke={PINK} />
+            <p className="my-2 text-sm italic leading-7 text-[#555]">"{svc.testimonial.text}"</p>
+            <p className="m-0 text-xs font-bold" style={{ color: PINK }}>— {svc.testimonial.author}</p>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <motion.button
+              whileHover={{ scale: 1.03, boxShadow: "0 10px 36px rgba(233,30,140,0.45)" }}
+              whileTap={{ scale: 0.97 }}
+              className="flex-1 cursor-pointer rounded-full border-0 px-6 py-4 text-sm font-extrabold text-white shadow-md"
+              style={{ background: "linear-gradient(135deg, #e91e8c, #c2185b)" }}
             >
-              <Icon d={icons.close} size={18} stroke="#fff" />
-            </button>
+              Réserver ce service
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="cursor-pointer rounded-full bg-transparent px-6 py-4 text-sm font-bold"
+              style={{ color: PINK, border: `1.5px solid ${PINK}` }}
+            >
+              Nous contacter
+            </motion.button>
           </div>
-
-          {/* Content */}
-          <div style={{ padding: "32px 36px 36px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                  <div style={{
-                    width: 44, height: 44, borderRadius: "50%",
-                    background: "linear-gradient(135deg, #e91e8c, #f06292)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    boxShadow: "0 4px 16px rgba(233,30,140,0.4)",
-                  }}>
-                    <Icon d={icons[svc.icon as keyof typeof icons]} size={20} stroke="#fff" />
-                  </div>
-                  <h2 style={{ fontSize: 28, fontWeight: 900, color: DARK, fontFamily: "Georgia, serif", margin: 0 }}>
-                    {svc.title}
-                  </h2>
-                </div>
-                <p style={{ fontSize: 14, color: "#888", margin: 0, lineHeight: 1.5 }}>
-                  {svc.desc}
-                </p>
-              </div>
-              <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 20 }}>
-                <p style={{ fontSize: 12, color: "#bbb", margin: "0 0 2px", textTransform: "uppercase", letterSpacing: "0.08em" }}>À partir de</p>
-                <p style={{ fontSize: 32, fontWeight: 900, color: PINK, margin: 0, lineHeight: 1 }}>
-                  {svc.price}
-                </p>
-              </div>
-            </div>
-
-            {/* Meta info */}
-            <div style={{ display: "flex", gap: 16, marginBottom: 24 }}>
-              {[
-                { label: "Durée", val: svc.duration, emoji: "⏱" },
-                { label: "Invités", val: svc.guests, emoji: "👥" },
-              ].map((m, i) => (
-                <div key={i} style={{
-                  flex: 1, background: "#fdf6f9", borderRadius: 14,
-                  padding: "12px 16px", border: "1px solid #fce4ec",
-                  display: "flex", alignItems: "center", gap: 10,
-                }}>
-                  <span style={{ fontSize: 22 }}>{m.emoji}</span>
-                  <div>
-                    <p style={{ fontSize: 11, color: "#bbb", margin: 0, textTransform: "uppercase", letterSpacing: "0.06em" }}>{m.label}</p>
-                    <p style={{ fontSize: 14, fontWeight: 700, color: DARK, margin: 0 }}>{m.val}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Details list */}
-            <div style={{ marginBottom: 24 }}>
-              <p style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#ccc", marginBottom: 12 }}>
-                Ce qui est inclus
-              </p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 20px" }}>
-                {svc.details.map((d, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 14, color: "#444" }}
-                  >
-                    <span style={{
-                      width: 20, height: 20, borderRadius: "50%",
-                      background: "linear-gradient(135deg, rgba(233,30,140,0.15), rgba(233,30,140,0.25))",
-                      display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                    }}>
-                      <Icon d={icons.check} size={11} stroke={PINK} strokeWidth={2.5} />
-                    </span>
-                    {d}
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Testimonial */}
-            <div style={{
-              background: "linear-gradient(135deg, #fff0f7 0%, #fce4ec 100%)",
-              borderRadius: 16, padding: "18px 22px",
-              borderLeft: `4px solid ${PINK}`,
-              marginBottom: 24,
-            }}>
-              <Icon d={icons.quote} size={22} stroke={PINK} />
-              <p style={{ fontSize: 14, color: "#555", lineHeight: 1.7, margin: "8px 0 6px", fontStyle: "italic" }}>
-                "{svc.testimonial.text}"
-              </p>
-              <p style={{ fontSize: 12, fontWeight: 700, color: PINK, margin: 0 }}>— {svc.testimonial.author}</p>
-            </div>
-
-            {/* CTA */}
-            <div style={{ display: "flex", gap: 12 }}>
-              <motion.button
-                whileHover={{ scale: 1.03, boxShadow: "0 10px 36px rgba(233,30,140,0.45)" }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  flex: 1, padding: "15px",
-                  background: "linear-gradient(135deg, #e91e8c, #c2185b)",
-                  color: "#fff", fontWeight: 800, fontSize: 15,
-                  border: "none", borderRadius: 100, cursor: "pointer",
-                  boxShadow: "0 4px 20px rgba(233,30,140,0.35)",
-                  letterSpacing: "0.02em",
-                }}
-              >
-                Réserver ce service →
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  padding: "15px 28px",
-                  background: "transparent",
-                  color: PINK, fontWeight: 700, fontSize: 15,
-                  border: `1.5px solid ${PINK}`, borderRadius: 100, cursor: "pointer",
-                }}
-              >
-                Nous contacter
-              </motion.button>
-            </div>
-          </div>
-        </motion.div>
+        </div>
       </motion.div>
-    </AnimatePresence>
+    </motion.div>,
+    document.body
   );
 }
 
@@ -611,6 +536,15 @@ function ServiceCard({ svc, onOpen }: { svc: typeof services[0]; onOpen: () => v
   return (
     <motion.div
       variants={staggerItem}
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       whileHover={{ y: -10, scale: 1.02 }}
@@ -687,7 +621,10 @@ function ServiceCard({ svc, onOpen }: { svc: typeof services[0]; onOpen: () => v
             </span>
           </div>
           <motion.button
-            onClick={onOpen}
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpen();
+            }}
             whileHover={{ scale: 1.05, x: 2 }}
             whileTap={{ scale: 0.96 }}
             style={{
@@ -726,7 +663,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
         display: "flex",
         flexDirection: isEven ? "row" : "row-reverse",
         borderRadius: 28,
-        overflow: "hidden",
+        overflow: "visible",
         background: "#fff",
         boxShadow: pkg.popular
           ? `0 12px 56px rgba(233,30,140,0.22), 0 4px 24px rgba(0,0,0,0.1)`
@@ -738,7 +675,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
     >
       {pkg.popular && (
         <div style={{
-          position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)",
+          position: "absolute", top: 0, left: "50%", transform: "translate(-50%, -50%)",
           background: "linear-gradient(135deg, #e91e8c, #c2185b)",
           color: "#fff", fontSize: 12, fontWeight: 800, padding: "5px 20px",
           borderRadius: 100, zIndex: 10, whiteSpace: "nowrap",
@@ -750,7 +687,16 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
       )}
 
       {/* Photo side */}
-      <div style={{ width: "40%", flexShrink: 0, position: "relative", overflow: "hidden" }}>
+      <div style={{
+        width: "40%",
+        flexShrink: 0,
+        position: "relative",
+        overflow: "hidden",
+        borderTopLeftRadius: isEven ? 26 : 0,
+        borderBottomLeftRadius: isEven ? 26 : 0,
+        borderTopRightRadius: isEven ? 0 : 26,
+        borderBottomRightRadius: isEven ? 0 : 26,
+      }}>
         <motion.img
           src={pkg.img}
           alt={pkg.name}
@@ -906,16 +852,16 @@ export default function WeddingServices() {
           { w: 380, h: 380, top: -100, left: -80, opacity: 0.15, dur: 8 },
           { w: 240, h: 240, top: 40, right: 60, opacity: 0.12, dur: 10 },
           { w: 180, h: 180, bottom: -50, left: "38%", opacity: 0.1, dur: 7 },
-        ].map((b, i) => (
+        ].map(({ w, h, opacity, dur, ...position }, i) => (
           <motion.div
             key={i}
             animate={{ y: [0, -18, 0], x: [0, 10, 0] }}
-            transition={{ duration: b.dur, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: dur, repeat: Infinity, ease: "easeInOut" }}
             style={{
-              position: "absolute", width: b.w, height: b.h,
+              position: "absolute", width: w, height: h,
               borderRadius: "50%", background: PINK,
-              opacity: b.opacity, filter: "blur(60px)",
-              top: b.top, left: b.left, right: (b as any).right, bottom: (b as any).bottom,
+              opacity, filter: "blur(60px)",
+              ...position,
               pointerEvents: "none",
             }}
           />
@@ -1023,7 +969,7 @@ export default function WeddingServices() {
               boxShadow: "0 28px 80px rgba(233,30,140,0.28), 0 6px 28px rgba(0,0,0,0.14)",
             }}>
               <img
-                src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800&h=600&fit=crop&q=90"
+                src={photo8}
                 alt="Wedding ceremony"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />

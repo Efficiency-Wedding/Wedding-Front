@@ -1,5 +1,6 @@
 import { type MouseEvent, type ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 
 interface Forfait {
   icon: ReactNode;
@@ -213,6 +214,12 @@ const STEPS = [
 
 
 export default function Travail() {
+  const sectionMotion = {
+    initial: { opacity: 0, y: 36 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.22 },
+    transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+  } as const;
 
   const getCardColor = (color: string) => {
 
@@ -220,19 +227,19 @@ export default function Travail() {
 
       case "rose": return {
 
-        bg: "bg-[#FFF8F8]",
+        bg: "bg-rose-soft/70",
 
-        border: "border-[#E8A0A0]/30",
+        border: "border-rose/25",
 
-        iconBg: "bg-[#FFF0F0]",
+        iconBg: "bg-rose-soft",
 
-        iconColor: "text-[#E8A0A0]",
+        iconColor: "text-rose",
 
-        title: "text-[#D47A7A]",
+        title: "text-rose",
 
-        badge: "bg-[#D47A7A]",
+        badge: "bg-rose",
 
-        button: "bg-[#D47A7A] hover:bg-[#C06868]",
+        button: "bg-rose hover:bg-rose-light",
 
         accent: "#E8A0A0"
 
@@ -240,19 +247,19 @@ export default function Travail() {
 
       case "lavande": return {
 
-        bg: "bg-[#F8F5FF]",
+        bg: "bg-violet-soft/70",
 
-        border: "border-[#C8A8E8]/30",
+        border: "border-violet/25",
 
-        iconBg: "bg-[#F0EBFF]",
+        iconBg: "bg-violet-soft",
 
-        iconColor: "text-[#C8A8E8]",
+        iconColor: "text-violet",
 
-        title: "text-[#A888D0]",
+        title: "text-violet",
 
-        badge: "bg-[#A888D0]",
+        badge: "bg-violet",
 
-        button: "bg-[#A888D0] hover:bg-[#9370C8]",
+        button: "bg-violet hover:bg-violet-dark",
 
         accent: "#C8A8E8"
 
@@ -260,19 +267,19 @@ export default function Travail() {
 
       case "gold": return {
 
-        bg: "bg-[#FFFAF5]",
+        bg: "bg-champagne-soft/80",
 
-        border: "border-[#F0B8A0]/30",
+        border: "border-champagne/30",
 
-        iconBg: "bg-[#FFF5F0]",
+        iconBg: "bg-champagne-soft",
 
-        iconColor: "text-[#F0B8A0]",
+        iconColor: "text-champagne",
 
-        title: "text-[#D49A7A]",
+        title: "text-champagne",
 
-        badge: "bg-[#D49A7A]",
+        badge: "bg-champagne",
 
-        button: "bg-[#D49A7A] hover:bg-[#C08868]",
+        button: "bg-champagne hover:bg-rose",
 
         accent: "#F0B8A0"
 
@@ -305,7 +312,7 @@ export default function Travail() {
 
   return (
 
-    <div className="page-entrance min-h-screen w-full overflow-x-hidden text-[#5A3A3A] bg-[#FFF8F8]">
+    <div className="page-entrance min-h-screen w-full overflow-x-hidden bg-background text-foreground">
 
       {/* HERO */}
 
@@ -315,13 +322,13 @@ export default function Travail() {
 
         style={{
 
-          background: `linear-gradient(rgba(212, 122, 122, 0.65), rgba(168, 136, 208, 0.65)), url("https://images.unsplash.com/photo-1519741497674-611481863552?w=1800&q=80") center/cover no-repeat`
+          background: `linear-gradient(color-mix(in oklab, var(--color-rose) 68%, transparent), color-mix(in oklab, var(--color-violet) 70%, transparent)), url("https://images.unsplash.com/photo-1519741497674-611481863552?w=1800&q=80") center/cover no-repeat`
 
         }}
 
       >
 
-        <h1 className="font-serif text-[#F5C2C2] text-[60px] font-light tracking-[10px] uppercase mb-5 md:text-[44px] md:tracking-[6px] sm:text-[30px] sm:tracking-[4px]">
+        <h1 className="font-serif text-champagne-soft text-[60px] font-light tracking-[10px] uppercase mb-5 md:text-[44px] md:tracking-[6px] sm:text-[30px] sm:tracking-[4px]">
 
           Travailler avec nous
 
@@ -337,13 +344,13 @@ export default function Travail() {
 
         </p>
 
-        <div className="flex items-center justify-center gap-4 mt-7 text-[#F5C2C2]">
+        <div className="flex items-center justify-center gap-4 mt-7 text-champagne-soft">
 
-          <span className="w-[60px] h-px bg-[#F5C2C2]" />
+          <span className="w-[60px] h-px bg-champagne-soft" />
 
           <Heart size={14} />
 
-          <span className="w-[60px] h-px bg-[#F5C2C2]" />
+          <span className="w-[60px] h-px bg-champagne-soft" />
 
         </div>
 
@@ -353,21 +360,21 @@ export default function Travail() {
 
       {/* INTRO */}
 
-      <section className="section-entrance max-w-[880px] mx-auto text-center px-6 py-24 md:px-12">
+      <motion.section {...sectionMotion} className="section-entrance max-w-[880px] mx-auto text-center px-6 py-24 md:px-12">
 
-        <p className="font-script text-[44px] text-[#E8A0A0] mb-2">
+        <p className="font-script text-[44px] text-rose mb-2">
 
           Une collaboration unique
 
         </p>
 
-        <h2 className="font-serif text-[38px] font-medium text-[#D47A7A] tracking-[4px] uppercase mt-4 mb-5 md:text-[26px] md:tracking-[3px]">
+        <h2 className="font-serif text-[38px] font-medium text-violet tracking-[4px] uppercase mt-4 mb-5 md:text-[26px] md:tracking-[3px]">
 
           Choisissez votre expérience
 
         </h2>
 
-        <p className="text-sm leading-relaxed text-[#8B6B6B]">
+        <p className="text-sm leading-relaxed text-muted-foreground">
 
           Que vous rêviez d'un portrait délicat, d'un reportage de mariage
 
@@ -379,14 +386,14 @@ export default function Travail() {
 
         </p>
 
-      </section>
+      </motion.section>
 
 
 
       {/* CARDS */}
 
-      <section className="section-entrance max-w-[1200px] mx-auto px-6 py-10 md:px-12">
-        <h1 className="font-script text-[40px] text-[#E8A0A0] mb-2 text-center">Plus populaire</h1>
+      <motion.section {...sectionMotion} className="section-entrance max-w-[1200px] mx-auto px-6 py-10 md:px-12">
+        <h1 className="font-script text-[40px] text-rose mb-2 text-center">Plus populaire</h1>
         <div className="grid gap-8 md:grid-cols-3 max-w-[520px] mx-auto md:max-w-none section-entrance">
 
           {FORFAITS.map((f) => {
@@ -395,13 +402,17 @@ export default function Travail() {
 
             return (
 
-              <article
+              <motion.article
 
                 key={f.title}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
 
                 className={`relative ${cardColors.bg} border ${cardColors.border} p-[50px_32px_40px] text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_24px_50px_rgba(0,0,0,0.08)] overflow-hidden rounded-2xl
 
-                  ${f.featured ? 'shadow-lg ring-2 ring-[#E8A0A0]/40' : ''}`}
+                  ${f.featured ? 'shadow-lg ring-2 ring-rose/30' : ''}`}
 
               >
 
@@ -429,19 +440,19 @@ export default function Travail() {
 
                 </h3>
 
-                <p className="font-script text-[22px] text-[#E8A0A0] mb-5">
+                <p className="font-script text-[22px] text-rose mb-5">
 
                   {f.subtitle}
 
                 </p>
 
-                <p className="font-serif text-[44px] text-[#5A3A3A] mb-1 sm:text-[36px]">
+                <p className="font-serif text-[44px] text-foreground mb-1 sm:text-[36px]">
 
                   {f.price}
 
                   <br />
 
-                  <small className="text-xs text-[#8B6B6B] tracking-[2px]">
+                  <small className="text-xs text-muted-foreground tracking-[2px]">
 
                     {f.unit}
 
@@ -453,7 +464,7 @@ export default function Travail() {
 
                   {f.features.map((feat) => (
 
-                    <li key={feat} className="flex gap-2 items-start py-2 text-sm text-[#5A3A3A]">
+                    <li key={feat} className="flex gap-2 items-start py-2 text-sm text-foreground">
 
                       <Check size={16} className={`${cardColors.iconColor} shrink-0 mt-0.5`} />
 
@@ -471,7 +482,7 @@ export default function Travail() {
 
                 </button>
 
-              </article>
+              </motion.article>
 
             );
 
@@ -479,7 +490,7 @@ export default function Travail() {
 
         </div>
 
-      </section>
+      </motion.section>
 
 
 
