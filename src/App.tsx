@@ -11,6 +11,7 @@ import WeddingServices from "@/components/services/Services";
 import Perfume from "@/components/about/Apropos";
 import HistoirePage from "./components/about/HistoirePage";
 import Travail from "./components/about/Travail";
+import GalleryPage from "./components/gallery/page";
 
 function App() {
   const location = useLocation();
@@ -39,7 +40,7 @@ function App() {
           />
           <Route
             path="/gallery"
-            element={<PageTransition><Home /></PageTransition>}
+            element={<PageTransition><GalleryPage /></PageTransition>}
           />
           <Route
             path="/blog"
