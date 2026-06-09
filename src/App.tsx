@@ -12,13 +12,16 @@ import Perfume from "@/components/about/Apropos";
 import HistoirePage from "./components/about/HistoirePage";
 import Travail from "./components/about/Travail";
 import GalleryPage from "./components/gallery/page";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminLogin from "./pages/admin/AdminLogin";
 
 function App() {
   const location = useLocation();
+  const isAdmin = location.pathname.startsWith("/admin");
 
   return (
     <>
-      <Navbar />
+      {!isAdmin && <Navbar />}
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<PageTransition><Home /></PageTransition>} />
@@ -50,9 +53,17 @@ function App() {
             path="/contact"
             element={<PageTransition><ContactPage /></PageTransition>}
           />
+          <Route
+            path="/admin/login"
+            element={<AdminLogin />}
+          />
+          <Route
+            path="/admin/*"
+            element={<AdminLayout />}
+          />
         </Routes>
       </AnimatePresence>
-      <Footer />
+      {!isAdmin && <Footer />}
     </>
   );
 }

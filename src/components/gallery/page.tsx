@@ -4,12 +4,19 @@ import { motion, AnimatePresence } from "motion/react";
 import type { Screen } from "../../types";
 import { HERO_IMAGE, GALLERY_ITEMS } from "../../data";
 import type { GalleryItem } from "../../data";
-import { Camera, MapPin, Heart, ChevronLeft, ChevronRight, X, Sparkles, SlidersHorizontal } from "lucide-react";
+import {
+  Camera,
+  MapPin,
+  Heart,
+  ChevronLeft,
+  ChevronRight,
+  X,
+} from "lucide-react";
 import Button from "@/components/ui/Button";
 import { FaArrowRight } from "react-icons/fa";
 
 // Strong ease-out curve for high-end UI feel
-const EASE_OUT = [0.23, 1, 0.32, 1];
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
 interface HomeProps {
   setScreen?: (screen: Screen) => void;
@@ -22,13 +29,14 @@ export default function GalleryPage({}: HomeProps = {}) {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   // Filter items
-  const filteredItems = activeCategory === "all"
-    ? GALLERY_ITEMS
-    : GALLERY_ITEMS.filter(item => item.category === activeCategory);
+  const filteredItems =
+    activeCategory === "all"
+      ? GALLERY_ITEMS
+      : GALLERY_ITEMS.filter((item) => item.category === activeCategory);
 
   // Open Lightbox
   const openLightbox = (item: GalleryItem) => {
-    const index = filteredItems.findIndex(fi => fi.id === item.id);
+    const index = filteredItems.findIndex((fi) => fi.id === item.id);
     setSelectedIndex(index !== -1 ? index : 0);
     setSelectedImage(item);
   };
@@ -43,7 +51,8 @@ export default function GalleryPage({}: HomeProps = {}) {
 
   const handlePrev = () => {
     if (filteredItems.length === 0) return;
-    const prevIndex = (selectedIndex - 1 + filteredItems.length) % filteredItems.length;
+    const prevIndex =
+      (selectedIndex - 1 + filteredItems.length) % filteredItems.length;
     setSelectedIndex(prevIndex);
     setSelectedImage(filteredItems[prevIndex]);
   };
@@ -63,8 +72,8 @@ export default function GalleryPage({}: HomeProps = {}) {
 
   const toggleLike = (id: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    setLikedItems(prev =>
-      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    setLikedItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
 
@@ -73,7 +82,7 @@ export default function GalleryPage({}: HomeProps = {}) {
     { id: "ceremonie", label: "Cérémonie" },
     { id: "reception", label: "Réception" },
     { id: "decoration", label: "Décoration" },
-    { id: "portraits", label: "Portraits" }
+    { id: "portraits", label: "Portraits" },
   ];
 
   return (
@@ -93,7 +102,7 @@ export default function GalleryPage({}: HomeProps = {}) {
         </div>
 
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: EASE_OUT }}
@@ -104,10 +113,13 @@ export default function GalleryPage({}: HomeProps = {}) {
             </span>
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold text-white tracking-tighter uppercase leading-[0.9]">
               Galerie <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/40">D'Émotions</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/40">
+                D'Émotions
+              </span>
             </h1>
             <p className="text-white/80 font-medium tracking-wide max-w-xl mx-auto text-sm md:text-base">
-              Capturer l'invisible, immortaliser l'éphémère. Découvrez nos plus belles réalisations à Madagascar.
+              Capturer l'invisible, immortaliser l'éphémère. Découvrez nos plus
+              belles réalisations à Madagascar.
             </p>
           </motion.div>
         </div>
@@ -118,15 +130,16 @@ export default function GalleryPage({}: HomeProps = {}) {
         <div className="flex flex-col lg:flex-row justify-between items-end mb-16 gap-8">
           <div className="max-w-2xl">
             <div className="flex items-center text-sm font-semibold text-primary mb-6">
-                <span>02</span>
-                <span className="mx-3 w-32 md:w-64 border-b border-dotted border-primary/40" />
-                <span>Portfolio</span>
+              <span>02</span>
+              <span className="mx-3 w-32 md:w-64 border-b border-dotted border-primary/40" />
+              <span>Portfolio</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight tracking-tight">
-              Souvenirs Élégants & <br />Instants de Grâce
+              Souvenirs Élégants & <br />
+              Instants de Grâce
             </h2>
           </div>
-          
+
           <div className="flex flex-wrap items-center gap-2">
             {categories.map((cat) => (
               <button
@@ -167,7 +180,8 @@ export default function GalleryPage({}: HomeProps = {}) {
                 "md:col-span-8 aspect-[16/10]",
                 "md:col-span-4 aspect-[3/4]",
               ];
-              const spanClass = spans[idx % spans.length] || "md:col-span-4 aspect-square";
+              const spanClass =
+                spans[idx % spans.length] || "md:col-span-4 aspect-square";
 
               return (
                 <motion.div
@@ -175,10 +189,10 @@ export default function GalleryPage({}: HomeProps = {}) {
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                  transition={{ 
-                    duration: 0.6, 
+                  transition={{
+                    duration: 0.6,
                     ease: EASE_OUT,
-                    delay: idx % 6 * 0.05 // Subtle stagger
+                    delay: (idx % 6) * 0.05, // Subtle stagger
                   }}
                   key={item.id}
                   className={`${spanClass} col-span-2 group relative overflow-hidden rounded-2xl md:rounded-3xl cursor-pointer active:scale-[0.98] transition-transform duration-300`}
@@ -190,16 +204,16 @@ export default function GalleryPage({}: HomeProps = {}) {
                     className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
                     loading="lazy"
                   />
-                  
+
                   {/* Subtle Elegant Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6 md:p-8">
-                    <motion.div 
+                    <motion.div
                       initial={{ y: 10, opacity: 0 }}
                       whileInView={{ y: 0, opacity: 1 }}
                       className="space-y-2"
                     >
                       <span className="text-[10px] tracking-[0.3em] text-white/70 uppercase font-bold">
-                        {categories.find(c => c.id === item.category)?.label}
+                        {categories.find((c) => c.id === item.category)?.label}
                       </span>
                       <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">
                         {item.title}
@@ -222,8 +236,12 @@ export default function GalleryPage({}: HomeProps = {}) {
         {filteredItems.length === 0 && (
           <div className="text-center py-32 bg-gray-50 rounded-[40px] border border-dashed border-gray-200">
             <Camera className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900">Aucune image trouvée</h3>
-            <p className="text-gray-500 mt-2">Nous préparons de nouveaux souvenirs pour cette catégorie.</p>
+            <h3 className="text-xl font-bold text-gray-900">
+              Aucune image trouvée
+            </h3>
+            <p className="text-gray-500 mt-2">
+              Nous préparons de nouveaux souvenirs pour cette catégorie.
+            </p>
           </div>
         )}
       </section>
@@ -259,14 +277,20 @@ export default function GalleryPage({}: HomeProps = {}) {
                   alt={selectedImage.title}
                   className="w-full max-h-[70vh] object-contain rounded-3xl shadow-2xl"
                 />
-                
+
                 <div className="absolute inset-y-0 -left-6 md:-left-12 flex items-center">
-                  <button onClick={handlePrev} className="p-4 rounded-full bg-white shadow-lg hover:scale-110 active:scale-90 transition-all text-gray-900">
+                  <button
+                    onClick={handlePrev}
+                    className="p-4 rounded-full bg-white shadow-lg hover:scale-110 active:scale-90 transition-all text-gray-900"
+                  >
                     <ChevronLeft className="w-6 h-6" />
                   </button>
                 </div>
                 <div className="absolute inset-y-0 -right-6 md:-right-12 flex items-center">
-                  <button onClick={handleNext} className="p-4 rounded-full bg-white shadow-lg hover:scale-110 active:scale-90 transition-all text-gray-900">
+                  <button
+                    onClick={handleNext}
+                    className="p-4 rounded-full bg-white shadow-lg hover:scale-110 active:scale-90 transition-all text-gray-900"
+                  >
                     <ChevronRight className="w-6 h-6" />
                   </button>
                 </div>
@@ -279,7 +303,10 @@ export default function GalleryPage({}: HomeProps = {}) {
               >
                 <div>
                   <span className="text-[10px] tracking-[0.4em] text-primary uppercase font-bold block mb-2">
-                    {categories.find(c => c.id === selectedImage.category)?.label}
+                    {
+                      categories.find((c) => c.id === selectedImage.category)
+                        ?.label
+                    }
                   </span>
                   <h3 className="text-3xl font-bold text-gray-900 tracking-tight">
                     {selectedImage.title}
@@ -289,7 +316,7 @@ export default function GalleryPage({}: HomeProps = {}) {
                     <span>{selectedImage.location}</span>
                   </div>
                 </div>
-                
+
                 <p className="text-gray-600 leading-relaxed text-sm italic">
                   "{selectedImage.description}"
                 </p>
@@ -301,10 +328,16 @@ export default function GalleryPage({}: HomeProps = {}) {
                   >
                     <Heart
                       className={`w-4 h-4 transition-colors ${
-                        likedItems.includes(selectedImage.id) ? "fill-red-500 text-red-500" : "text-gray-400"
+                        likedItems.includes(selectedImage.id)
+                          ? "fill-red-500 text-red-500"
+                          : "text-gray-400"
                       }`}
                     />
-                    <span>{likedItems.includes(selectedImage.id) ? "Ajouté" : "Coup de cœur"}</span>
+                    <span>
+                      {likedItems.includes(selectedImage.id)
+                        ? "Ajouté"
+                        : "Coup de cœur"}
+                    </span>
                   </button>
                 </div>
               </motion.div>
@@ -331,12 +364,13 @@ export default function GalleryPage({}: HomeProps = {}) {
               <span className="text-primary">Commence Ici</span>
             </h3>
             <p className="text-lg text-gray-600 max-w-xl mx-auto font-medium">
-              Confiez-nous l'organisation de votre mariage et laissez-vous porter par la magie de l'instant.
+              Confiez-nous l'organisation de votre mariage et laissez-vous
+              porter par la magie de l'instant.
             </p>
             <div className="pt-6">
-              <Link to="/contact">
-                <Button 
-                  text="Réserver votre Date" 
+              <Link to="/admin">
+                <Button
+                  text="Réserver votre Date"
                   icon={FaArrowRight}
                   className="px-12 py-5 text-sm tracking-[0.2em] uppercase"
                 />
