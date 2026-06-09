@@ -1,0 +1,106 @@
+import { FaXTwitter } from "react-icons/fa6";
+import { FaInstagram, FaLinkedinIn, FaGithub } from "react-icons/fa";
+import logo from '@/assets/images/icons/logo-footer.png'
+import { motion } from "motion/react";
+import { Link } from "react-router-dom";
+
+const quickLinks = [
+  { label: "Home", path: "/" },
+  { label: "à propos", path: "/apropos" },
+  { label: "Services", path: "/services" },
+  { label: "Contact", path: "/contact" },
+];
+
+const contactLinks = [
+  { label: "034 91 880 43", href: "tel:+261349188043" },
+  { label: "033 07 373 09", href: "tel:+261330737309" },
+  { label: "efficiencyevent@gmail.com", href: "mailto:efficiencyevent@gmail.com" },
+  { label: "Efficiency organization Event", href: "/contact", internal: true },
+];
+
+const legalLinks = [
+  { label: "Politique de confidentialité", path: "/politique-confidentialite" },
+  { label: "Conditions", path: "/conditions" },
+  { label: "Cookies", path: "/cookies" },
+];
+
+const Footer = () => {
+  return (
+    <motion.footer
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="bg-card border-t border-border font-sans"
+    >
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 py-12">
+        <div className="flex flex-col md:flex-row justify-between gap-10">
+          {/* Left: Brand */}
+          <div className="max-w-xs">
+            <div className="flex items-center gap-2 mb-4">
+              {/* Logo icon */}
+                <img src={logo} alt="Efficiency Logo" className="h-16" />
+            </div>
+
+            <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+              Wedding Efficiency vous accompagne dans l'organisation de vos
+              mariages et événements avec élégance, précision et sérénité.
+            </p>
+
+            <div className="flex items-center gap-4 text-foreground/75">
+              <a href="https://x.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors"><FaXTwitter size={16} /></a>
+              <a href="https://www.instagram.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors"><FaInstagram size={16} /></a>
+              <a href="https://www.linkedin.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors"><FaLinkedinIn size={16} /></a>
+              <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors"><FaGithub size={16} /></a>
+            </div>
+          </div>
+
+          {/* Right: Nav columns */}
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-12 lg:gap-16">
+            {/* Product */}
+            <div>
+              <h4 className="text-sm font-semibold text-foreground mb-4">Liens rapides</h4>
+              <ul className="space-y-3">
+                {quickLinks.map((item) => (
+                  <li key={item.path}>
+                    <Link to={item.path} className="text-sm text-muted-foreground hover:text-primary transition-colors">{item.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <h4 className="text-sm font-semibold text-foreground mb-4">Contact</h4>
+              <ul className="space-y-3">
+                {contactLinks.map((item) => (
+                  <li key={item.label}>
+                    {item.internal ? (
+                      <Link to={item.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">{item.label}</Link>
+                    ) : (
+                      <a href={item.href} className="text-sm text-muted-foreground hover:text-primary transition-colors">{item.label}</a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="mt-10 pt-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+          <p className="text-xs text-muted-foreground/75">© 2026 Wedding Efficiency. Tous droits réservés.</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            {legalLinks.map((item) => (
+              <Link key={item.path} to={item.path} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-primary transition-colors">
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.footer>
+  );
+};
+
+export default Footer;
