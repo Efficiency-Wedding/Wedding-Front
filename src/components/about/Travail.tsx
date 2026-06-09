@@ -448,7 +448,7 @@ export default function Travail() {
         </p>
 
         <Link
-          to="/admin"
+          to="/reservation"
           className="button-glow inline-flex bg-gradient-to-r from-[#E8A0A0] to-[#C8A8E8] text-white px-8 py-3 text-[11px] tracking-[3px] font-semibold uppercase transition-all duration-200 hover:scale-105 rounded-full shadow-md"
         >
           Réserver

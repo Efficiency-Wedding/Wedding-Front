@@ -32,6 +32,7 @@ import blog8 from "@/assets/images/blog/blog (8).jpeg";
 import blog9 from "@/assets/images/blog/blog (9).jpeg";
 import blog17 from "@/assets/images/blog/blog (17).jpeg";
 import blog18 from "@/assets/images/blog/blog (18).jpeg";
+import { Link } from "react-router-dom";
 
 // ── SVG Icon helper ─────────────────────────────────────────────────────────
 type IconProps = {
@@ -1438,43 +1439,47 @@ export default function WeddingServices() {
               votre mariage un moment absolument inoubliable.
             </p>
             <div style={{ display: "flex", gap: 12, marginTop: 30 }}>
-              <motion.button
-                whileHover={{
-                  scale: 1.04,
-                  boxShadow: "0 10px 36px rgba(233,30,140,0.5)",
-                }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  padding: "14px 34px",
-                  background: "linear-gradient(135deg, #e91e8c, #c2185b)",
-                  color: "#fff",
-                  fontWeight: 800,
-                  fontSize: 15,
-                  border: "none",
-                  borderRadius: 100,
-                  cursor: "pointer",
-                  boxShadow: "0 6px 24px rgba(233,30,140,0.38)",
-                  letterSpacing: "0.02em",
-                }}
-              >
-                Découvrir nos services →
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  padding: "14px 28px",
-                  background: "transparent",
-                  color: PINK,
-                  fontWeight: 700,
-                  fontSize: 15,
-                  border: `1.5px solid ${PINK}`,
-                  borderRadius: 100,
-                  cursor: "pointer",
-                }}
-              >
-                Nous contacter
-              </motion.button>
+              <Link to="/services">
+                <motion.button
+                  whileHover={{
+                    scale: 1.04,
+                    boxShadow: "0 10px 36px rgba(233,30,140,0.5)",
+                  }}
+                  whileTap={{ scale: 0.97 }}
+                  style={{
+                    padding: "14px 34px",
+                    background: "linear-gradient(135deg, #e91e8c, #c2185b)",
+                    color: "#fff",
+                    fontWeight: 800,
+                    fontSize: 15,
+                    border: "none",
+                    borderRadius: 100,
+                    cursor: "pointer",
+                    boxShadow: "0 6px 24px rgba(233,30,140,0.38)",
+                    letterSpacing: "0.02em",
+                  }}
+                >
+                  Découvrir nos services →
+                </motion.button>
+              </Link>
+              <Link to="/contact">
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                  style={{
+                    padding: "14px 28px",
+                    background: "transparent",
+                    color: PINK,
+                    fontWeight: 700,
+                    fontSize: 15,
+                    border: `1.5px solid ${PINK}`,
+                    borderRadius: 100,
+                    cursor: "pointer",
+                  }}
+                >
+                  Nous contacter
+                </motion.button>
+              </Link>
             </div>
           </motion.div>
 

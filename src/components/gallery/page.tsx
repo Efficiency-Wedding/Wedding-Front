@@ -22,7 +22,7 @@ interface HomeProps {
   setScreen?: (screen: Screen) => void;
 }
 
-export default function GalleryPage({}: HomeProps = {}) {
+export default function GalleryPage({ }: HomeProps = {}) {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null);
   const [likedItems, setLikedItems] = useState<number[]>([]);
@@ -145,11 +145,10 @@ export default function GalleryPage({}: HomeProps = {}) {
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`relative px-6 py-2 text-xs font-bold tracking-widest uppercase rounded-full transition-all duration-300 active:scale-[0.96] cursor-pointer ${
-                  activeCategory === cat.id
+                className={`relative px-6 py-2 text-xs font-bold tracking-widest uppercase rounded-full transition-all duration-300 active:scale-[0.96] cursor-pointer ${activeCategory === cat.id
                     ? "text-white"
                     : "text-gray-500 hover:text-gray-900 bg-gray-100/50"
-                }`}
+                  }`}
               >
                 {activeCategory === cat.id && (
                   <motion.div
@@ -327,11 +326,10 @@ export default function GalleryPage({}: HomeProps = {}) {
                     className="flex items-center gap-3 px-6 py-3 rounded-full bg-gray-50 hover:bg-red-50 hover:text-red-500 transition-all group font-bold text-xs uppercase tracking-widest"
                   >
                     <Heart
-                      className={`w-4 h-4 transition-colors ${
-                        likedItems.includes(selectedImage.id)
+                      className={`w-4 h-4 transition-colors ${likedItems.includes(selectedImage.id)
                           ? "fill-red-500 text-red-500"
                           : "text-gray-400"
-                      }`}
+                        }`}
                     />
                     <span>
                       {likedItems.includes(selectedImage.id)
@@ -368,7 +366,7 @@ export default function GalleryPage({}: HomeProps = {}) {
               porter par la magie de l'instant.
             </p>
             <div className="pt-6">
-              <Link to="/admin">
+              <Link to="/reservation">
                 <Button
                   text="Réserver votre Date"
                   icon={FaArrowRight}

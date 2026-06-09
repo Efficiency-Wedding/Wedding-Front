@@ -37,23 +37,23 @@ const stats: {
   number: string;
   label: string;
 }[] = [
-  {
-    number: "3k+",
-    label: "Projects",
-  },
-  {
-    number: "200+",
-    label: "Clients",
-  },
-  {
-    number: "350+",
-    label: "Awards",
-  },
-  {
-    number: "16+",
-    label: "Years",
-  },
-];
+    {
+      number: "3k+",
+      label: "Projects",
+    },
+    {
+      number: "200+",
+      label: "Clients",
+    },
+    {
+      number: "350+",
+      label: "Awards",
+    },
+    {
+      number: "16+",
+      label: "Years",
+    },
+  ];
 
 const Home = () => {
   return (
@@ -219,7 +219,9 @@ const Home = () => {
             J, nous transformons vos idées en une expérience exceptionnelle
             remplie d'émotions et de souvenirs.
           </p>
-          <Button text="Découvrir nos services" icon={FaArrowRight} />
+          <Link to="/services">
+            <Button text="Découvrir nos services" icon={FaArrowRight} />
+          </Link>
         </div>
       </div>
 

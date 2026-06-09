@@ -1,4 +1,5 @@
 import mariage from "@/assets/images/blog/blog1.jpeg";
+import { Link } from "react-router-dom";
 
 export function BlogFooter() {
   return (
@@ -28,12 +29,12 @@ export function BlogFooter() {
             De la première inspiration au dernier slow, nous orchestrons chaque
             détail avec délicatesse et précision.
           </p>
-          <a
-            href="#"
+          <Link
+            to="/contact"
             className="mt-10 inline-flex items-center gap-3 border border-white/70 px-8 py-3 font-serif text-[11px] uppercase tracking-[0.4em] text-white transition-colors hover:bg-white hover:text-foreground"
           >
             Prendre rendez-vous
-          </a>
+          </Link>
         </div>
       </section>
     </>

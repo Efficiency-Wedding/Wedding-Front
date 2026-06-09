@@ -68,9 +68,13 @@ export default function Navbar() {
           <Menu />
         </div>
 
-        <div className="hidden md:block">
-          <Link to="/admin">
+        <div className="hidden md:flex gap-2">
+          <Link to="/reservation">
             <Button text="Réserver" />
+          </Link>
+
+          <Link to="/admin/login">
+            <Button text="Se connecter" />
           </Link>
         </div>
         <button
@@ -92,9 +96,12 @@ export default function Navbar() {
           <div className="flex flex-col gap-3">
             <Menu onClick={() => setOpen(false)} />
           </div>
-          <div className="pt-2">
-            <Link to="/admin" onClick={() => setOpen(false)}>
+          <div className="pt-2 flex flex-col gap-2">
+            <Link to="/reservation" onClick={() => setOpen(false)}>
               <Button text="Réserver" />
+            </Link>
+            <Link to="/admin/login">
+              <Button text="Se connecter" />
             </Link>
           </div>
         </div>
