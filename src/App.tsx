@@ -11,8 +11,7 @@ import WeddingServices from "@/components/services/Services";
 import Perfume from "@/components/about/Apropos";
 import HistoirePage from "./components/about/HistoirePage";
 import Travail from "./components/about/Travail";
-import GalleryPage from "./components/gallery/page";
-import AdminLayout from "./pages/admin/AdminLayout";
+import GalleryPage from "./components/gallery/page"; import ReservationPage from "./pages/ReservationPage"; import AdminLayout from "./pages/admin/AdminLayout";
 import AdminLogin from "./pages/admin/AdminLogin";
 
 function App() {
@@ -44,6 +43,10 @@ function App() {
           <Route
             path="/gallery"
             element={<PageTransition><GalleryPage /></PageTransition>}
+          />
+          <Route
+            path="/reservation"
+            element={<PageTransition><ReservationPage /></PageTransition>}
           />
           <Route
             path="/blog"
