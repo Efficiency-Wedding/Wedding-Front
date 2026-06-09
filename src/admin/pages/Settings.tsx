@@ -29,11 +29,11 @@ export default function Settings() {
     setTimeout(() => setSaved(false), 3000);
   };
 
-  const tabs = [
-    { id: "general", label: "Général", icon: User },
-    { id: "contact", label: "Coordonnées", icon: Mail },
-    { id: "security", label: "Sécurité & Accès", icon: Shield },
-  ];
+ const tabs: { id: SettingsTab; label: string; icon: React.ElementType }[] = [
+  { id: "general", label: "Général", icon: User },
+  { id: "contact", label: "Coordonnées", icon: Mail },
+  { id: "security", label: "Sécurité & Accès", icon: Shield },
+];
 
   return (
     <div className="space-y-6">

@@ -35,8 +35,9 @@ export default function ImageUploader({ type, id, initialImages = [], onChange }
     try {
       const data = await api.uploadImages(type, id, files);
       update(data);
-    } catch (err: any) {
-      setError(err.message ?? "Erreur lors de l'upload");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Erreur inconnue";
+      setError(msg ?? "Erreur lors de l'upload");
     } finally {
       setUploading(false);
       e.target.value = ""; // reset input
@@ -48,8 +49,9 @@ export default function ImageUploader({ type, id, initialImages = [], onChange }
     try {
       await api.deleteImage(imageId);
       update(images.filter((img) => img.id !== imageId));
-    } catch (err: any) {
-      setError(err.message ?? "Erreur lors de la suppression");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Erreur inconnue";
+      setError(msg ?? "Erreur lors de la suppression");
     }
   };
 

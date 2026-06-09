@@ -7,13 +7,23 @@ import {
 } from "lucide-react";
 import { api, clearAdminSession, isAdminAuthenticated } from "@/shared/api";
 
-const Dashboard   = lazy(() => import("./Dashboard"));
-const Services    = lazy(() => import("./Services"));
-const Packs       = lazy(() => import("./Packs"));
+const Dashboard    = lazy(() => import("./Dashboard"));
+const Services     = lazy(() => import("./Services"));
+const Packs        = lazy(() => import("./Packs"));
 const Reservations = lazy(() => import("./Reservations"));
-const Blog        = lazy(() => import("./Blog"));
-const Settings    = lazy(() => import("./Settings"));
-const Contacts    = lazy(() => import("./Contacts"));
+const Blog         = lazy(() => import("./Blog"));
+const Settings     = lazy(() => import("./Settings"));
+const Contacts     = lazy(() => import("./Contacts"));
+
+const nav = [
+  { id: "dashboard",    path: "/admin",              label: "Tableau de bord", icon: LayoutDashboard },
+  { id: "services",     path: "/admin/services",     label: "Services",        icon: Sparkles },
+  { id: "packs",        path: "/admin/packs",        label: "Packs",           icon: Package },
+  { id: "reservations", path: "/admin/reservations", label: "Réservations",    icon: CalendarCheck },
+  { id: "blog",         path: "/admin/blog",         label: "Blog",            icon: PenTool },
+  { id: "contacts",     path: "/admin/contacts",     label: "Messages",        icon: Mail },
+  { id: "settings",     path: "/admin/settings",     label: "Paramètres",      icon: SettingsIcon },
+];
 
 function AdminRouteFallback() {
   return (
@@ -23,37 +33,25 @@ function AdminRouteFallback() {
   );
 }
 
-export default function AdminLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
+// ── Sorti du composant parent pour éviter la re-création à chaque render ──
+type SidebarContentProps = {
+  collapsed: boolean;
+  sidebarOpen: boolean;
+  setSidebarOpen: (v: boolean) => void;
+  setMobileOpen: (v: boolean) => void;
+  isActive: (path: string) => boolean;
+  handleLogout: () => void;
+};
 
-  if (!isAdminAuthenticated()) return <Navigate to="/admin/login" replace />;
-
-  const nav = [
-    { id: "dashboard",    path: "/admin",              label: "Tableau de bord", icon: LayoutDashboard },
-    { id: "services",     path: "/admin/services",     label: "Services",        icon: Sparkles },
-    { id: "packs",        path: "/admin/packs",        label: "Packs",           icon: Package },
-    { id: "reservations", path: "/admin/reservations", label: "Réservations",    icon: CalendarCheck },
-    { id: "blog",         path: "/admin/blog",         label: "Blog",            icon: PenTool },
-    { id: "contacts",     path: "/admin/contacts",     label: "Messages",        icon: Mail },
-    { id: "settings",     path: "/admin/settings",     label: "Paramètres",      icon: SettingsIcon },
-  ];
-
-  const isActive = (path: string) =>
-    path === "/admin" ? location.pathname === "/admin" : location.pathname.startsWith(path);
-
-  const handleLogout = () => {
-    void (async () => {
-      try { await api.adminLogout(); } finally {
-        clearAdminSession();
-        navigate("/admin/login", { replace: true });
-      }
-    })();
-  };
-
-  const SidebarContent = ({ collapsed }: { collapsed: boolean }) => (
+function SidebarContent({
+  collapsed,
+  sidebarOpen,
+  setSidebarOpen,
+  setMobileOpen,
+  isActive,
+  handleLogout,
+}: SidebarContentProps) {
+  return (
     <>
       {/* Logo */}
       <div className="p-4 border-b border-[#edd694]/20 flex items-center justify-between">
@@ -109,7 +107,7 @@ export default function AdminLayout() {
 
       {/* Footer */}
       <div className="p-3 border-t border-[#edd694]/20">
-        <div className={`flex items-center gap-3 ${collapsed && "justify-center"}`}>
+        <div className={`flex items-center gap-3 ${collapsed ? "justify-center" : ""}`}>
           <div className="w-8 h-8 min-w-8 rounded-full bg-[#f5e8c2] text-[#946c25] flex items-center justify-center font-semibold text-xs border border-[#d4a843]/20">
             A
           </div>
@@ -130,8 +128,32 @@ export default function AdminLayout() {
       </div>
     </>
   );
+}
+
+// ── Composant principal ──
+export default function AdminLayout() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  if (!isAdminAuthenticated()) return <Navigate to="/admin/login" replace />;
+
+  const isActive = (path: string) =>
+    path === "/admin" ? location.pathname === "/admin" : location.pathname.startsWith(path);
+
+  const handleLogout = () => {
+    void (async () => {
+      try { await api.adminLogout(); } finally {
+        clearAdminSession();
+        navigate("/admin/login", { replace: true });
+      }
+    })();
+  };
 
   const currentLabel = nav.find((n) => isActive(n.path))?.label ?? "Dashboard";
+
+  const sidebarProps = { sidebarOpen, setSidebarOpen, setMobileOpen, isActive, handleLogout };
 
   return (
     <div className="flex h-screen bg-[#faf7f2] text-gray-800 font-sans overflow-hidden">
@@ -146,12 +168,12 @@ export default function AdminLayout() {
 
       {/* Mobile sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-[#edd694]/30 flex flex-col transition-transform duration-300 md:hidden ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <SidebarContent collapsed={false} />
+        <SidebarContent collapsed={false} {...sidebarProps} />
       </aside>
 
       {/* Desktop sidebar */}
       <aside className={`hidden md:flex ${sidebarOpen ? "w-60" : "w-[68px]"} bg-white border-r border-[#edd694]/30 flex-col transition-all duration-300 h-screen sticky top-0 shrink-0`}>
-        <SidebarContent collapsed={!sidebarOpen} />
+        <SidebarContent collapsed={!sidebarOpen} {...sidebarProps} />
       </aside>
 
       {/* Main */}
@@ -159,7 +181,6 @@ export default function AdminLayout() {
         {/* Top bar */}
         <header className="bg-white border-b border-[#edd694]/25 h-14 flex items-center justify-between px-4 sm:px-6 shadow-sm shrink-0 gap-3">
           <div className="flex items-center gap-3">
-            {/* Mobile hamburger */}
             <button
               onClick={() => setMobileOpen(true)}
               className="md:hidden p-2 hover:bg-[#fbf5e6] rounded-lg text-[#946c25]"

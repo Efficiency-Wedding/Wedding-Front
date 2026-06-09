@@ -12,20 +12,13 @@ export default function Contacts() {
   const [selected, setSelected] = useState<Contact | null>(null);
 
   useEffect(() => {
-    loadContacts();
+    let cancelled = false;
+    api.getContacts()
+      .then((data) => { if (!cancelled) setContacts(data); })
+      .catch((err) => { if (!cancelled) setError(getErrorMessage(err, "Impossible de charger les messages.")); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, []);
-
-  async function loadContacts() {
-    try {
-      setLoading(true);
-      const data = await api.getContacts();
-      setContacts(data);
-    } catch (err) {
-      setError(getErrorMessage(err, "Impossible de charger les messages."));
-    } finally {
-      setLoading(false);
-    }
-  }
 
   const handleMarkLu = async (id: number) => {
     try {
@@ -179,7 +172,6 @@ export default function Contacts() {
                 </div>
 
                 <div className="p-6 space-y-6 flex-1">
-                  {/* Infos contact */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <a
                       href={`mailto:${selected.email}`}
@@ -214,7 +206,6 @@ export default function Contacts() {
                     )}
                   </div>
 
-                  {/* Message */}
                   <div>
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
                       Message
@@ -224,7 +215,6 @@ export default function Contacts() {
                     </div>
                   </div>
 
-                  {/* Actions rapides */}
                   <div className="flex gap-3 pt-2">
                     <a
                       href={`mailto:${selected.email}`}
