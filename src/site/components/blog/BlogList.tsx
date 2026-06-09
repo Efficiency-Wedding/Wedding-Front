@@ -15,7 +15,7 @@ export function BlogList({ articles, onOpen }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3 items-start">
       {articles.map((a) => (
         <article
           key={a.id}
@@ -29,24 +29,22 @@ export function BlogList({ articles, onOpen }: Props) {
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
           </div>
-          <div className="flex flex-1 flex-col p-6">
+          <div className="flex flex-col p-6 gap-3">
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs uppercase tracking-widest text-muted-foreground">
               <span className="rounded-full bg-secondary px-3 py-1 text-secondary-foreground">
                 {a.category}
               </span>
               <time>{a.date}</time>
             </div>
-            <h2 className="mt-4 font-serif text-lg leading-snug text-foreground sm:text-xl">
+            <h2 className="font-serif text-lg leading-snug text-foreground sm:text-xl line-clamp-2">
               {a.title}
             </h2>
-            <p className="mt-3 flex-1 text-sm text-muted-foreground">
-              {a.excerpt.length > 150
-                ? a.excerpt.slice(0, 150) + "…"
-                : a.excerpt}
+            <p className="text-sm text-muted-foreground line-clamp-3">
+              {a.excerpt}
             </p>
             <button
               onClick={() => onOpen(a)}
-              className="mt-6 self-start border-b border-accent pb-1 text-sm font-medium uppercase tracking-widest text-foreground transition hover:text-primary"
+              className="self-start border-b border-accent pb-1 text-sm font-medium uppercase tracking-widest text-foreground transition hover:text-primary"
             >
               Lire la suite →
             </button>

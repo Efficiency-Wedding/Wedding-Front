@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { getErrorMessage } from "@/shared/errors";
+import ImageUploader from "@/admin/components/ImageUploader";
 
 export default function Services() {
   const [loading, setLoading] = useState(true);
@@ -61,17 +62,27 @@ export default function Services() {
     setModal("create");
   };
 
-  const openEdit = (s: Service) => {
-    setCurrentId(s.id);
-    setNom(s.nom);
-    setSlug(s.slug || "");
-    setPrixIndicatif(s.prix_indicatif ? String(s.prix_indicatif) : "");
-    setDescriptionCourte(s.description_courte || "");
-    setDescriptionComplete(s.description_complete || "");
-    setStatut(s.statut);
-    setImagePreview(s.image_url || null);
-    setModal("edit");
-  };
+  const openEdit = async (s: Service) => {
+  setCurrentId(s.id);
+  setNom(s.nom);
+  setSlug(s.slug || "");
+  setPrixIndicatif(s.prix_indicatif ? String(s.prix_indicatif) : "");
+  setDescriptionCourte(s.description_courte || "");
+  setDescriptionComplete(s.description_complete || "");
+  setStatut(s.statut);
+  setImagePreview(s.image_url || null);
+  setModal("edit");
+
+  // Recharger avec les images
+  try {
+    const full = await api.getService(s.id);
+    setServices((prev) =>
+      prev.map((svc) => (svc.id === full.id ? full : svc))
+    );
+  } catch {
+    // silencieux, ImageUploader démarrera avec []
+  }
+};
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -163,22 +174,23 @@ export default function Services() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="font-serif text-3xl font-bold text-[#664a24]">
-            Services
-          </h2>
-          <p className="text-gray-500 mt-1">
-            Gérez vos prestations de mariage et tarifs indicatifs
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#edd694]/30">
+          <div>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#664a24]">
+              Services
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Gérez vos prestations de mariage et tarifs indicatifs
+            </p>
+          </div>
+          <button
+            onClick={openCreate}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#b88a2d] hover:bg-[#946c25] text-white rounded-xl font-semibold transition-colors shadow-sm text-sm w-full sm:w-auto"
+          >
+            <Plus size={16} />
+            Ajouter un service
+          </button>
         </div>
-        <button
-          onClick={openCreate}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#b88a2d] hover:bg-[#946c25] text-white rounded-xl font-medium transition-colors shadow-sm text-sm"
-        >
-          <Plus size={18} /> Ajouter un service
-        </button>
-      </div>
 
       {error ? (
         <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl shadow-sm">
@@ -377,10 +389,10 @@ export default function Services() {
                   />
                 </div>
 
-                {/* Image Upload */}
+                {/* Image principale */}
                 <div className="md:col-span-2">
                   <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
-                    Image du service
+                    Image principale
                   </label>
                   <div className="flex gap-4 items-center">
                     <label className="flex flex-col items-center justify-center w-36 h-28 border border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
@@ -388,25 +400,14 @@ export default function Services() {
                         <Upload size={20} className="mb-1" />
                         <span className="text-[10px]">Téléverser</span>
                       </div>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                      />
+                      <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
                     </label>
                     {imagePreview && (
                       <div className="relative w-36 h-28 border border-[#f5e8c2] rounded-xl overflow-hidden shadow-sm bg-gray-50">
-                        <img
-                          src={imagePreview}
-                          alt="Prévisualisation"
-                          className="w-full h-full object-cover"
-                        />
+                        <img src={imagePreview} alt="Prévisualisation" className="w-full h-full object-cover" />
                         <button
                           type="button"
-                          onClick={() => {
-                            setImagePreview(null);
-                          }}
+                          onClick={() => setImagePreview(null)}
                           className="absolute top-1 right-1 p-1 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors"
                         >
                           <X size={12} />
@@ -415,6 +416,20 @@ export default function Services() {
                     )}
                   </div>
                 </div>
+
+                {/* Photos supplémentaires — uniquement en mode édition */}
+                {modal === "edit" && currentId !== null && (
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">
+                      Photos supplémentaires
+                    </label>
+                    <ImageUploader
+                      type="service"
+                      id={currentId}
+                      initialImages={services.find((s) => s.id === currentId)?.images ?? []}
+                    />
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">

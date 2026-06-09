@@ -274,6 +274,7 @@ const packages = [
     color: "#c2185b",
     gradient: "linear-gradient(135deg, #e91e8c 0%, #c2185b 100%)",
     img: photo,
+    gallery: [photo],  
     desc: "La formule idéale pour un mariage élégant et intimiste.",
     cols: [["3 jours de photographie", "Portraits", "Solo shoot", "Couple shoot", "Family shoot"]],
   },
@@ -283,6 +284,7 @@ const packages = [
     color: "#8e24aa",
     gradient: "linear-gradient(135deg, #ab47bc 0%, #6a1b9a 100%)",
     img: blog2,
+    gallery: [blog2],
     desc: "Le choix parfait pour un mariage mémorable avec tous les essentiels.",
     cols: [
       ["3 jours de photographie", "2 Albums luxe", "Portraits", "Family portraits", "Solo shoot"],
@@ -295,6 +297,7 @@ const packages = [
     color: "#b71c1c",
     gradient: "linear-gradient(135deg, #e53935 0%, #880e4f 100%)",
     img: photo14,
+    gallery: [photo14],
     desc: "L'expérience ultime pour un mariage de rêve inoubliable.",
     cols: [
       ["3 jours de photo + vidéo", "3 Albums luxe", "Portraits artistiques", "Solo & couple shoots", "Outdoor shoot", "Highlights vidéo", "Wall frame OFFERT"],
@@ -331,6 +334,18 @@ function formatMgaPrice(value?: number | null, fallback = "Sur devis") {
 
 function buildServiceCard(apiCard: ApiService): StaticServiceCard {
   const image = assetUrl(apiCard.image_url || apiCard.image_principale) || photo8;
+  
+  console.log("=== SERVICE:", apiCard.nom);
+  console.log("images brutes:", apiCard.images);
+  const gallery = [
+    image,
+    ...(apiCard.images ?? []).map((img) => {
+      const url = assetUrl(img.url) ?? "";
+      console.log("img.url:", img.url, "→ assetUrl:", url);
+      return url;
+    }).filter(Boolean),
+  ];
+  console.log("gallery finale:", gallery);
   const summary = apiCard.description_courte || apiCard.description_complete || "Service disponible sur demande.";
 
   return {
@@ -339,7 +354,10 @@ function buildServiceCard(apiCard: ApiService): StaticServiceCard {
     desc: summary,
     price: apiCard.prix_formate || formatMgaPrice(apiCard.prix_indicatif),
     img: image,
-    gallery: [image],
+    gallery: [
+      image,
+      ...(apiCard.images ?? []).map((img) => assetUrl(img.url) ?? "").filter(Boolean),
+    ],
     details: [apiCard.description_complete || summary],
     testimonial: {
       text: "Prestation synchronisée avec le backoffice.",
@@ -349,6 +367,7 @@ function buildServiceCard(apiCard: ApiService): StaticServiceCard {
     guests: "Sur mesure",
     tag: apiCard.statut === "ACTIF" ? "Actif" : "Inactif",
   };
+  
 }
 
 function buildPackageCard(apiCard: ApiPack): StaticPackageCard {
@@ -364,12 +383,15 @@ function buildPackageCard(apiCard: ApiPack): StaticPackageCard {
     color: "#c2185b",
     gradient: "linear-gradient(135deg, #e91e8c 0%, #c2185b 100%)",
     img: image,
+    gallery: [
+      image,
+      ...(apiCard.images ?? []).map((img) => assetUrl(img.url) ?? "").filter(Boolean),
+    ],
     desc: apiCard.description || "Package synchronisé avec le backoffice.",
     cols: [servicesList],
     popular: apiCard.statut === "ACTIF",
   };
 }
-
 // ── Colors ──────────────────────────────────────────────────────────────────
 const PINK   = "#e91e8c";
 const DARK   = "#1a0a14";
@@ -729,6 +751,8 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
   const navigate = useNavigate();
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const isEven = index % 2 === 0;
+  const [activeImg, setActiveImg] = useState(0);
+  const gallery = pkg.gallery ?? [pkg.img];
 
   return (
     <motion.div
@@ -768,38 +792,61 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
 
       {/* Photo side */}
       <div className="services-package-image" style={{
-        width: "40%",
-        flexShrink: 0,
-        position: "relative",
-        overflow: "hidden",
+        width: "40%", flexShrink: 0, position: "relative",
+        display: "flex", flexDirection: "column",
         borderTopLeftRadius: isEven ? 26 : 0,
         borderBottomLeftRadius: isEven ? 26 : 0,
         borderTopRightRadius: isEven ? 0 : 26,
         borderBottomRightRadius: isEven ? 0 : 26,
+        overflow: "hidden",
       }}>
-        <motion.img
-          src={pkg.img}
-          alt={pkg.name}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          whileHover={{ scale: 1.06 }}
-          transition={{ duration: 0.7 }}
-        />
-        <div style={{
-          position: "absolute", inset: 0,
-          background: `linear-gradient(${isEven ? "to right" : "to left"}, transparent 55%, rgba(0,0,0,0.2))`,
-        }} />
-        {/* Price overlay */}
-        <div style={{
-          position: "absolute", bottom: 20, left: "50%", transform: "translateX(-50%)",
-          background: "rgba(255,255,255,0.15)",
-          backdropFilter: "blur(12px)",
-          borderRadius: 16, padding: "10px 22px",
-          border: "1px solid rgba(255,255,255,0.3)",
-          textAlign: "center",
-        }}>
-          <p style={{ fontSize: 11, color: "rgba(255,255,255,0.8)", margin: "0 0 2px", letterSpacing: "0.08em" }}>INVESTISSEMENT</p>
-          <p style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: 0 }}>{pkg.badge}</p>
+        <div style={{ position: "relative", flex: 1, overflow: "hidden" }}>
+          <motion.img
+            key={activeImg}
+            src={gallery[activeImg]}
+            alt={pkg.name}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          />
+          <div style={{
+            position: "absolute", inset: 0,
+            background: `linear-gradient(${isEven ? "to right" : "to left"}, transparent 55%, rgba(0,0,0,0.2))`,
+          }} />
+          {/* Price overlay */}
+          <div style={{
+            position: "absolute", bottom: 20, left: "50%", transform: "translateX(-50%)",
+            background: "rgba(255,255,255,0.15)", backdropFilter: "blur(12px)",
+            borderRadius: 16, padding: "10px 22px",
+            border: "1px solid rgba(255,255,255,0.3)", textAlign: "center",
+          }}>
+            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.8)", margin: "0 0 2px", letterSpacing: "0.08em" }}>INVESTISSEMENT</p>
+            <p style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: 0 }}>{pkg.badge}</p>
+          </div>
         </div>
+
+        {/* Thumbnails */}
+        {gallery.length > 1 && (
+          <div style={{
+            display: "flex", gap: 6, padding: "8px 10px",
+            background: "rgba(0,0,0,0.55)", flexWrap: "wrap",
+          }}>
+            {gallery.map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                onClick={() => setActiveImg(i)}
+                style={{
+                  width: 44, height: 44, objectFit: "cover", borderRadius: 8,
+                  cursor: "pointer", opacity: i === activeImg ? 1 : 0.6,
+                  border: i === activeImg ? `2px solid ${PINK}` : "2px solid transparent",
+                  transition: "all 0.2s",
+                }}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Content side */}
@@ -814,12 +861,25 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
               fontSize: 32, fontWeight: 900, color: DARK,
               letterSpacing: "-0.03em", fontFamily: "Georgia, serif",
               margin: 0, lineHeight: 1.1,
+              wordBreak: "break-word",
+              overflowWrap: "anywhere",
             }}>
               {pkg.name}
             </h3>
           </div>
         </div>
-        <p style={{ fontSize: 14, color: "#888", lineHeight: 1.6, marginBottom: 22 }}>{pkg.desc}</p>
+        <p style={{ 
+          fontSize: 14, 
+          color: "#888", 
+          lineHeight: 1.6, 
+          marginBottom: 22, 
+          wordBreak: "break-word",
+          overflowWrap: "anywhere",
+          display: "-webkit-box",
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: "vertical" as const,
+          overflow: "hidden", 
+        }}>{pkg.desc}</p>
 
         <div className="services-package-features" style={{ display: "flex", gap: 36 }}>
           {pkg.cols.map((col, ci) => (

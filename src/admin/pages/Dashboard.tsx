@@ -21,35 +21,33 @@ export default function Dashboard() {
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    async function loadDashboardData() {
-      try {
-        setLoading(true);
-        const [servicesData, packsData, reservationsData, articlesData] =
-          await Promise.all([
-            api.getServices(),
-            api.getPacks(),
-            api.getReservations(),
-            api.getArticles(true),
-          ]);
-        setServices(servicesData);
-        setPacks(packsData);
-        setReservations(reservationsData);
-        setArticles(articlesData);
-      } catch (error: unknown) {
-        console.error(error);
-        setError(
-          getErrorMessage(
-            error,
-            "Impossible de charger les données du dashboard.",
-          ),
-        );
-      } finally {
-        setLoading(false);
-      }
+  async function loadDashboardData() {
+    try {
+      setLoading(true);
+      const [servicesData, packsData, reservationsData, articlesData] =
+        await Promise.all([
+          api.getServices(),
+          api.getPacks(),
+          api.getReservations(),
+          api.getArticles(true),
+        ]);
+      setServices(servicesData);
+      setPacks(packsData);
+      setReservations(reservationsData);
+      setArticles(articlesData);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, "Impossible de charger les données du dashboard."));
+    } finally {
+      setLoading(false);
     }
+  }
 
-    loadDashboardData();
-  }, []);
+  loadDashboardData();
+
+  const handleFocus = () => loadDashboardData();
+  window.addEventListener("focus", handleFocus);
+  return () => window.removeEventListener("focus", handleFocus);
+}, []);
 
   const formatMGA = (n: number) =>
     new Intl.NumberFormat("fr-FR").format(n) + " MGA";

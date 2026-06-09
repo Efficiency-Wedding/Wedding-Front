@@ -12,6 +12,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { getErrorMessage } from "@/shared/errors";
+import ImageUploader from "@/admin/components/ImageUploader";
 
 export default function Blog() {
   const [loading, setLoading] = useState(true);
@@ -165,20 +166,21 @@ export default function Blog() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-[#edd694]/30">
         <div>
-          <h2 className="font-serif text-3xl font-bold text-[#664a24]">
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#664a24]">
             Blog / Articles
           </h2>
-          <p className="text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 mt-1">
             Publiez des conseils, des guides et des tendances de mariage
           </p>
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#b88a2d] hover:bg-[#946c25] text-white rounded-xl font-medium transition-colors shadow-sm text-sm"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#b88a2d] hover:bg-[#946c25] text-white rounded-xl font-semibold transition-colors shadow-sm text-sm w-full sm:w-auto"
         >
-          <Plus size={18} /> Nouvel article
+          <Plus size={16} />
+          Ajouter un service
         </button>
       </div>
 
@@ -381,7 +383,7 @@ export default function Blog() {
                   />
                 </div>
 
-                {/* Image Upload */}
+                {/* Image principale */}
                 <div className="md:col-span-2">
                   <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
                     Image de l'article
@@ -392,25 +394,14 @@ export default function Blog() {
                         <Upload size={20} className="mb-1" />
                         <span className="text-[10px]">Téléverser</span>
                       </div>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                      />
+                      <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
                     </label>
                     {imagePreview && (
                       <div className="relative w-36 h-28 border border-[#f5e8c2] rounded-xl overflow-hidden shadow-sm bg-gray-50">
-                        <img
-                          src={imagePreview}
-                          alt="Prévisualisation"
-                          className="w-full h-full object-cover"
-                        />
+                        <img src={imagePreview} alt="Prévisualisation" className="w-full h-full object-cover" />
                         <button
                           type="button"
-                          onClick={() => {
-                            setImagePreview(null);
-                          }}
+                          onClick={() => setImagePreview(null)}
                           className="absolute top-1 right-1 p-1 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors"
                         >
                           <X size={12} />
@@ -419,6 +410,20 @@ export default function Blog() {
                     )}
                   </div>
                 </div>
+
+                {/* Photos supplémentaires — uniquement en mode édition */}
+                {modal === "edit" && currentId !== null && (
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">
+                      Photos supplémentaires
+                    </label>
+                    <ImageUploader
+                      type="article"
+                      id={currentId}
+                      initialImages={articles.find((a) => a.id === currentId)?.images ?? []}
+                    />
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">

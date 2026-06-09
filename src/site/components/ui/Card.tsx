@@ -26,11 +26,15 @@ export default function Card({
                 </div>
             </div>
             <div className="pt-14 sm:pt-16 p-6 sm:p-8">
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 truncate" title={title}>
                     {title}
                 </h3>
-
-                <p className="text-gray-600 leading-relaxed mb-8">
+                <p className="text-gray-600 leading-relaxed mb-8 overflow-hidden"
+                   style={{
+                     display: "-webkit-box",
+                     WebkitLineClamp: 3,
+                     WebkitBoxOrient: "vertical" as const,
+                   }}>
                     {description}
                 </p>
             </div>

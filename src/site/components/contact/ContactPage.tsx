@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./ContactPage.css";
+import { api } from "@/shared/api";
 
 type ContactFormErrors = Partial<Record<"name" | "email" | "phone" | "message", string>>;
 
@@ -157,12 +158,30 @@ const ContactForm: React.FC = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors = validate();
     setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
+    if (Object.keys(newErrors).length > 0) return;
+
+    try {
+      setSubmitting(true);
+      setSubmitError("");
+      await api.sendContact({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        url: formData.url || undefined,
+        message: formData.message,
+      });
       setSubmitted(true);
+    } catch {
+      setSubmitError("Erreur lors de l'envoi. Veuillez réessayer.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -429,10 +448,12 @@ const ContactForm: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full bg-jaune text-violet py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 shine flex items-center justify-center gap-3 shadow-lg shadow-jaune/30"
+                disabled={submitting}
+                className="w-full bg-jaune text-violet py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 shine flex items-center justify-center gap-3 shadow-lg shadow-jaune/30 disabled:opacity-70"
               >
-                Demander un devis gratuit
+                {submitting ? "Envoi en cours..." : "Demander un devis gratuit"}
               </button>
+              {submitError && <p className="text-rose text-sm text-center">{submitError}</p>}
 
               <p className="text-center text-xs text-blanc/40 mt-4">
                 Vos informations sont sécurisées et confidentielles

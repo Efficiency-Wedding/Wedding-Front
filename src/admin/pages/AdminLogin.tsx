@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { Heart, Lock, Mail } from "lucide-react";
+import { Navigate, useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff, Heart, Lock, Mail, ArrowLeft } from "lucide-react";
 import { api, isAdminAuthenticated, setAdminSession } from "@/shared/api";
 
 const ADMIN_EMAIL = "admin@mariage.mg";
@@ -12,6 +12,7 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   if (isAdminAuthenticated()) {
     return <Navigate to="/admin" replace />;
@@ -23,11 +24,7 @@ export default function AdminLogin() {
     setIsSubmitting(true);
 
     try {
-      const session = await api.adminLogin({
-        email,
-        password,
-      });
-
+      const session = await api.adminLogin({ email, password });
       setAdminSession(session);
       navigate("/admin", { replace: true });
     } catch (loginError) {
@@ -39,6 +36,16 @@ export default function AdminLogin() {
 
   return (
     <main className="min-h-screen bg-[#faf7f2] text-gray-800 flex items-center justify-center px-4 py-8">
+
+      {/* Flèche retour */}
+      <Link
+        to="/"
+        className="absolute top-5 left-5 flex items-center gap-2 text-sm font-medium text-[#946c25] hover:text-[#664a24] transition-colors group"
+      >
+        <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" />
+        <span>Retour au site</span>
+      </Link>
+
       <section className="w-full max-w-md bg-white border border-[#edd694]/40 shadow-xl shadow-[#d4a843]/10 rounded-lg p-7 sm:p-8">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-11 h-11 rounded-lg bg-[#f5e8c2] text-[#946c25] flex items-center justify-center border border-[#d4a843]/20">
@@ -74,7 +81,7 @@ export default function AdminLogin() {
             <span className="mt-2 flex items-center gap-3 rounded-md border border-[#edd694]/70 bg-[#fdfbf7] px-3 py-2.5 focus-within:border-[#d4a843] focus-within:ring-2 focus-within:ring-[#d4a843]/15">
               <Lock size={18} className="text-[#946c25]" />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
@@ -82,6 +89,14 @@ export default function AdminLogin() {
                 autoComplete="current-password"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-[#946c25] hover:text-[#664a24] transition-colors"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </span>
           </label>
 

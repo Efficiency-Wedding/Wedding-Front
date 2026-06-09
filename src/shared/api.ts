@@ -14,6 +14,7 @@ export interface Service {
   statut: Status;
   created_at?: string;
   updated_at?: string;
+  images?: Image[];  // ← ajouter
 }
 
 export interface Pack {
@@ -27,6 +28,7 @@ export interface Pack {
   services?: Service[];
   created_at?: string;
   updated_at?: string;
+  images?: Image[];  // ← ajouter
 }
 
 export interface ReservationPayload {
@@ -92,6 +94,18 @@ export interface Article {
   date_publication: string | null;
   created_at: string;
   updated_at: string;
+  images?: Image[];  // ← ajouter
+}
+
+export interface Contact {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  url: string | null;
+  message: string;
+  lu: boolean;
+  created_at: string;
 }
 
 type ApiEnvelope<T> = T | { data: T; message?: string; errors?: Record<string, string[]> };
@@ -306,6 +320,13 @@ export const api = {
       },
       body: JSON.stringify(data),
     }),
+    updateReservationStatut: (id: number, statut: Reservation["statut"]) =>
+    apiRequest<Reservation>(`/api/reservations/${id}/statut`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ statut }),
+    }),
+
   deleteReservation: (id: number) =>
     apiRequest<void>(`/api/reservations/${id}`, {
       method: "DELETE",
@@ -332,4 +353,47 @@ export const api = {
     apiRequest<void>(`/api/articles/${id}`, {
       method: "DELETE",
     }),
+
+    // Images multiples
+  uploadImages: (type: "service" | "pack" | "article", id: number, files: File[]) => {
+    const formData = new FormData();
+    files.forEach((f) => formData.append("images[]", f));
+    return apiRequest<Image[]>(`/api/admin/${type}/${id}/images`, {
+      method: "POST",
+      body: formData,
+    });
+  },
+  deleteImage: (id: number) =>
+    apiRequest<void>(`/api/admin/images/${id}`, {
+      method: "DELETE",
+    }),
+  reorderImages: (ids: number[]) =>
+    apiRequest<void>("/api/admin/images/reorder", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids }),
+    }),
+
+    sendContact: (data: { name: string; email: string; phone: string; url?: string; message: string }) =>
+  apiRequest<Contact>('/api/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }),
+getContacts: () => apiRequest<Contact[]>('/api/admin/contacts'),
+markContactLu: (id: number) =>
+  apiRequest<Contact>(`/api/admin/contacts/${id}/lu`, { method: 'PATCH' }),
+deleteContact: (id: number) =>
+  apiRequest<void>(`/api/admin/contacts/${id}`, { method: 'DELETE' }),
 };
+
+// Après les interfaces existantes (Article, Pack, etc.)
+
+export interface Image {
+  id: number;
+  url: string;
+  alt: string | null;
+  ordre: number;
+  imageable_id: number;
+  imageable_type: string;
+}

@@ -12,6 +12,7 @@ function toBlogArticle(article: ApiArticle): Article {
   const content = article.contenu || "";
   const fallbackImage = fallbackArticles[0]?.image ?? "";
   const date = article.date_publication || article.created_at || "";
+  const mainImage = assetUrl(article.image_url || article.image) || fallbackImage;
 
   return {
     id: article.id,
@@ -20,8 +21,11 @@ function toBlogArticle(article: ApiArticle): Article {
     content,
     date: date ? new Date(date.replace(" ", "T")).toLocaleDateString("fr-FR") : "",
     category: "Blog",
-    image: assetUrl(article.image_url || article.image) || fallbackImage,
-    gallery: [assetUrl(article.image_url || article.image) || fallbackImage],
+    image: mainImage,
+    gallery: [
+      mainImage,
+      ...(article.images ?? []).map((img) => assetUrl(img.url) ?? "").filter(Boolean),
+    ],
   };
 }
 
