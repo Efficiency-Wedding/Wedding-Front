@@ -1,30 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import type { Screen } from "../../types";
 import { HERO_IMAGE, GALLERY_ITEMS } from "../../data";
 import type { GalleryItem } from "../../data";
-import { Camera, MapPin, Heart, ChevronLeft, ChevronRight, X, Sparkles, SlidersHorizontal } from "lucide-react";
+import { Camera, MapPin, Heart, ChevronLeft, ChevronRight, X } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { FaArrowRight } from "react-icons/fa";
 
 // Strong ease-out curve for high-end UI feel
-const EASE_OUT = [0.23, 1, 0.32, 1];
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
-interface HomeProps {
-  setScreen?: (screen: Screen) => void;
-}
-
-export default function GalleryPage({}: HomeProps = {}) {
+export default function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null);
   const [likedItems, setLikedItems] = useState<number[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   // Filter items
-  const filteredItems = activeCategory === "all"
-    ? GALLERY_ITEMS
-    : GALLERY_ITEMS.filter(item => item.category === activeCategory);
+  const filteredItems = useMemo(
+    () => activeCategory === "all"
+      ? GALLERY_ITEMS
+      : GALLERY_ITEMS.filter(item => item.category === activeCategory),
+    [activeCategory]
+  );
 
   // Open Lightbox
   const openLightbox = (item: GalleryItem) => {
@@ -34,19 +32,19 @@ export default function GalleryPage({}: HomeProps = {}) {
   };
 
   // Lightbox Navigation
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (filteredItems.length === 0) return;
     const nextIndex = (selectedIndex + 1) % filteredItems.length;
     setSelectedIndex(nextIndex);
     setSelectedImage(filteredItems[nextIndex]);
-  };
+  }, [filteredItems, selectedIndex]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (filteredItems.length === 0) return;
     const prevIndex = (selectedIndex - 1 + filteredItems.length) % filteredItems.length;
     setSelectedIndex(prevIndex);
     setSelectedImage(filteredItems[prevIndex]);
-  };
+  }, [filteredItems, selectedIndex]);
 
   // Keyboard Navigation for Lightbox
   useEffect(() => {
@@ -59,7 +57,7 @@ export default function GalleryPage({}: HomeProps = {}) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedImage, selectedIndex, filteredItems]);
+  }, [selectedImage, handleNext, handlePrev]);
 
   const toggleLike = (id: number, e: React.MouseEvent) => {
     e.stopPropagation();
