@@ -323,8 +323,8 @@ const stats = [
 
 const floatingAccents = [Flower2, Sparkles, Heart, Flower2, Sparkles, Heart, Flower2];
 
-type StaticServiceCard = (typeof services)[number];
-type StaticPackageCard = (typeof packages)[number];
+type StaticServiceCard = (typeof services)[number] & { id?: number };
+type StaticPackageCard = (typeof packages)[number] & { id?: number };
 
 const numberFormat = new Intl.NumberFormat("fr-FR");
 
@@ -349,6 +349,7 @@ function buildServiceCard(apiCard: ApiService): StaticServiceCard {
   const summary = apiCard.description_courte || apiCard.description_complete || "Service disponible sur demande.";
 
   return {
+    id: apiCard.id,
     icon: "sparkle",
     title: apiCard.nom,
     desc: summary,
@@ -378,6 +379,7 @@ function buildPackageCard(apiCard: ApiPack): StaticPackageCard {
       : ["Formule personnalisée"];
 
   return {
+    id: apiCard.id,
     name: apiCard.nom,
     badge: formatMgaPrice(apiCard.prix),
     color: "#c2185b",
@@ -598,7 +600,7 @@ function ServiceModal({ svc, onClose }: { svc: typeof services[0]; onClose: () =
             <motion.button
               onClick={() => {
                 onClose();
-                navigate("/reservation");
+                navigate("/reservation", { state: { serviceId: svc.id, type: "service" } });
               }}
               whileHover={{ scale: 1.03, boxShadow: "0 10px 36px rgba(233,30,140,0.45)" }}
               whileTap={{ scale: 0.97 }}
@@ -908,7 +910,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
         </div>
 
         <motion.button
-          onClick={() => navigate("/reservation")}
+          onClick={() => navigate("/reservation", { state: { packId: pkg.id, type: "pack" } })}
           whileHover={{ scale: 1.03, boxShadow: `0 8px 28px ${pkg.color}50` }}
           whileTap={{ scale: 0.97 }}
           style={{

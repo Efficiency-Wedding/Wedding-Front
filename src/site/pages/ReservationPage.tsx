@@ -1,25 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Link } from "react-router-dom";
-import { ApiError, api } from "@/shared/api";
-import type { ReservationPayload, Service } from "@/shared/api";
+import { Link, useLocation } from "react-router-dom";
+import { ApiError, api, assetUrl } from "@/shared/api";
+import type { ReservationPayload, Service, Pack } from "@/shared/api";
 import homeHero from "@/assets/images/home/home.jpg";
 import photo11 from "@/assets/images/home/photo11.jpg";
 import photo16 from "@/assets/images/home/photo16.jpg";
 
-const service: Service = {
-    id: 1,
-    nom: "Salle de réception",
-    slug: "salle-de-reception",
-    description_courte: "Salle élégante avec piste de danse et jardin privé.",
-    description_complete:
-        "Une salle de réception luxueuse avec une décoration personnalisée, un espace cocktail, et une prestation complète pour tous vos invités.",
-    prix_indicatif: 150000,
-    prix_formate: "150 000 Ar",
-    image_principale: homeHero,
-    image_url: null,
-    statut: "ACTIF",
-};
+
 
 type ReservationForm = {
     prenom: string;
@@ -102,13 +90,85 @@ export default function ReservationPage() {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-    const gallery = [service.image_principale || homeHero, photo11, photo16];
     const [activeImg, setActiveImg] = useState(0);
+
+    const [services, setServices] = useState<Service[]>([]);
+    const [packs, setPacks] = useState<Pack[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const location = useLocation();
+    const state = location.state as { serviceId?: number; packId?: number; type?: "service" | "pack" } | null;
+
+    const [reservationType, setReservationType] = useState<"service" | "pack">("service");
+    const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+
     const [minimumWeddingDate] = useState(() => {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         return formatLocalDate(tomorrow);
     });
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const [activeServices, activePacks] = await Promise.all([
+                    api.getActiveServices(),
+                    api.getActivePacks(),
+                ]);
+                setServices(activeServices);
+                setPacks(activePacks);
+
+                // Determine selection based on location state or default
+                if (state && state.type === "pack" && state.packId) {
+                    setReservationType("pack");
+                    setSelectedItemId(state.packId);
+                } else if (state && state.type === "service" && state.serviceId) {
+                    setReservationType("service");
+                    setSelectedItemId(state.serviceId);
+                } else {
+                    if (activeServices.length > 0) {
+                        setReservationType("service");
+                        setSelectedItemId(activeServices[0].id);
+                    } else if (activePacks.length > 0) {
+                        setReservationType("pack");
+                        setSelectedItemId(activePacks[0].id);
+                    }
+                }
+            } catch (err) {
+                console.error("Erreur lors du chargement des données", err);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchData();
+    }, [state]);
+
+    useEffect(() => {
+        setActiveImg(0);
+    }, [selectedItemId, reservationType]);
+
+    const selectedService = reservationType === "service" ? services.find(s => s.id === selectedItemId) : null;
+    const selectedPack = reservationType === "pack" ? packs.find(p => p.id === selectedItemId) : null;
+
+    const currentItemName = selectedService ? selectedService.nom : (selectedPack ? selectedPack.nom : "");
+    const currentItemDescription = selectedService 
+        ? (selectedService.description_complete || selectedService.description_courte || "") 
+        : (selectedPack ? (selectedPack.description || "") : "");
+    
+    const currentItemPrice = selectedService
+        ? (selectedService.prix_formate || (selectedService.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(selectedService.prix_indicatif) + " Ar" : "Sur devis"))
+        : (selectedPack ? (new Intl.NumberFormat("fr-FR").format(selectedPack.prix) + " Ar") : "Sur devis");
+
+    // Resolve images
+    const currentItemImage = selectedService
+        ? (assetUrl(selectedService.image_url || selectedService.image_principale) || homeHero)
+        : (selectedPack ? (assetUrl(selectedPack.image_url || selectedPack.image_principale) || homeHero) : homeHero);
+
+    const extraImages = selectedService
+        ? (selectedService.images ?? []).map(img => assetUrl(img.url) ?? "").filter(Boolean)
+        : (selectedPack ? (selectedPack.images ?? []).map(img => assetUrl(img.url) ?? "").filter(Boolean) : []);
+
+    const gallery = [currentItemImage, ...extraImages, photo11, photo16].filter(Boolean) as string[];
 
     const handleChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -131,6 +191,12 @@ export default function ReservationPage() {
             return;
         }
 
+        if (!selectedItemId) {
+            setError("Veuillez sélectionner un service ou un package.");
+            setSubmitting(false);
+            return;
+        }
+
         const payload: ReservationPayload = {
             nom: form.nom.trim(),
             prenom: form.prenom.trim(),
@@ -145,6 +211,9 @@ export default function ReservationPage() {
             lieu_deja_reserve: form.deja_reserve === "oui",
             nom_lieu: form.deja_reserve === "oui" ? form.lieu_nom.trim() || null : null,
             description_projet: form.description_projet.trim() || null,
+            ...(reservationType === "service" 
+                ? { service_ids: [selectedItemId] } 
+                : { pack_id: selectedItemId }),
         };
 
         try {
@@ -187,6 +256,14 @@ export default function ReservationPage() {
         }
     };
 
+    if (loading) {
+        return (
+            <div className="flex min-h-[60vh] items-center justify-center text-sm text-gray-500">
+                Chargement...
+            </div>
+        );
+    }
+
     return (
         <div className="mx-auto max-w-[1280px] px-4 py-8 md:px-8 md:py-12">
             <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -220,12 +297,12 @@ export default function ReservationPage() {
                     <div className="relative h-[300px] overflow-hidden sm:h-[360px]">
                         <img
                             src={gallery[activeImg]}
-                            alt={service.nom}
+                            alt={currentItemName}
                             className="h-full w-full object-cover"
                         />
                         <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/60" />
                         <div className="absolute left-4 top-4 rounded-full bg-[#e91e8c] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white shadow-lg">
-                            {service.statut}
+                            ACTIF
                         </div>
                         <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2">
                             {gallery.map((_, index) => (
@@ -245,10 +322,10 @@ export default function ReservationPage() {
                         <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                             <div>
                                 <h2 className="text-3xl font-black leading-tight text-[#111] md:text-[34px]">
-                                    {service.nom}
+                                    {currentItemName}
                                 </h2>
                                 <p className="mt-3 max-w-xl text-sm leading-7 text-[#666]">
-                                    {service.description_complete}
+                                    {currentItemDescription}
                                 </p>
                             </div>
                             <div className="rounded-3xl bg-[#fdf6f9] px-5 py-4 text-right">
@@ -256,17 +333,17 @@ export default function ReservationPage() {
                                     À partir de
                                 </p>
                                 <p className="mt-1 text-3xl font-black text-[#e91e8c]">
-                                    {service.prix_formate ?? `${service.prix_indicatif ?? 0} Ar`}
+                                    {currentItemPrice}
                                 </p>
                             </div>
                         </div>
 
                         <div className="grid gap-4 sm:grid-cols-2">
                             {[
-                                { label: "Style", value: "Élégant & chic" },
-                                { label: "Invités", value: "50 à 250" },
-                                { label: "Durée", value: "Journée complète" },
-                                { label: "Accompagnement", value: "Planification sur mesure" },
+                                { label: "Style", value: reservationType === "pack" ? "Complet & prestigieux" : "Sur mesure" },
+                                { label: "Invités", value: reservationType === "pack" ? "Tout format" : "Adapté à vos besoins" },
+                                { label: "Durée", value: reservationType === "pack" ? "Durée de l'événement" : "Journée ou soirée" },
+                                { label: "Accompagnement", value: reservationType === "pack" ? "Prise en charge totale" : "Coordination dédiée" },
                             ].map((item) => (
                                 <div
                                     key={item.label}
@@ -288,7 +365,7 @@ export default function ReservationPage() {
                                 fluide et inoubliable."
                             </p>
                             <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-[#e91e8c]">
-                                Service sélectionné
+                                {reservationType === "service" ? "Service sélectionné" : "Package sélectionné"}
                             </p>
                         </div>
                     </div>
@@ -306,12 +383,62 @@ export default function ReservationPage() {
                             Formulaire de réservation
                         </p>
                         <h2 className="mt-3 text-xl font-black text-[#111]">
-                            {service.nom}
+                            {currentItemName}
                         </h2>
                         <p className="mt-2 text-sm leading-6 text-[#666]">
                             Merci de nous transmettre vos informations pour que nous puissions vous
                             proposer un devis personnalisé.
                         </p>
+                    </div>
+
+                    <div className="mb-6 grid gap-4 sm:grid-cols-2">
+                        <label className="block text-sm text-[#444]">
+                            <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
+                                Type de réservation
+                            </span>
+                            <select
+                                value={reservationType}
+                                onChange={(e) => {
+                                    const type = e.target.value as "service" | "pack";
+                                    setReservationType(type);
+                                    if (type === "service" && services.length > 0) {
+                                        setSelectedItemId(services[0].id);
+                                    } else if (type === "pack" && packs.length > 0) {
+                                        setSelectedItemId(packs[0].id);
+                                    } else {
+                                        setSelectedItemId(null);
+                                    }
+                                }}
+                                className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                            >
+                                <option value="service">Service individuel</option>
+                                <option value="pack">Package complet</option>
+                            </select>
+                        </label>
+                        <label className="block text-sm text-[#444]">
+                            <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
+                                {reservationType === "service" ? "Sélectionner le service" : "Sélectionner le package"}
+                            </span>
+                            <select
+                                value={selectedItemId ?? ""}
+                                onChange={(e) => setSelectedItemId(Number(e.target.value))}
+                                className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                                required
+                            >
+                                <option value="" disabled>-- Choisir --</option>
+                                {reservationType === "service"
+                                    ? services.map((s) => (
+                                          <option key={s.id} value={s.id}>
+                                              {s.nom}
+                                          </option>
+                                      ))
+                                    : packs.map((p) => (
+                                          <option key={p.id} value={p.id}>
+                                              {p.nom}
+                                          </option>
+                                      ))}
+                            </select>
+                        </label>
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-2">
