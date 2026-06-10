@@ -168,6 +168,12 @@
 @layer base {
   * {
     border-color: var(--color-border);
+    outline: none;        /* ← ajouter */
+  }
+
+  *:focus {
+    outline: none;        /* ← ajouter */
+    box-shadow: none;     /* ← ajouter */
   }
 
   body {

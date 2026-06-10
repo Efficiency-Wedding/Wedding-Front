@@ -1,7 +1,7 @@
 import { Suspense, lazy, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate, Routes, Route } from "react-router-dom";
 import {
-  Heart, LayoutDashboard, Sparkles, Package, CalendarCheck,
+  ArrowLeft, Heart, LayoutDashboard, Sparkles, Package, CalendarCheck,
   PenTool, Mail, Settings as SettingsIcon, ChevronLeft, ChevronRight,
   LogOut, Menu, X,
 } from "lucide-react";
@@ -118,6 +118,15 @@ function SidebarContent({
             </div>
           )}
         </div>
+        {/* Séparateur + Retour au site */}
+        <div className="border-t border-[#edd694]/15 my-3" />  
+        <Link
+          to="/"
+          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-500 hover:bg-[#fdfbf7] hover:text-[#7a5826] transition-colors mb-2 ${collapsed ? "justify-center" : ""}`}
+        >
+          <ArrowLeft size={16} className="text-gray-400 shrink-0" />
+          {!collapsed && <span>Retour au site</span>}
+        </Link>
         <button
           onClick={handleLogout}
           className={`mt-3 w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-[#fdfbf7] hover:text-[#7a5826] transition-colors ${collapsed ? "justify-center" : ""}`}
