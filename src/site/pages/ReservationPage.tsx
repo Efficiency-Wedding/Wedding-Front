@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ApiError, api, assetUrl } from "@/shared/api";
-import type { ReservationPayload, Service, Pack } from "@/shared/api";
+import type { ReservationPayload, Service, Pack, Reservation } from "@/shared/api";
 import homeHero from "@/assets/images/home/home.jpg";
 import photo11 from "@/assets/images/home/photo11.jpg";
 import photo16 from "@/assets/images/home/photo16.jpg";
@@ -229,10 +229,14 @@ export default function ReservationPage() {
     useEffect(() => {
         async function fetchData() {
             try {
-                // Fetch dynamic services and packages from the database
-                const [activeServices, activePacks] = await Promise.all([
+                // Fetch dynamic services, packages, and reservations from the database
+                const [activeServices, activePacks, allReservations] = await Promise.all([
                     api.getActiveServices(),
-                    api.getActivePacks()
+                    api.getActivePacks(),
+                    api.getReservations().catch(err => {
+                        console.warn("Impossible de charger les réservations via l'API.", err);
+                        return [] as Reservation[];
+                    })
                 ]);
 
                 let finalServices = staticServices;
@@ -266,42 +270,82 @@ export default function ReservationPage() {
                     finalPacks = activePacks;
                 }
 
+                // Extract all already reserved services (ignoring cancelled reservations)
+                const reservedServiceIds = new Set<number>();
+                allReservations.forEach(r => {
+                    if (r.statut === "ANNULE") return;
+                    if (r.services) {
+                        r.services.forEach(s => reservedServiceIds.add(s.id));
+                    }
+                    if (r.pack) {
+                        const packObj = finalPacks.find(p => p.id === r.pack!.id);
+                        if (packObj && packObj.services) {
+                            packObj.services.forEach(s => reservedServiceIds.add(s.id));
+                        }
+                    }
+                });
+
+                // Filter out already reserved services
+                finalServices = finalServices.filter(s => !reservedServiceIds.has(s.id));
+
                 setServices(finalServices);
                 setPacks(finalPacks);
 
-                // Determine selection based on location state or default
+                // Determine selection based on location state
                 if (state && state.type === "pack" && state.packId) {
                     setReservationType("pack");
                     setSelectedItemId(state.packId);
                 } else if (state && state.type === "service" && state.serviceId) {
-                    setReservationType("service");
-                    setSelectedItemId(state.serviceId);
-                } else {
-                    if (finalServices.length > 0) {
+                    const svcExists = finalServices.some(s => s.id === state.serviceId);
+                    if (svcExists) {
                         setReservationType("service");
-                        setSelectedItemId(finalServices[0].id);
-                    } else if (finalPacks.length > 0) {
-                        setReservationType("pack");
-                        setSelectedItemId(finalPacks[0].id);
+                        setSelectedItemId(state.serviceId);
+                    } else {
+                        setSelectedItemId(null);
                     }
+                } else {
+                    setSelectedItemId(null);
                 }
             } catch (err) {
                 console.error("Erreur lors du chargement des données depuis l'API, utilisation du fallback statique.", err);
+                
+                let reservedServiceIds = new Set<number>();
+                try {
+                    const allReservations = await api.getReservations();
+                    allReservations.forEach(r => {
+                        if (r.statut === "ANNULE") return;
+                        if (r.services) {
+                            r.services.forEach(s => reservedServiceIds.add(s.id));
+                        }
+                        if (r.pack) {
+                            const packObj = staticPacks.find(p => p.id === r.pack!.id);
+                            if (packObj && packObj.services) {
+                                packObj.services.forEach(s => reservedServiceIds.add(s.id));
+                            }
+                        }
+                    });
+                } catch (resErr) {
+                    console.error("Impossible de récupérer les réservations pour le fallback", resErr);
+                }
+
+                const finalServices = staticServices.filter(s => !reservedServiceIds.has(s.id));
+                setServices(finalServices);
+                setPacks(staticPacks);
+
                 // Fallback selected item configuration
                 if (state && state.type === "pack" && state.packId) {
                     setReservationType("pack");
                     setSelectedItemId(state.packId);
                 } else if (state && state.type === "service" && state.serviceId) {
-                    setReservationType("service");
-                    setSelectedItemId(state.serviceId);
-                } else {
-                    if (staticServices.length > 0) {
+                    const svcExists = finalServices.some(s => s.id === state.serviceId);
+                    if (svcExists) {
                         setReservationType("service");
-                        setSelectedItemId(staticServices[0].id);
-                    } else if (staticPacks.length > 0) {
-                        setReservationType("pack");
-                        setSelectedItemId(staticPacks[0].id);
+                        setSelectedItemId(state.serviceId);
+                    } else {
+                        setSelectedItemId(null);
                     }
+                } else {
+                    setSelectedItemId(null);
                 }
             } finally {
                 setLoading(false);
@@ -388,8 +432,8 @@ export default function ReservationPage() {
             await api.createReservation(payload);
             setForm(initialFormState);
             setSubmitted(true);
-            // Redirect to the backoffice reservation page
-            navigate("/admin/reservations");
+            // Redirect to the services page
+            navigate("/services");
         } catch (error: unknown) {
             if (error instanceof ApiError && error.validationErrors) {
                 const mappedErrors: FieldErrors = {};
@@ -607,13 +651,7 @@ export default function ReservationPage() {
                                 onChange={(e) => {
                                     const type = e.target.value as "service" | "pack";
                                     setReservationType(type);
-                                    if (type === "service" && services.length > 0) {
-                                        setSelectedItemId(services[0].id);
-                                    } else if (type === "pack" && packs.length > 0) {
-                                        setSelectedItemId(packs[0].id);
-                                    } else {
-                                        setSelectedItemId(null);
-                                    }
+                                    setSelectedItemId(null);
                                 }}
                                 className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                             >
@@ -627,7 +665,7 @@ export default function ReservationPage() {
                             </span>
                             <select
                                 value={selectedItemId ?? ""}
-                                onChange={(e) => setSelectedItemId(Number(e.target.value))}
+                                onChange={(e) => setSelectedItemId(e.target.value ? Number(e.target.value) : null)}
                                 className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                                 required
                             >
