@@ -260,6 +260,18 @@ export default function Reservations() {
                           </div>
                         </div>
                       )}
+                      {r.services && r.services.length > 0 && (
+                        <div className="col-span-2">
+                          <p className="text-[10px] text-gray-400 uppercase font-semibold mb-1.5">Services demandés</p>
+                          <div className="flex flex-wrap gap-1">
+                            {r.services.map((s) => (
+                              <span key={s.id} className="px-2 py-0.5 bg-[#fdfbf7] text-[#946c25] text-[10px] font-medium rounded-md border border-[#edd694]/30">
+                                {s.nom}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Quick status buttons */}

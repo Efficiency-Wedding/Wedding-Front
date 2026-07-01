@@ -1,13 +1,41 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ApiError, api, assetUrl } from "@/shared/api";
 import type { ReservationPayload, Service, Pack } from "@/shared/api";
 import homeHero from "@/assets/images/home/home.jpg";
 import photo11 from "@/assets/images/home/photo11.jpg";
 import photo16 from "@/assets/images/home/photo16.jpg";
+import verre from "@/assets/images/home/verre.jpg";
+import photo8 from "@/assets/images/home/photo8.jpg";
+import bouquet from "@/assets/images/home/bouquet.jpg";
+import blog9 from "@/assets/images/blog/blog (9).jpeg";
 
+// SVG Icon Helper & paths
+type IconProps = {
+  d: string;
+  size?: number;
+  stroke?: string;
+  strokeWidth?: number;
+};
 
+const Icon = ({ d, size = 22, stroke = "currentColor", strokeWidth = 1.8 }: IconProps) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+    <path d={d} />
+  </svg>
+);
+
+const icons = {
+  chef:     "M3 11l19-9-9 19-2-8-8-2z",
+  hall:     "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z M9 22V12h6v10",
+  camera:   "M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z M12 17a4 4 0 100-8 4 4 0 000 8z",
+  music:    "M9 18V5l12-2v13 M6 21a3 3 0 100-6 3 3 0 000 6z M18 19a3 3 0 100-6 3 3 0 000 6z",
+  flower:   "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
+  close:    "M18 6L6 18M6 6l12 12",
+  arrow:    "M5 12h14M12 5l7 7-7 7",
+  check:    "M20 6L9 17l-5-5",
+};
 
 type ReservationForm = {
     prenom: string;
@@ -68,6 +96,92 @@ const initialFormState: ReservationForm = {
     description_projet: "",
 };
 
+// Static fallback data for services and packs (if API calls fail)
+const staticServices: (Service & { icon?: string; tag?: string })[] = [
+    {
+        id: 991,
+        nom: "Traiteur",
+        slug: "traiteur",
+        description_courte: "Menus variés et raffinés pour ravir vos invités.",
+        description_complete: "Menus personnalisés, buffet ou service à table",
+        prix_indicatif: 1200000,
+        prix_formate: "1 200 €",
+        image_principale: null,
+        image_url: verre,
+        icon: "chef",
+        tag: "Le plus demandé",
+        statut: "ACTIF",
+    },
+    {
+        id: 992,
+        nom: "Salle de réception",
+        slug: "salle-de-reception",
+        description_courte: "Salles élégantes adaptées à votre événement.",
+        description_complete: "Capacité de 50 à 600 invités, parking privé",
+        prix_indicatif: 1500000,
+        prix_formate: "1 500 €",
+        image_principale: null,
+        image_url: homeHero,
+        icon: "hall",
+        tag: "Exclusif",
+        statut: "ACTIF",
+    },
+    {
+        id: 993,
+        nom: "Photographe & Vidéaste",
+        slug: "photographe-videaste",
+        description_courte: "Immortalisez chaque instant de votre mariage.",
+        description_complete: "Photos HD, drone, album de luxe",
+        prix_indicatif: 800000,
+        prix_formate: "800 €",
+        image_principale: null,
+        image_url: photo8,
+        icon: "camera",
+        tag: "Coup de cœur",
+        statut: "ACTIF",
+    },
+    {
+        id: 994,
+        nom: "DJ & Animation",
+        slug: "dj-animation",
+        description_courte: "Ambiance garantie avec nos DJ et animateurs.",
+        description_complete: "Sonorisation, jeux de lumières, playlist sur mesure",
+        prix_indicatif: 600000,
+        prix_formate: "600 €",
+        image_principale: null,
+        image_url: blog9,
+        icon: "music",
+        tag: "Ambiance garantie",
+        statut: "ACTIF",
+    },
+    {
+        id: 995,
+        nom: "Décoration florale",
+        slug: "decoration-florale",
+        description_courte: "Décorations personnalisées selon votre thème.",
+        description_complete: "Fleurs fraîches de saison, arches, centres de table",
+        prix_indicatif: 400000,
+        prix_formate: "400 €",
+        image_principale: null,
+        image_url: bouquet,
+        icon: "flower",
+        tag: "Artisan fleuriste",
+        statut: "ACTIF",
+    }
+];
+
+const staticPacks: Pack[] = [
+    {
+        id: 881,
+        nom: "Package Prestige",
+        description: "Le package complet pour votre mariage",
+        prix: 5000000,
+        image_principale: null,
+        image_url: null,
+        statut: "ACTIF",
+    },
+];
+
 function FieldError({ message }: { message?: string }) {
     if (!message) {
         return null;
@@ -85,6 +199,7 @@ function formatLocalDate(date: Date) {
 }
 
 export default function ReservationPage() {
+    const navigate = useNavigate();
     const [form, setForm] = useState<ReservationForm>(initialFormState);
     const [submitted, setSubmitted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -92,9 +207,12 @@ export default function ReservationPage() {
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
     const [activeImg, setActiveImg] = useState(0);
 
-    const [services, setServices] = useState<Service[]>([]);
-    const [packs, setPacks] = useState<Pack[]>([]);
+    const [services, setServices] = useState<(Service & { icon?: string; tag?: string })[]>(staticServices);
+    const [packs, setPacks] = useState<Pack[]>(staticPacks);
     const [loading, setLoading] = useState(true);
+
+    const [selectedExtraServices, setSelectedExtraServices] = useState<number[]>([]);
+    const [showExtraServicesModal, setShowExtraServicesModal] = useState(false);
 
     const location = useLocation();
     const state = location.state as { serviceId?: number; packId?: number; type?: "service" | "pack" } | null;
@@ -111,12 +229,45 @@ export default function ReservationPage() {
     useEffect(() => {
         async function fetchData() {
             try {
+                // Fetch dynamic services and packages from the database
                 const [activeServices, activePacks] = await Promise.all([
                     api.getActiveServices(),
-                    api.getActivePacks(),
+                    api.getActivePacks()
                 ]);
-                setServices(activeServices);
-                setPacks(activePacks);
+
+                let finalServices = staticServices;
+                let finalPacks = staticPacks;
+
+                if (activeServices && activeServices.length > 0) {
+                    finalServices = activeServices.map(s => {
+                        let icon = "chef";
+                        if (s.slug.includes("salle") || s.slug.includes("reception")) icon = "hall";
+                        else if (s.slug.includes("photo") || s.slug.includes("video") || s.slug.includes("photographe")) icon = "camera";
+                        else if (s.slug.includes("musique") || s.slug.includes("dj")) icon = "music";
+                        else if (s.slug.includes("decor") || s.slug.includes("fleur")) icon = "flower";
+
+                        let tag = undefined;
+                        if (s.slug === "traiteur") tag = "Le plus demandé";
+                        else if (s.slug.includes("salle")) tag = "Exclusif";
+                        else if (s.slug.includes("photo")) tag = "Coup de cœur";
+                        else if (s.slug.includes("dj")) tag = "Ambiance garantie";
+                        else if (s.slug.includes("decor")) tag = "Artisan fleuriste";
+
+                        return {
+                            ...s,
+                            icon,
+                            tag,
+                            image_url: assetUrl(s.image_url || s.image_principale) || null
+                        };
+                    });
+                }
+
+                if (activePacks && activePacks.length > 0) {
+                    finalPacks = activePacks;
+                }
+
+                setServices(finalServices);
+                setPacks(finalPacks);
 
                 // Determine selection based on location state or default
                 if (state && state.type === "pack" && state.packId) {
@@ -126,16 +277,32 @@ export default function ReservationPage() {
                     setReservationType("service");
                     setSelectedItemId(state.serviceId);
                 } else {
-                    if (activeServices.length > 0) {
+                    if (finalServices.length > 0) {
                         setReservationType("service");
-                        setSelectedItemId(activeServices[0].id);
-                    } else if (activePacks.length > 0) {
+                        setSelectedItemId(finalServices[0].id);
+                    } else if (finalPacks.length > 0) {
                         setReservationType("pack");
-                        setSelectedItemId(activePacks[0].id);
+                        setSelectedItemId(finalPacks[0].id);
                     }
                 }
             } catch (err) {
-                console.error("Erreur lors du chargement des données", err);
+                console.error("Erreur lors du chargement des données depuis l'API, utilisation du fallback statique.", err);
+                // Fallback selected item configuration
+                if (state && state.type === "pack" && state.packId) {
+                    setReservationType("pack");
+                    setSelectedItemId(state.packId);
+                } else if (state && state.type === "service" && state.serviceId) {
+                    setReservationType("service");
+                    setSelectedItemId(state.serviceId);
+                } else {
+                    if (staticServices.length > 0) {
+                        setReservationType("service");
+                        setSelectedItemId(staticServices[0].id);
+                    } else if (staticPacks.length > 0) {
+                        setReservationType("pack");
+                        setSelectedItemId(staticPacks[0].id);
+                    }
+                }
             } finally {
                 setLoading(false);
             }
@@ -145,6 +312,7 @@ export default function ReservationPage() {
 
     useEffect(() => {
         setActiveImg(0);
+        setSelectedExtraServices([]);
     }, [selectedItemId, reservationType]);
 
     const selectedService = reservationType === "service" ? services.find(s => s.id === selectedItemId) : null;
@@ -212,14 +380,16 @@ export default function ReservationPage() {
             nom_lieu: form.deja_reserve === "oui" ? form.lieu_nom.trim() || null : null,
             description_projet: form.description_projet.trim() || null,
             ...(reservationType === "service" 
-                ? { service_ids: [selectedItemId] } 
-                : { pack_id: selectedItemId }),
+                ? { service_ids: [selectedItemId, ...selectedExtraServices] } 
+                : { pack_id: selectedItemId, service_ids: selectedExtraServices.length > 0 ? selectedExtraServices : undefined }),
         };
 
         try {
             await api.createReservation(payload);
             setForm(initialFormState);
             setSubmitted(true);
+            // Redirect to the backoffice reservation page
+            navigate("/admin/reservations");
         } catch (error: unknown) {
             if (error instanceof ApiError && error.validationErrors) {
                 const mappedErrors: FieldErrors = {};
@@ -368,7 +538,43 @@ export default function ReservationPage() {
                                 {reservationType === "service" ? "Service sélectionné" : "Package sélectionné"}
                             </p>
                         </div>
-                    </div>
+
+                        <div className="mt-6 rounded-3xl border border-[#fce4ec] bg-[#fff0f6] p-5">
+                            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+                                    <div>
+                                        <h3 className="text-sm font-bold text-[#111]">Services supplémentaires</h3>
+                                        <p className="text-xs text-[#666]">Ajoutez des services à votre package</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowExtraServicesModal(true)}
+                                        className="inline-flex items-center justify-center rounded-full bg-[#e91e8c] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#c2185b]"
+                                    >
+                                        {reservationType === "pack" ? "Ajout de services supplémentaires dans un pack" : "Ajout de services supplémentaires"}
+                                    </button>
+                                </div>
+                                
+                                {selectedExtraServices.length > 0 && (
+                                    <ul className="mt-3 flex flex-col gap-2">
+                                        {selectedExtraServices.map(serviceId => {
+                                            const svc = services.find(s => s.id === serviceId);
+                                            return svc ? (
+                                                <li key={serviceId} className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-sm shadow-sm border border-[#fce4ec]">
+                                                    <span className="font-semibold text-[#333]">{svc.nom}</span>
+                                                    <button 
+                                                        type="button" 
+                                                        onClick={() => setSelectedExtraServices(prev => prev.filter(id => id !== serviceId))}
+                                                        className="text-xs font-bold text-red-500 hover:text-red-700"
+                                                    >
+                                                        Retirer
+                                                    </button>
+                                                </li>
+                                            ) : null;
+                                        })}
+                                    </ul>
+                                )}
+                            </div>
+                        </div>
                 </motion.section>
 
                 <motion.form
@@ -584,6 +790,130 @@ export default function ReservationPage() {
                     )}
                 </motion.form>
             </div>
+
+            {/* Modal for Extra Services */}
+            {showExtraServicesModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="flex max-h-[90vh] w-full max-w-4xl flex-col rounded-3xl bg-white p-6 shadow-2xl"
+                    >
+                        <div className="mb-4 flex items-center justify-between">
+                            <h2 className="text-xl font-black text-[#111]">Tous nos services</h2>
+                            <button 
+                                type="button" 
+                                onClick={() => setShowExtraServicesModal(false)}
+                                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        
+                        <div className="flex-1 overflow-y-auto pr-2 pb-4">
+                            {services.length === 0 ? (
+                                <p className="text-sm text-gray-500">Aucun service supplémentaire disponible.</p>
+                            ) : (
+                                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                    {services.map(service => {
+                                        const isSelected = selectedExtraServices.includes(service.id);
+                                        return (
+                                            <div 
+                                                key={service.id} 
+                                                onClick={() => {
+                                                    if (isSelected) {
+                                                        setSelectedExtraServices(prev => prev.filter(id => id !== service.id));
+                                                    } else {
+                                                        setSelectedExtraServices(prev => [...prev, service.id]);
+                                                    }
+                                                }}
+                                                className="group relative cursor-pointer overflow-hidden rounded-[22px] bg-white transition-all duration-300"
+                                                style={{
+                                                    boxShadow: isSelected
+                                                        ? "0 20px 48px rgba(233, 30, 140, 0.25), 0 6px 20px rgba(0,0,0,0.08)"
+                                                        : "0 4px 20px rgba(0,0,0,0.07)",
+                                                    border: isSelected ? "2.5px solid #e91e8c" : "2.5px solid transparent",
+                                                }}
+                                            >
+                                                {/* Image inside card */}
+                                                <div className="relative h-[160px] overflow-hidden bg-gray-100">
+                                                    <img
+                                                        src={service.image_url || verre}
+                                                        alt={service.nom}
+                                                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
+                                                    
+                                                    {/* Pink circular icon badge */}
+                                                    <div className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#e91e8c] to-[#f06292] shadow-md shadow-[#e91e8c]/40">
+                                                        <Icon d={icons[service.icon as keyof typeof icons] || icons.chef} size={18} stroke="#fff" />
+                                                    </div>
+
+                                                    {/* Selection pill */}
+                                                    <div className={`absolute bottom-3 right-3 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white text-xs font-bold text-white shadow-md transition-all duration-200 ${
+                                                        isSelected ? "bg-[#e91e8c]" : "bg-black/40 backdrop-blur-sm"
+                                                    }`}>
+                                                        {isSelected ? "✓" : ""}
+                                                    </div>
+
+                                                    {/* Tag Badge */}
+                                                    {service.tag && (
+                                                        <div className="absolute right-3 top-3 rounded-full border border-white/15 bg-black/60 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
+                                                            {service.tag}
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Card body */}
+                                                <div className="p-4">
+                                                    <h3 className="font-serif text-base font-black text-[#1a0a14] mb-1">
+                                                        {service.nom}
+                                                    </h3>
+                                                    <p className="text-xs leading-relaxed text-[#888] mb-3 line-clamp-2 h-[34px]">
+                                                        {service.description_courte}
+                                                    </p>
+                                                    <div className="flex items-center justify-between border-t border-[#fce4ec]/40 pt-3">
+                                                        <div>
+                                                            <span className="block text-[9px] uppercase tracking-wider text-[#bbb]">À partir de</span>
+                                                            <span className="text-sm font-black text-[#e91e8c]">
+                                                                {service.prix_formate || (service.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(service.prix_indicatif) + " Ar" : "Sur devis")}
+                                                            </span>
+                                                        </div>
+                                                        <span className={`rounded-full px-3 py-1 text-[10px] font-bold transition-all ${
+                                                            isSelected 
+                                                                ? "bg-[#fff0f7] text-[#e91e8c] border border-[#fce4ec]" 
+                                                                : "bg-gray-50 text-gray-500 border border-gray-100"
+                                                        }`}>
+                                                            {isSelected ? "Sélectionné" : "Ajouter"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button
+                                type="button"
+                                onClick={() => setShowExtraServicesModal(false)}
+                                className="rounded-full border border-gray-200 px-6 py-2.5 text-sm font-bold text-gray-600 transition hover:bg-gray-50"
+                            >
+                                Fermer
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setShowExtraServicesModal(false)}
+                                className="rounded-full bg-[#e91e8c] px-6 py-2.5 text-sm font-bold text-white transition hover:bg-[#c2185b]"
+                            >
+                                Valider
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
         </div>
     );
 }
