@@ -1,8 +1,70 @@
 import { useState, useEffect } from "react";
+import { motion } from "motion/react";
 import type { Reservation, Pack, Service } from "../lib/api";
 import { api } from "../lib/api";
-import { Search, Pencil, Trash2, Eye, X, Loader2, CalendarDays, MapPin, Users, Wallet, Package } from "lucide-react";
 import { getErrorMessage } from "@/shared/errors";
+import { assetUrl } from "@/shared/api";
+
+// SVG Icon Helper & paths
+type IconProps = {
+  d: string;
+  size?: number;
+  stroke?: string;
+  strokeWidth?: number;
+};
+
+const Icon = ({ d, size = 22, stroke = "currentColor", strokeWidth = 1.8 }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+         stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d={d} />
+    </svg>
+);
+
+const icons = {
+  chef:     "M3 11l19-9-9 19-2-8-8-2z",
+  hall:     "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z M9 22V12h6v10",
+  camera:   "M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z M12 17a4 4 0 100-8 4 4 0 000 8z",
+  music:    "M9 18V5l12-2v13 M6 21a3 3 0 100-6 3 3 0 000 6z M18 19a3 3 0 100-6 3 3 0 000 6z",
+  flower:   "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
+  close:    "M18 6L6 18M6 6l12 12",
+  arrow:    "M5 12h14M12 5l7 7-7 7",
+  check:    "M20 6L9 17l-5-5",
+  user:     "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2",
+  calendar: "M8 2v4M16 2v4M3 10h18",
+  mapPin:   "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z M12 13a3 3 0 100-6 3 3 0 000 6z",
+  users:    "M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2 M23 21v-2a4 4 0 00-3-3.87 M16 3.13a4 4 0 010 7.75",
+  wallet:   "M21 12V7H5a2 2 0 010-4h14v4 M3 5v14a2 2 0 002 2h16v-5",
+  package:  "M16.5 9.4l-9-5.19M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z M3.27 6.96L12 12.01l8.73-5.05 M12 22.08V12",
+  edit:     "M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7 M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z",
+  trash:    "M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2",
+  eye:      "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 100 6 3 3 0 000-6z",
+  search:   "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
+  loader:   "M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83",
+};
+
+const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; dot: string }> = {
+  EN_ATTENTE:   { label: "En attente",    bg: "bg-amber-50",   text: "text-amber-700",   dot: "bg-amber-400" },
+  CONTACTE:     { label: "Contacté",      bg: "bg-blue-50",    text: "text-blue-700",    dot: "bg-blue-400" },
+  DEVIS_ENVOYE: { label: "Devis envoyé",  bg: "bg-purple-50",  text: "text-purple-700",  dot: "bg-purple-400" },
+  CONFIRME:     { label: "Confirmé",      bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-400" },
+  ANNULE:       { label: "Annulé",        bg: "bg-red-50",     text: "text-red-600",     dot: "bg-red-400" },
+  TERMINE:      { label: "Terminé",       bg: "bg-gray-100",   text: "text-gray-600",    dot: "bg-gray-400" },
+};
+
+const formatMGA = (n: number) => new Intl.NumberFormat("fr-FR").format(n) + " MGA";
+
+const cfg = (s: string) => STATUS_CONFIG[s] ?? { label: s, bg: "bg-gray-50", text: "text-gray-600", dot: "bg-gray-400" };
+
+// Helper pour obtenir l'icône d'un service
+const getServiceIcon = (serviceName: string) => {
+  const name = serviceName.toLowerCase();
+  if (name.includes("traiteur") || name.includes("cuisine")) return "chef";
+  if (name.includes("salle") || name.includes("reception") || name.includes("lieu")) return "hall";
+  if (name.includes("photo") || name.includes("video") || name.includes("photographe") || name.includes("caméra")) return "camera";
+  if (name.includes("musique") || name.includes("dj") || name.includes("animation")) return "music";
+  if (name.includes("decor") || name.includes("fleur") || name.includes("florale")) return "flower";
+  return "chef";
+};
 
 export default function Reservations() {
   const [loading, setLoading] = useState(true);
@@ -79,7 +141,7 @@ export default function Reservations() {
 
   const toggleService = (id: number) => {
     setSelectedServices((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
@@ -132,424 +194,515 @@ export default function Reservations() {
     return s.includes(filter.toLowerCase()) && (!statusFilter || r.statut === statusFilter);
   });
 
-  const formatMGA = (n: number) => new Intl.NumberFormat("fr-FR").format(n) + " MGA";
-
-  const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; dot: string }> = {
-    EN_ATTENTE:   { label: "En attente",    bg: "bg-amber-50",   text: "text-amber-700",   dot: "bg-amber-400" },
-    CONTACTE:     { label: "Contacté",      bg: "bg-blue-50",    text: "text-blue-700",    dot: "bg-blue-400" },
-    DEVIS_ENVOYE: { label: "Devis envoyé",  bg: "bg-purple-50",  text: "text-purple-700",  dot: "bg-purple-400" },
-    CONFIRME:     { label: "Confirmé",      bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-400" },
-    ANNULE:       { label: "Annulé",        bg: "bg-red-50",     text: "text-red-600",     dot: "bg-red-400" },
-    TERMINE:      { label: "Terminé",       bg: "bg-gray-100",   text: "text-gray-600",    dot: "bg-gray-400" },
-  };
-
-  const cfg = (s: string) => STATUS_CONFIG[s] ?? { label: s, bg: "bg-gray-50", text: "text-gray-600", dot: "bg-gray-400" };
-
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="font-serif text-3xl font-bold text-[#664a24]">Réservations</h2>
-        <p className="text-gray-500 mt-1">
-          {reservations.length} demande{reservations.length > 1 ? "s" : ""} au total
-        </p>
-      </div>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl text-sm">
-          {error}
-        </div>
-      )}
-
-      {loading ? (
-        <div className="flex flex-col items-center justify-center min-h-[300px] gap-3">
-          <Loader2 className="w-8 h-8 text-[#d4a843] animate-spin" />
-          <p className="text-sm text-gray-500">Chargement des réservations...</p>
-        </div>
-      ) : (
-        <>
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3">
-            <div className="relative flex-1 min-w-[260px] max-w-md">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Rechercher par client, ville..."
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 border border-[#f5e8c2] rounded-xl text-sm bg-white focus:outline-none focus:border-[#d4a843]"
-              />
-            </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2.5 border border-[#f5e8c2] rounded-xl text-sm bg-white focus:outline-none focus:border-[#d4a843]"
-            >
-              <option value="">Tous les statuts</option>
-              {Object.entries(STATUS_CONFIG).map(([val, c]) => (
-                <option key={val} value={val}>{c.label}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Cards */}
-          {filtered.length === 0 ? (
-            <div className="text-center py-16 text-gray-400 text-sm">Aucune réservation trouvée.</div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-              {filtered.map((r) => {
-                const sc = cfg(r.statut);
-                return (
-                  <div
-                    key={r.id}
-                    className="bg-white rounded-2xl border border-[#edd694]/25 shadow-sm hover:shadow-md transition-shadow flex flex-col"
-                  >
-                    {/* Card Header */}
-                    <div className="p-5 border-b border-[#fdfbf7] flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="font-bold text-gray-900 text-base truncate">
-                          {r.client.prenom} {r.client.nom}
-                        </p>
-                        <p className="text-xs text-gray-500 truncate mt-0.5">{r.client.email}</p>
-                        <p className="text-xs text-gray-400">{r.client.telephone}</p>
-                      </div>
-                      <span className={`shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${sc.bg} ${sc.text}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
-                        {sc.label}
-                      </span>
-                    </div>
-
-                    {/* Card Body */}
-                    <div className="p-5 flex-1 grid grid-cols-2 gap-3">
-                      <div className="flex items-center gap-2">
-                        <CalendarDays size={14} className="text-[#b88a2d] shrink-0" />
-                        <div>
-                          <p className="text-[10px] text-gray-400 uppercase font-semibold">Date</p>
-                          <p className="text-xs font-medium text-gray-700">{r.details_mariage.date}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin size={14} className="text-[#b88a2d] shrink-0" />
-                        <div>
-                          <p className="text-[10px] text-gray-400 uppercase font-semibold">Ville</p>
-                          <p className="text-xs font-medium text-gray-700 truncate">{r.details_mariage.ville}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users size={14} className="text-[#b88a2d] shrink-0" />
-                        <div>
-                          <p className="text-[10px] text-gray-400 uppercase font-semibold">Invités</p>
-                          <p className="text-xs font-medium text-gray-700">{r.details_mariage.nombre_invites}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Wallet size={14} className="text-[#b88a2d] shrink-0" />
-                        <div>
-                          <p className="text-[10px] text-gray-400 uppercase font-semibold">Budget</p>
-                          <p className="text-xs font-medium text-gray-700">
-                            {formatMGA(parseFloat(r.details_mariage.budget) || 0)}
-                          </p>
-                        </div>
-                      </div>
-                      {r.pack && (
-                        <div className="col-span-2 flex items-center gap-2">
-                          <Package size={14} className="text-[#b88a2d] shrink-0" />
-                          <div>
-                            <p className="text-[10px] text-gray-400 uppercase font-semibold">Pack</p>
-                            <p className="text-xs font-medium text-gray-700 truncate">{r.pack.nom}</p>
-                          </div>
-                        </div>
-                      )}
-                      {r.services && r.services.length > 0 && (
-                        <div className="col-span-2">
-                          <p className="text-[10px] text-gray-400 uppercase font-semibold mb-1.5">Services demandés</p>
-                          <div className="flex flex-wrap gap-1">
-                            {r.services.map((s) => (
-                              <span key={s.id} className="px-2 py-0.5 bg-[#fdfbf7] text-[#946c25] text-[10px] font-medium rounded-md border border-[#edd694]/30">
-                                {s.nom}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Quick status buttons */}
-                    <div className="px-5 pb-3 flex flex-wrap gap-1.5">
-                      {r.statut === "EN_ATTENTE" && (
-                        <button onClick={() => quickStatus(r.id, "CONTACTE")}
-                          className="px-2.5 py-1 text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
-                          Contacter
-                        </button>
-                      )}
-                      {r.statut === "CONTACTE" && (
-                        <button onClick={() => quickStatus(r.id, "DEVIS_ENVOYE")}
-                          className="px-2.5 py-1 text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors">
-                          Devis envoyé
-                        </button>
-                      )}
-                      {r.statut === "DEVIS_ENVOYE" && (
-                        <button onClick={() => quickStatus(r.id, "CONFIRME")}
-                          className="px-2.5 py-1 text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors">
-                          ✓ Confirmer
-                        </button>
-                      )}
-                      {r.statut === "CONFIRME" && (
-                        <button onClick={() => quickStatus(r.id, "TERMINE")}
-                          className="px-2.5 py-1 text-[10px] font-semibold bg-gray-100 text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-200 transition-colors">
-                          Terminer
-                        </button>
-                      )}
-                      {r.statut !== "ANNULE" && r.statut !== "TERMINE" && (
-                        <button onClick={() => quickStatus(r.id, "ANNULE")}
-                          className="px-2.5 py-1 text-[10px] font-semibold bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 transition-colors">
-                          Annuler
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Card Footer — actions */}
-                    <div className="px-5 pb-5 flex items-center gap-2 border-t border-[#fdfbf7] pt-3">
-                      <button
-                        onClick={() => setDetailModal(r)}
-                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-[#fdfbf7] hover:bg-[#f5e8c2]/40 border border-[#edd694]/30 rounded-xl text-xs font-semibold text-[#946c25] transition-colors"
-                      >
-                        <Eye size={13} />
-                        Voir détail
-                      </button>
-                      <button
-                        onClick={() => openEdit(r)}
-                        className="p-2 hover:bg-[#fbf5e6] rounded-xl text-[#b88a2d] transition-colors border border-[#edd694]/20"
-                        title="Modifier"
-                      >
-                        <Pencil size={15} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(r.id)}
-                        className="p-2 hover:bg-red-50 rounded-xl text-red-400 transition-colors border border-red-100"
-                        title="Supprimer"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Detail Modal */}
-      {detailModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-[#f5e8c2]">
-            <div className="flex items-center justify-between p-6 border-b border-[#fdfbf7]">
-              <h3 className="font-serif text-xl font-bold text-[#664a24]">
-                {detailModal.client.prenom} {detailModal.client.nom}
-              </h3>
-              <button onClick={() => setDetailModal(null)} className="p-2 hover:bg-[#fdfbf7] rounded-lg text-gray-400">
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-6">
-              <div className="flex items-center justify-between flex-wrap gap-3 bg-[#fdfbf7] border border-[#f5e8c2]/50 p-4 rounded-xl">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-[#946c25] block mb-1">Statut</span>
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-semibold uppercase ${cfg(detailModal.statut).bg} ${cfg(detailModal.statut).text}`}>
-                    {cfg(detailModal.statut).label}
-                  </span>
-                </div>
-                <div className="text-right">
-                  <span className="text-[10px] uppercase font-bold text-[#946c25] block mb-1">Date célébration</span>
-                  <span className="text-sm font-semibold text-gray-800">{detailModal.details_mariage.date}</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <h4 className="font-serif text-sm font-bold text-[#664a24] border-b border-gray-100 pb-1.5">Contact</h4>
-                  <div className="text-sm space-y-1">
-                    <p className="text-gray-500">Téléphone : <span className="font-medium text-gray-800">{detailModal.client.telephone}</span></p>
-                    <p className="text-gray-500">Email : <span className="font-medium text-gray-800">{detailModal.client.email}</span></p>
-                    <p className="text-gray-500">Ville : <span className="font-medium text-gray-800">{detailModal.details_mariage.ville}</span></p>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <h4 className="font-serif text-sm font-bold text-[#664a24] border-b border-gray-100 pb-1.5">Détails</h4>
-                  <div className="text-sm space-y-1">
-                    <p className="text-gray-500">Invités : <span className="font-medium text-gray-800">{detailModal.details_mariage.nombre_invites} personnes</span></p>
-                    <p className="text-gray-500">Budget : <span className="font-medium text-gray-800">{formatMGA(parseFloat(detailModal.details_mariage.budget) || 0)}</span></p>
-                    <p className="text-gray-500">Thème : <span className="font-medium text-gray-800">{detailModal.details_mariage.theme || "—"}</span></p>
-                    <p className="text-gray-500">Couleurs : <span className="font-medium text-gray-800">{detailModal.details_mariage.couleurs || "—"}</span></p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-serif text-sm font-bold text-[#664a24] border-b border-gray-100 pb-1.5 mb-2">Lieu</h4>
-                <p className="text-sm text-gray-700">
-                  {detailModal.lieu.deja_reserve
-                    ? <span>Déjà réservé : <strong className="text-[#664a24]">{detailModal.lieu.nom}</strong></span>
-                    : <span className="text-gray-500 italic">Recherche à la charge de l'agence.</span>}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-serif text-sm font-bold text-[#664a24] border-b border-gray-100 pb-1.5 mb-2">Pack choisi</h4>
-                  {detailModal.pack ? (
-                    <div className="bg-[#fdfbf7] p-3 rounded-lg border border-[#f5e8c2]/50 text-sm">
-                      <p className="font-semibold text-gray-800">{detailModal.pack.nom}</p>
-                      <p className="text-[#b88a2d] font-bold text-xs mt-1">{formatMGA(detailModal.pack.prix)}</p>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-gray-400 italic">Aucun forfait choisi.</p>
-                  )}
-                </div>
-                <div>
-                  <h4 className="font-serif text-sm font-bold text-[#664a24] border-b border-gray-100 pb-1.5 mb-2">Prestations</h4>
-                  <div className="flex flex-wrap gap-1.5">
-                    {detailModal.services && detailModal.services.length > 0
-                      ? detailModal.services.map((s) => (
-                          <span key={s.id} className="px-2.5 py-1 bg-[#fdfbf7] text-[#946c25] text-xs rounded-lg border border-[#edd694]/30">{s.nom}</span>
-                        ))
-                      : <span className="text-xs text-gray-400 italic">Aucune prestation.</span>}
-                  </div>
-                </div>
-              </div>
-
-              {detailModal.description_projet && (
-                <div>
-                  <h4 className="font-serif text-sm font-bold text-[#664a24] border-b border-gray-100 pb-1.5 mb-2">Description du projet</h4>
-                  <p className="text-sm text-gray-700 bg-gray-50 p-4 rounded-xl italic whitespace-pre-line leading-relaxed">
-                    "{detailModal.description_projet}"
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-end p-6 border-t border-gray-100">
-              <button onClick={() => setDetailModal(null)}
-                className="px-5 py-2.5 bg-[#b88a2d] hover:bg-[#946c25] text-white rounded-xl text-sm font-semibold transition-colors">
-                Fermer
-              </button>
-            </div>
+      <div className="mx-auto max-w-[1280px] px-4 py-8 md:px-8 md:py-12">
+        {/* Header */}
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.24em] text-[#b73f68]">
+              Backoffice
+            </p>
+            <h1 className="mt-3 text-3xl font-black leading-tight md:text-4xl">
+              Réservations
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-[#555] md:text-base">
+              {reservations.length} demande{reservations.length > 1 ? "s" : ""} au total
+            </p>
           </div>
         </div>
-      )}
 
-      {/* Edit Modal */}
-      {modal === "edit" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto border border-[#f5e8c2]">
-            <div className="flex items-center justify-between p-6 border-b border-[#fdfbf7]">
-              <h3 className="font-serif text-xl font-semibold text-[#664a24]">Modifier la réservation #{currentId}</h3>
-              <button onClick={() => setModal(null)} className="p-2 hover:bg-[#fdfbf7] rounded-lg text-gray-400"><X size={20} /></button>
+        {error && (
+            <div className="mb-6 rounded-3xl bg-red-50 px-6 py-4 text-sm text-red-700 border border-red-100">
+              {error}
             </div>
+        )}
 
-            <form onSubmit={save} className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { label: "Nom", value: nom, set: setNom, required: true },
-                  { label: "Prénom", value: prenom, set: setPrenom, required: true },
-                  { label: "Téléphone", value: telephone, set: setTelephone, required: true },
-                  { label: "Email", value: email, set: setEmail, required: true, type: "email" },
-                  { label: "Ville", value: ville, set: setVille, required: true },
-                  { label: "Budget estimé", value: budgetEstime, set: setBudgetEstime, required: true },
-                  { label: "Thème du mariage", value: themeMariage, set: setThemeMariage },
-                  { label: "Couleurs principales", value: couleursPrincipales, set: setCouleursPrincipales },
-                ].map(({ label, value, set, required, type }) => (
-                  <div key={label}>
-                    <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">{label}</label>
-                    <input type={type || "text"} required={required} value={value}
-                      onChange={(e) => set(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-[#f5e8c2] rounded-xl text-sm focus:outline-none focus:border-[#d4a843]" />
-                  </div>
-                ))}
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Date du mariage</label>
-                  <input type="date" required value={dateMariage} onChange={(e) => setDateMariage(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-[#f5e8c2] rounded-xl text-sm focus:outline-none focus:border-[#d4a843]" />
+        {loading ? (
+            <div className="flex min-h-[300px] flex-col items-center justify-center gap-3">
+              <svg width={40} height={40} viewBox="0 0 24 24" fill="none" stroke="#e91e8c" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+                <path d={icons.loader} />
+              </svg>
+              <p className="text-sm text-gray-500">Chargement des réservations...</p>
+            </div>
+        ) : (
+            <>
+              {/* Filters */}
+              <div className="mb-6 flex flex-wrap gap-3">
+                <div className="relative flex-1 min-w-[260px] max-w-md">
+                  <Icon d={icons.search} size={16} stroke="#aaa" strokeWidth={2} />
+                  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <path d={icons.search} />
+                  </svg>
+                  <input
+                      type="text"
+                      placeholder="Rechercher par client, ville..."
+                      value={filter}
+                      onChange={(e) => setFilter(e.target.value)}
+                      className="w-full rounded-3xl border border-[#eee] bg-white pl-12 pr-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                  />
                 </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Nombre d'invités</label>
-                  <input type="number" required value={nombreInvites} onChange={(e) => setNombreInvites(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-[#f5e8c2] rounded-xl text-sm focus:outline-none focus:border-[#d4a843]" />
-                </div>
-
-                <div className="md:col-span-2 space-y-2">
-                  <label className="flex items-center gap-2 text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer">
-                    <input type="checkbox" checked={lieuDejaReserve} onChange={(e) => setLieuDejaReserve(e.target.checked)}
-                      className="w-4 h-4 rounded text-[#b88a2d] border-[#f5e8c2]" />
-                    Lieu déjà réservé ?
-                  </label>
-                  {lieuDejaReserve && (
-                    <input type="text" placeholder="Nom du lieu" required value={nomLieu} onChange={(e) => setNomLieu(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-[#f5e8c2] rounded-xl text-sm focus:outline-none focus:border-[#d4a843]" />
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Pack</label>
-                  <select value={packId} onChange={(e) => setPackId(e.target.value ? Number(e.target.value) : "")}
-                    className="w-full px-4 py-2.5 border border-[#f5e8c2] rounded-xl text-sm bg-white focus:outline-none focus:border-[#d4a843]">
-                    <option value="">Aucun pack</option>
-                    {packs.map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Statut</label>
-                  <select value={statut} onChange={(e) => setStatut(e.target.value as Reservation["statut"])}
-                    className="w-full px-4 py-2.5 border border-[#f5e8c2] rounded-xl text-sm bg-white focus:outline-none focus:border-[#d4a843]">
-                    {Object.entries(STATUS_CONFIG).map(([val, c]) => (
+                <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                >
+                  <option value="">Tous les statuts</option>
+                  {Object.entries(STATUS_CONFIG).map(([val, c]) => (
                       <option key={val} value={val}>{c.label}</option>
-                    ))}
-                  </select>
-                </div>
+                  ))}
+                </select>
+              </div>
 
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">Description du projet</label>
-                  <textarea rows={3} value={descriptionProjet} onChange={(e) => setDescriptionProjet(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-[#f5e8c2] rounded-xl text-sm resize-none focus:outline-none focus:border-[#d4a843]" />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Prestations additionnelles</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-3 bg-[#fdfbf7]/50 rounded-xl border border-[#f5e8c2]/50">
-                    {services.filter((s) => s.statut === "ACTIF").map((s) => {
-                      const checked = selectedServices.includes(s.id);
+              {/* Cards */}
+              {filtered.length === 0 ? (
+                  <div className="flex min-h-[300px] flex-col items-center justify-center text-center text-gray-400">
+                    <div className="rounded-full bg-gray-50 p-6 mb-4">
+                      <Icon d={icons.search} size={32} stroke="#ccc" />
+                    </div>
+                    <p className="text-sm font-medium">Aucune réservation trouvée</p>
+                    <p className="text-xs text-gray-400 mt-1">Essayez de modifier vos filtres</p>
+                  </div>
+              ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                    {filtered.map((r) => {
+                      const sc = cfg(r.statut);
                       return (
-                        <label key={s.id} className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors border ${checked ? "bg-[#f5e8c2]/30 border-[#d4a843]" : "bg-white border-transparent hover:border-[#edd694]/30"}`}>
-                          <input type="checkbox" checked={checked} onChange={() => toggleService(s.id)}
-                            className="w-4 h-4 rounded text-[#b88a2d] border-[#f5e8c2]" />
-                          <span className="text-xs text-gray-700 truncate">{s.nom}</span>
-                        </label>
+                          <motion.div
+                              key={r.id}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3 }}
+                              className="group overflow-hidden rounded-[28px] bg-white shadow-lg transition-all duration-300 hover:shadow-2xl border border-[#fce4ec]/40"
+                          >
+                            {/* Card Header */}
+                            <div className="p-5 border-b border-[#fce4ec]/30 flex items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <p className="font-serif text-lg font-black text-[#1a0a14] truncate">
+                                  {r.client.prenom} {r.client.nom}
+                                </p>
+                                <p className="text-xs text-gray-500 truncate mt-0.5">{r.client.email}</p>
+                                <p className="text-xs text-gray-400">{r.client.telephone}</p>
+                              </div>
+                              <span className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase ${sc.bg} ${sc.text} border border-current/20`}>
+                                                <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
+                                {sc.label}
+                                            </span>
+                            </div>
+
+                            {/* Card Body */}
+                            <div className="p-5 flex-1 grid grid-cols-2 gap-3">
+                              <div className="flex items-center gap-2">
+                                <Icon d={icons.calendar} size={14} stroke="#e91e8c" />
+                                <div>
+                                  <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wider">Date</p>
+                                  <p className="text-xs font-medium text-gray-700">{r.details_mariage.date}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Icon d={icons.mapPin} size={14} stroke="#e91e8c" />
+                                <div>
+                                  <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wider">Ville</p>
+                                  <p className="text-xs font-medium text-gray-700 truncate">{r.details_mariage.ville}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Icon d={icons.users} size={14} stroke="#e91e8c" />
+                                <div>
+                                  <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wider">Invités</p>
+                                  <p className="text-xs font-medium text-gray-700">{r.details_mariage.nombre_invites}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Icon d={icons.wallet} size={14} stroke="#e91e8c" />
+                                <div>
+                                  <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wider">Budget</p>
+                                  <p className="text-xs font-medium text-gray-700">
+                                    {formatMGA(parseFloat(r.details_mariage.budget) || 0)}
+                                  </p>
+                                </div>
+                              </div>
+                              {r.pack && (
+                                  <div className="col-span-2 flex items-center gap-2">
+                                    <Icon d={icons.package} size={14} stroke="#e91e8c" />
+                                    <div>
+                                      <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wider">Pack</p>
+                                      <p className="text-xs font-medium text-gray-700 truncate">{r.pack.nom}</p>
+                                    </div>
+                                  </div>
+                              )}
+                              {r.services && r.services.length > 0 && (
+                                  <div className="col-span-2">
+                                    <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wider mb-2">Services demandés</p>
+                                    <div className="flex flex-wrap gap-1.5">
+                                      {r.services.map((s) => (
+                                          <span key={s.id} className="flex items-center gap-1.5 px-2.5 py-1 bg-[#fdf6f9] text-[#b73f68] text-[10px] font-medium rounded-full border border-[#fce4ec]/50">
+                                                                <Icon d={icons[getServiceIcon(s.nom) as keyof typeof icons] || icons.chef} size={10} stroke="#b73f68" />
+                                            {s.nom}
+                                                            </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                              )}
+                            </div>
+
+                            {/* Quick status buttons */}
+                            <div className="px-5 pb-2 flex flex-wrap gap-1.5">
+                              {r.statut === "EN_ATTENTE" && (
+                                  <button onClick={() => quickStatus(r.id, "CONTACTE")}
+                                          className="px-3 py-1.5 text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 rounded-full hover:bg-blue-100 transition-colors">
+                                    Contacter
+                                  </button>
+                              )}
+                              {r.statut === "CONTACTE" && (
+                                  <button onClick={() => quickStatus(r.id, "DEVIS_ENVOYE")}
+                                          className="px-3 py-1.5 text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200 rounded-full hover:bg-purple-100 transition-colors">
+                                    Devis envoyé
+                                  </button>
+                              )}
+                              {r.statut === "DEVIS_ENVOYE" && (
+                                  <button onClick={() => quickStatus(r.id, "CONFIRME")}
+                                          className="px-3 py-1.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full hover:bg-emerald-100 transition-colors">
+                                    ✓ Confirmer
+                                  </button>
+                              )}
+                              {r.statut === "CONFIRME" && (
+                                  <button onClick={() => quickStatus(r.id, "TERMINE")}
+                                          className="px-3 py-1.5 text-[10px] font-semibold bg-gray-100 text-gray-600 border border-gray-200 rounded-full hover:bg-gray-200 transition-colors">
+                                    Terminer
+                                  </button>
+                              )}
+                              {r.statut !== "ANNULE" && r.statut !== "TERMINE" && (
+                                  <button onClick={() => quickStatus(r.id, "ANNULE")}
+                                          className="px-3 py-1.5 text-[10px] font-semibold bg-red-50 text-red-600 border border-red-200 rounded-full hover:bg-red-100 transition-colors">
+                                    Annuler
+                                  </button>
+                              )}
+                            </div>
+
+                            {/* Card Footer — actions */}
+                            <div className="px-5 pb-5 flex items-center gap-2 border-t border-[#fce4ec]/30 pt-3">
+                              <button
+                                  onClick={() => setDetailModal(r)}
+                                  className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#fdf6f9] hover:bg-[#fce4ec] border border-[#fce4ec] rounded-full text-xs font-bold text-[#b73f68] transition-colors"
+                              >
+                                <Icon d={icons.eye} size={13} stroke="#b73f68" />
+                                Voir détail
+                              </button>
+                              <button
+                                  onClick={() => openEdit(r)}
+                                  className="flex h-10 w-10 items-center justify-center hover:bg-[#fdf6f9] rounded-full text-[#b73f68] transition-colors border border-[#fce4ec]/30"
+                                  title="Modifier"
+                              >
+                                <Icon d={icons.edit} size={15} stroke="#b73f68" />
+                              </button>
+                              <button
+                                  onClick={() => handleDelete(r.id)}
+                                  className="flex h-10 w-10 items-center justify-center hover:bg-red-50 rounded-full text-red-400 transition-colors border border-red-100"
+                                  title="Supprimer"
+                              >
+                                <Icon d={icons.trash} size={15} stroke="#f87171" />
+                              </button>
+                            </div>
+                          </motion.div>
                       );
                     })}
                   </div>
-                </div>
-              </div>
+              )}
+            </>
+        )}
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                <button type="button" onClick={() => setModal(null)}
-                  className="px-5 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
-                  Annuler
-                </button>
-                <button type="submit" disabled={submitting}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-[#b88a2d] hover:bg-[#946c25] text-white rounded-xl text-sm font-semibold transition-colors shadow-sm disabled:opacity-50">
-                  {submitting && <Loader2 size={16} className="animate-spin" />}
-                  Sauvegarder
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
+        {/* Detail Modal */}
+        {detailModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+              <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-[#fce4ec]/30"
+              >
+                <div className="flex items-center justify-between p-6 border-b border-[#fce4ec]/30">
+                  <h3 className="font-serif text-xl font-black text-[#1a0a14]">
+                    {detailModal.client.prenom} {detailModal.client.nom}
+                  </h3>
+                  <button onClick={() => setDetailModal(null)} className="flex h-10 w-10 items-center justify-center hover:bg-[#fdf6f9] rounded-full text-gray-400 transition-colors">
+                    <Icon d={icons.close} size={20} />
+                  </button>
+                </div>
+
+                <div className="p-6 space-y-6">
+                  <div className="flex items-center justify-between flex-wrap gap-3 bg-[#fdf6f9] border border-[#fce4ec]/50 p-5 rounded-3xl">
+                    <div>
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-[#b73f68] block mb-1">Statut</span>
+                      <span className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase ${cfg(detailModal.statut).bg} ${cfg(detailModal.statut).text} border border-current/20`}>
+                                        {cfg(detailModal.statut).label}
+                                    </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-[#b73f68] block mb-1">Date célébration</span>
+                      <span className="text-sm font-semibold text-gray-800">{detailModal.details_mariage.date}</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5">Contact</h4>
+                      <div className="text-sm space-y-2">
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <Icon d={icons.user} size={14} stroke="#aaa" />
+                          <span className="font-medium text-gray-800">{detailModal.client.telephone}</span>
+                        </p>
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <Icon d={icons.user} size={14} stroke="#aaa" />
+                          <span className="font-medium text-gray-800">{detailModal.client.email}</span>
+                        </p>
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <Icon d={icons.mapPin} size={14} stroke="#aaa" />
+                          <span className="font-medium text-gray-800">{detailModal.details_mariage.ville}</span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5">Détails</h4>
+                      <div className="text-sm space-y-2">
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <Icon d={icons.users} size={14} stroke="#aaa" />
+                          <span className="font-medium text-gray-800">{detailModal.details_mariage.nombre_invites} personnes</span>
+                        </p>
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <Icon d={icons.wallet} size={14} stroke="#aaa" />
+                          <span className="font-medium text-gray-800">{formatMGA(parseFloat(detailModal.details_mariage.budget) || 0)}</span>
+                        </p>
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <Icon d={icons.flower} size={14} stroke="#aaa" />
+                          <span className="font-medium text-gray-800">{detailModal.details_mariage.theme || "—"}</span>
+                        </p>
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <Icon d={icons.flower} size={14} stroke="#aaa" />
+                          <span className="font-medium text-gray-800">{detailModal.details_mariage.couleurs || "—"}</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5 mb-2">Lieu</h4>
+                    <p className="text-sm text-gray-700">
+                      {detailModal.lieu.deja_reserve
+                          ? <span>Déjà réservé : <strong className="text-[#b73f68]">{detailModal.lieu.nom}</strong></span>
+                          : <span className="text-gray-500 italic">Recherche à la charge de l'agence.</span>}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5 mb-2">Pack choisi</h4>
+                      {detailModal.pack ? (
+                          <div className="bg-[#fdf6f9] p-4 rounded-3xl border border-[#fce4ec]/50 text-sm">
+                            <p className="font-semibold text-gray-800">{detailModal.pack.nom}</p>
+                            <p className="text-[#e91e8c] font-bold text-xs mt-1">{formatMGA(detailModal.pack.prix)}</p>
+                          </div>
+                      ) : (
+                          <p className="text-xs text-gray-400 italic">Aucun forfait choisi.</p>
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5 mb-2">Prestations</h4>
+                      <div className="flex flex-wrap gap-1.5">
+                        {detailModal.services && detailModal.services.length > 0
+                            ? detailModal.services.map((s) => (
+                                <span key={s.id} className="flex items-center gap-1.5 px-2.5 py-1 bg-[#fdf6f9] text-[#b73f68] text-xs rounded-full border border-[#fce4ec]/50">
+                                                    <Icon d={icons[getServiceIcon(s.nom) as keyof typeof icons] || icons.chef} size={10} stroke="#b73f68" />
+                                  {s.nom}
+                                                </span>
+                            ))
+                            : <span className="text-xs text-gray-400 italic">Aucune prestation.</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {detailModal.description_projet && (
+                      <div>
+                        <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5 mb-2">Description du projet</h4>
+                        <p className="text-sm text-gray-700 bg-[#fdf6f9] p-5 rounded-3xl italic whitespace-pre-line leading-relaxed border border-[#fce4ec]/30">
+                          "{detailModal.description_projet}"
+                        </p>
+                      </div>
+                  )}
+                </div>
+
+                <div className="flex justify-end p-6 border-t border-[#fce4ec]/30">
+                  <button onClick={() => setDetailModal(null)}
+                          className="rounded-full bg-gradient-to-r from-[#e91e8c] to-[#c2185b] px-8 py-3 text-sm font-bold text-white transition hover:opacity-95">
+                    Fermer
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+        )}
+
+        {/* Edit Modal */}
+        {modal === "edit" && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+              <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto border border-[#fce4ec]/30"
+              >
+                <div className="flex items-center justify-between p-6 border-b border-[#fce4ec]/30">
+                  <h3 className="font-serif text-xl font-black text-[#1a0a14]">Modifier la réservation #{currentId}</h3>
+                  <button onClick={() => setModal(null)} className="flex h-10 w-10 items-center justify-center hover:bg-[#fdf6f9] rounded-full text-gray-400 transition-colors">
+                    <Icon d={icons.close} size={20} />
+                  </button>
+                </div>
+
+                <form onSubmit={save} className="p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { label: "Nom", value: nom, set: setNom, required: true },
+                      { label: "Prénom", value: prenom, set: setPrenom, required: true },
+                      { label: "Téléphone", value: telephone, set: setTelephone, required: true },
+                      { label: "Email", value: email, set: setEmail, required: true, type: "email" },
+                      { label: "Ville", value: ville, set: setVille, required: true },
+                      { label: "Budget estimé", value: budgetEstime, set: setBudgetEstime, required: true },
+                      { label: "Thème du mariage", value: themeMariage, set: setThemeMariage },
+                      { label: "Couleurs principales", value: couleursPrincipales, set: setCouleursPrincipales },
+                    ].map(({ label, value, set, required, type }) => (
+                        <div key={label}>
+                          <label className="block text-[11px] uppercase tracking-[0.16em] text-[#999] font-semibold mb-1.5">{label}</label>
+                          <input
+                              type={type || "text"}
+                              required={required}
+                              value={value}
+                              onChange={(e) => set(e.target.value)}
+                              className="w-full rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                          />
+                        </div>
+                    ))}
+
+                    <div>
+                      <label className="block text-[11px] uppercase tracking-[0.16em] text-[#999] font-semibold mb-1.5">Date du mariage</label>
+                      <input
+                          type="date"
+                          required
+                          value={dateMariage}
+                          onChange={(e) => setDateMariage(e.target.value)}
+                          className="w-full rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] uppercase tracking-[0.16em] text-[#999] font-semibold mb-1.5">Nombre d'invités</label>
+                      <input
+                          type="number"
+                          required
+                          value={nombreInvites}
+                          onChange={(e) => setNombreInvites(e.target.value)}
+                          className="w-full rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2 space-y-2">
+                      <label className="flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-[#999] font-semibold cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={lieuDejaReserve}
+                            onChange={(e) => setLieuDejaReserve(e.target.checked)}
+                            className="w-4 h-4 rounded border-[#eee] text-[#e91e8c] focus:ring-[#fad1e1]"
+                        />
+                        Lieu déjà réservé ?
+                      </label>
+                      {lieuDejaReserve && (
+                          <input
+                              type="text"
+                              placeholder="Nom du lieu"
+                              required
+                              value={nomLieu}
+                              onChange={(e) => setNomLieu(e.target.value)}
+                              className="w-full rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                          />
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] uppercase tracking-[0.16em] text-[#999] font-semibold mb-1.5">Pack</label>
+                      <select
+                          value={packId}
+                          onChange={(e) => setPackId(e.target.value ? Number(e.target.value) : "")}
+                          className="w-full rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                      >
+                        <option value="">Aucun pack</option>
+                        {packs.map((p) => <option key={p.id} value={p.id}>{p.nom}</option>)}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] uppercase tracking-[0.16em] text-[#999] font-semibold mb-1.5">Statut</label>
+                      <select
+                          value={statut}
+                          onChange={(e) => setStatut(e.target.value as Reservation["statut"])}
+                          className="w-full rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                      >
+                        {Object.entries(STATUS_CONFIG).map(([val, c]) => (
+                            <option key={val} value={val}>{c.label}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-[11px] uppercase tracking-[0.16em] text-[#999] font-semibold mb-1.5">Description du projet</label>
+                      <textarea
+                          rows={3}
+                          value={descriptionProjet}
+                          onChange={(e) => setDescriptionProjet(e.target.value)}
+                          className="w-full rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1] resize-none"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-[11px] uppercase tracking-[0.16em] text-[#999] font-semibold mb-2">Prestations additionnelles</label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-4 bg-[#fdf6f9] rounded-3xl border border-[#fce4ec]/50">
+                        {services.filter((s) => s.statut === "ACTIF").map((s) => {
+                          const checked = selectedServices.includes(s.id);
+                          return (
+                              <label key={s.id} className={`flex items-center gap-3 p-3 rounded-2xl cursor-pointer transition-colors border ${checked ? "bg-[#fce4ec] border-[#e91e8c]" : "bg-white border-transparent hover:border-[#fce4ec]"}`}>
+                                <input
+                                    type="checkbox"
+                                    checked={checked}
+                                    onChange={() => toggleService(s.id)}
+                                    className="w-4 h-4 rounded border-[#eee] text-[#e91e8c] focus:ring-[#fad1e1]"
+                                />
+                                <span className="text-xs text-gray-700 truncate">{s.nom}</span>
+                              </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-4 border-t border-[#fce4ec]/30">
+                    <button
+                        type="button"
+                        onClick={() => setModal(null)}
+                        className="rounded-full border border-gray-200 px-6 py-2.5 text-sm font-bold text-gray-600 transition hover:bg-gray-50"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={submitting}
+                        className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#e91e8c] to-[#c2185b] px-8 py-2.5 text-sm font-bold text-white transition hover:opacity-95 disabled:opacity-50"
+                    >
+                      {submitting && (
+                          <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+                            <path d={icons.loader} />
+                          </svg>
+                      )}
+                      Sauvegarder
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+        )}
+      </div>
   );
 }

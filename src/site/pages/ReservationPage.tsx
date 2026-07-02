@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ApiError, api, assetUrl } from "@/shared/api";
-import type { ReservationPayload, Service, Pack, Reservation } from "@/shared/api";
+import type { ReservationPayload, Service, Pack } from "@/shared/api";
 import homeHero from "@/assets/images/home/home.jpg";
 import photo11 from "@/assets/images/home/photo11.jpg";
 import photo16 from "@/assets/images/home/photo16.jpg";
@@ -13,28 +13,28 @@ import blog9 from "@/assets/images/blog/blog (9).jpeg";
 
 // SVG Icon Helper & paths
 type IconProps = {
-  d: string;
-  size?: number;
-  stroke?: string;
-  strokeWidth?: number;
+    d: string;
+    size?: number;
+    stroke?: string;
+    strokeWidth?: number;
 };
 
 const Icon = ({ d, size = 22, stroke = "currentColor", strokeWidth = 1.8 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
-    stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
-    <path d={d} />
-  </svg>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+         stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+        <path d={d} />
+    </svg>
 );
 
 const icons = {
-  chef:     "M3 11l19-9-9 19-2-8-8-2z",
-  hall:     "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z M9 22V12h6v10",
-  camera:   "M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z M12 17a4 4 0 100-8 4 4 0 000 8z",
-  music:    "M9 18V5l12-2v13 M6 21a3 3 0 100-6 3 3 0 000 6z M18 19a3 3 0 100-6 3 3 0 000 6z",
-  flower:   "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
-  close:    "M18 6L6 18M6 6l12 12",
-  arrow:    "M5 12h14M12 5l7 7-7 7",
-  check:    "M20 6L9 17l-5-5",
+    chef:     "M3 11l19-9-9 19-2-8-8-2z",
+    hall:     "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z M9 22V12h6v10",
+    camera:   "M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z M12 17a4 4 0 100-8 4 4 0 000 8z",
+    music:    "M9 18V5l12-2v13 M6 21a3 3 0 100-6 3 3 0 000 6z M18 19a3 3 0 100-6 3 3 0 000 6z",
+    flower:   "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
+    close:    "M18 6L6 18M6 6l12 12",
+    arrow:    "M5 12h14M12 5l7 7-7 7",
+    check:    "M20 6L9 17l-5-5",
 };
 
 type ReservationForm = {
@@ -179,6 +179,7 @@ const staticPacks: Pack[] = [
         image_principale: null,
         image_url: null,
         statut: "ACTIF",
+        services: [staticServices[0], staticServices[1], staticServices[2]] // Exemple: le pack contient 3 services
     },
 ];
 
@@ -229,14 +230,10 @@ export default function ReservationPage() {
     useEffect(() => {
         async function fetchData() {
             try {
-                // Fetch dynamic services, packages, and reservations from the database
-                const [activeServices, activePacks, allReservations] = await Promise.all([
+                // Fetch dynamic services and packages from the database
+                const [activeServices, activePacks] = await Promise.all([
                     api.getActiveServices(),
-                    api.getActivePacks(),
-                    api.getReservations().catch(err => {
-                        console.warn("Impossible de charger les réservations via l'API.", err);
-                        return [] as Reservation[];
-                    })
+                    api.getActivePacks()
                 ]);
 
                 let finalServices = staticServices;
@@ -270,82 +267,42 @@ export default function ReservationPage() {
                     finalPacks = activePacks;
                 }
 
-                // Extract all already reserved services (ignoring cancelled reservations)
-                const reservedServiceIds = new Set<number>();
-                allReservations.forEach(r => {
-                    if (r.statut === "ANNULE") return;
-                    if (r.services) {
-                        r.services.forEach(s => reservedServiceIds.add(s.id));
-                    }
-                    if (r.pack) {
-                        const packObj = finalPacks.find(p => p.id === r.pack!.id);
-                        if (packObj && packObj.services) {
-                            packObj.services.forEach(s => reservedServiceIds.add(s.id));
-                        }
-                    }
-                });
-
-                // Filter out already reserved services
-                finalServices = finalServices.filter(s => !reservedServiceIds.has(s.id));
-
                 setServices(finalServices);
                 setPacks(finalPacks);
 
-                // Determine selection based on location state
+                // Determine selection based on location state or default
                 if (state && state.type === "pack" && state.packId) {
                     setReservationType("pack");
                     setSelectedItemId(state.packId);
                 } else if (state && state.type === "service" && state.serviceId) {
-                    const svcExists = finalServices.some(s => s.id === state.serviceId);
-                    if (svcExists) {
-                        setReservationType("service");
-                        setSelectedItemId(state.serviceId);
-                    } else {
-                        setSelectedItemId(null);
-                    }
+                    setReservationType("service");
+                    setSelectedItemId(state.serviceId);
                 } else {
-                    setSelectedItemId(null);
+                    if (finalServices.length > 0) {
+                        setReservationType("service");
+                        setSelectedItemId(finalServices[0].id);
+                    } else if (finalPacks.length > 0) {
+                        setReservationType("pack");
+                        setSelectedItemId(finalPacks[0].id);
+                    }
                 }
             } catch (err) {
                 console.error("Erreur lors du chargement des données depuis l'API, utilisation du fallback statique.", err);
-                
-                let reservedServiceIds = new Set<number>();
-                try {
-                    const allReservations = await api.getReservations();
-                    allReservations.forEach(r => {
-                        if (r.statut === "ANNULE") return;
-                        if (r.services) {
-                            r.services.forEach(s => reservedServiceIds.add(s.id));
-                        }
-                        if (r.pack) {
-                            const packObj = staticPacks.find(p => p.id === r.pack!.id);
-                            if (packObj && packObj.services) {
-                                packObj.services.forEach(s => reservedServiceIds.add(s.id));
-                            }
-                        }
-                    });
-                } catch (resErr) {
-                    console.error("Impossible de récupérer les réservations pour le fallback", resErr);
-                }
-
-                const finalServices = staticServices.filter(s => !reservedServiceIds.has(s.id));
-                setServices(finalServices);
-                setPacks(staticPacks);
-
                 // Fallback selected item configuration
                 if (state && state.type === "pack" && state.packId) {
                     setReservationType("pack");
                     setSelectedItemId(state.packId);
                 } else if (state && state.type === "service" && state.serviceId) {
-                    const svcExists = finalServices.some(s => s.id === state.serviceId);
-                    if (svcExists) {
-                        setReservationType("service");
-                        setSelectedItemId(state.serviceId);
-                    } else {
-                        setSelectedItemId(null);
-                    }
+                    setReservationType("service");
+                    setSelectedItemId(state.serviceId);
                 } else {
-                    setSelectedItemId(null);
+                    if (staticServices.length > 0) {
+                        setReservationType("service");
+                        setSelectedItemId(staticServices[0].id);
+                    } else if (staticPacks.length > 0) {
+                        setReservationType("pack");
+                        setSelectedItemId(staticPacks[0].id);
+                    }
                 }
             } finally {
                 setLoading(false);
@@ -362,11 +319,25 @@ export default function ReservationPage() {
     const selectedService = reservationType === "service" ? services.find(s => s.id === selectedItemId) : null;
     const selectedPack = reservationType === "pack" ? packs.find(p => p.id === selectedItemId) : null;
 
+    // Récupérer les IDs des services déjà inclus dans le pack sélectionné
+    const serviceIdsInSelectedPack = selectedPack?.services?.map(s => s.id) || [];
+
+    // Filtrer les services disponibles pour les services supplémentaires
+    // Exclure les services déjà dans le pack et ceux déjà sélectionnés
+    const getAvailableExtraServices = () => {
+        return services.filter(service =>
+            !serviceIdsInSelectedPack.includes(service.id) &&
+            !selectedExtraServices.includes(service.id)
+        );
+    };
+
+    const availableExtraServices = getAvailableExtraServices();
+
     const currentItemName = selectedService ? selectedService.nom : (selectedPack ? selectedPack.nom : "");
-    const currentItemDescription = selectedService 
-        ? (selectedService.description_complete || selectedService.description_courte || "") 
+    const currentItemDescription = selectedService
+        ? (selectedService.description_complete || selectedService.description_courte || "")
         : (selectedPack ? (selectedPack.description || "") : "");
-    
+
     const currentItemPrice = selectedService
         ? (selectedService.prix_formate || (selectedService.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(selectedService.prix_indicatif) + " Ar" : "Sur devis"))
         : (selectedPack ? (new Intl.NumberFormat("fr-FR").format(selectedPack.prix) + " Ar") : "Sur devis");
@@ -409,6 +380,16 @@ export default function ReservationPage() {
             return;
         }
 
+        // Vérifier que les services supplémentaires ne sont pas déjà dans le pack
+        if (reservationType === "pack") {
+            const invalidServices = selectedExtraServices.filter(id => serviceIdsInSelectedPack.includes(id));
+            if (invalidServices.length > 0) {
+                setError("Certains services supplémentaires sont déjà inclus dans le pack.");
+                setSubmitting(false);
+                return;
+            }
+        }
+
         const payload: ReservationPayload = {
             nom: form.nom.trim(),
             prenom: form.prenom.trim(),
@@ -423,8 +404,8 @@ export default function ReservationPage() {
             lieu_deja_reserve: form.deja_reserve === "oui",
             nom_lieu: form.deja_reserve === "oui" ? form.lieu_nom.trim() || null : null,
             description_projet: form.description_projet.trim() || null,
-            ...(reservationType === "service" 
-                ? { service_ids: [selectedItemId, ...selectedExtraServices] } 
+            ...(reservationType === "service"
+                ? { service_ids: [selectedItemId, ...selectedExtraServices] }
                 : { pack_id: selectedItemId, service_ids: selectedExtraServices.length > 0 ? selectedExtraServices : undefined }),
         };
 
@@ -432,8 +413,8 @@ export default function ReservationPage() {
             await api.createReservation(payload);
             setForm(initialFormState);
             setSubmitted(true);
-            // Redirect to the services page
-            navigate("/services");
+            // Redirect to the backoffice reservation page
+            navigate("/admin/reservations");
         } catch (error: unknown) {
             if (error instanceof ApiError && error.validationErrors) {
                 const mappedErrors: FieldErrors = {};
@@ -525,7 +506,7 @@ export default function ReservationPage() {
                                     type="button"
                                     onClick={() => setActiveImg(index)}
                                     className={`h-2 rounded-full transition-all ${index === activeImg ? "w-10 bg-white" : "w-3 bg-white/40"
-                                        }`}
+                                    }`}
                                     aria-label={`Voir l'image ${index + 1}`}
                                 />
                             ))}
@@ -585,40 +566,56 @@ export default function ReservationPage() {
 
                         <div className="mt-6 rounded-3xl border border-[#fce4ec] bg-[#fff0f6] p-5">
                             <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-                                    <div>
-                                        <h3 className="text-sm font-bold text-[#111]">Services supplémentaires</h3>
-                                        <p className="text-xs text-[#666]">Ajoutez des services à votre package</p>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowExtraServicesModal(true)}
-                                        className="inline-flex items-center justify-center rounded-full bg-[#e91e8c] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#c2185b]"
-                                    >
-                                        {reservationType === "pack" ? "Ajout de services supplémentaires dans un pack" : "Ajout de services supplémentaires"}
-                                    </button>
+                                <div>
+                                    <h3 className="text-sm font-bold text-[#111]">Services supplémentaires</h3>
+                                    <p className="text-xs text-[#666]">
+                                        {reservationType === "pack"
+                                            ? `Ajoutez des services à votre pack (${serviceIdsInSelectedPack.length} services déjà inclus)`
+                                            : "Ajoutez des services supplémentaires"}
+                                    </p>
                                 </div>
-                                
-                                {selectedExtraServices.length > 0 && (
-                                    <ul className="mt-3 flex flex-col gap-2">
-                                        {selectedExtraServices.map(serviceId => {
-                                            const svc = services.find(s => s.id === serviceId);
-                                            return svc ? (
-                                                <li key={serviceId} className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-sm shadow-sm border border-[#fce4ec]">
-                                                    <span className="font-semibold text-[#333]">{svc.nom}</span>
-                                                    <button 
-                                                        type="button" 
-                                                        onClick={() => setSelectedExtraServices(prev => prev.filter(id => id !== serviceId))}
-                                                        className="text-xs font-bold text-red-500 hover:text-red-700"
-                                                    >
-                                                        Retirer
-                                                    </button>
-                                                </li>
-                                            ) : null;
-                                        })}
-                                    </ul>
-                                )}
+                                <button
+                                    type="button"
+                                    onClick={() => setShowExtraServicesModal(true)}
+                                    className="inline-flex items-center justify-center rounded-full bg-[#e91e8c] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#c2185b]"
+                                >
+                                    {reservationType === "pack" ? "Ajouter des services" : "Ajouter des services"}
+                                </button>
                             </div>
+
+                            {selectedExtraServices.length > 0 && (
+                                <ul className="mt-3 flex flex-col gap-2">
+                                    {selectedExtraServices.map(serviceId => {
+                                        const svc = services.find(s => s.id === serviceId);
+                                        return svc ? (
+                                            <li key={serviceId} className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-sm shadow-sm border border-[#fce4ec]">
+                                                <span className="font-semibold text-[#333]">{svc.nom}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSelectedExtraServices(prev => prev.filter(id => id !== serviceId))}
+                                                    className="text-xs font-bold text-red-500 hover:text-red-700"
+                                                >
+                                                    Retirer
+                                                </button>
+                                            </li>
+                                        ) : null;
+                                    })}
+                                </ul>
+                            )}
+
+                            {reservationType === "pack" && serviceIdsInSelectedPack.length > 0 && (
+                                <div className="mt-3 rounded-xl bg-[#f0f7ff] p-3">
+                                    <p className="text-xs text-[#555]">
+                                        <span className="font-semibold">Services inclus dans le pack :</span>{' '}
+                                        {serviceIdsInSelectedPack.map(id => {
+                                            const svc = services.find(s => s.id === id);
+                                            return svc ? svc.nom : '';
+                                        }).filter(Boolean).join(', ')}
+                                    </p>
+                                </div>
+                            )}
                         </div>
+                    </div>
                 </motion.section>
 
                 <motion.form
@@ -651,7 +648,14 @@ export default function ReservationPage() {
                                 onChange={(e) => {
                                     const type = e.target.value as "service" | "pack";
                                     setReservationType(type);
-                                    setSelectedItemId(null);
+                                    if (type === "service" && services.length > 0) {
+                                        setSelectedItemId(services[0].id);
+                                    } else if (type === "pack" && packs.length > 0) {
+                                        setSelectedItemId(packs[0].id);
+                                    } else {
+                                        setSelectedItemId(null);
+                                    }
+                                    setSelectedExtraServices([]);
                                 }}
                                 className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                             >
@@ -665,22 +669,25 @@ export default function ReservationPage() {
                             </span>
                             <select
                                 value={selectedItemId ?? ""}
-                                onChange={(e) => setSelectedItemId(e.target.value ? Number(e.target.value) : null)}
+                                onChange={(e) => {
+                                    setSelectedItemId(Number(e.target.value));
+                                    setSelectedExtraServices([]);
+                                }}
                                 className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                                 required
                             >
                                 <option value="" disabled>-- Choisir --</option>
                                 {reservationType === "service"
                                     ? services.map((s) => (
-                                          <option key={s.id} value={s.id}>
-                                              {s.nom}
-                                          </option>
-                                      ))
+                                        <option key={s.id} value={s.id}>
+                                            {s.nom}
+                                        </option>
+                                    ))
                                     : packs.map((p) => (
-                                          <option key={p.id} value={p.id}>
-                                              {p.nom}
-                                          </option>
-                                      ))}
+                                        <option key={p.id} value={p.id}>
+                                            {p.nom}
+                                        </option>
+                                    ))}
                             </select>
                         </label>
                     </div>
@@ -832,32 +839,52 @@ export default function ReservationPage() {
             {/* Modal for Extra Services */}
             {showExtraServicesModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="flex max-h-[90vh] w-full max-w-4xl flex-col rounded-3xl bg-white p-6 shadow-2xl"
                     >
                         <div className="mb-4 flex items-center justify-between">
-                            <h2 className="text-xl font-black text-[#111]">Tous nos services</h2>
-                            <button 
-                                type="button" 
+                            <h2 className="text-xl font-black text-[#111]">
+                                {reservationType === "pack"
+                                    ? `Services supplémentaires (${availableExtraServices.length} disponibles)`
+                                    : "Tous nos services"}
+                            </h2>
+                            <button
+                                type="button"
                                 onClick={() => setShowExtraServicesModal(false)}
                                 className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200"
                             >
                                 ✕
                             </button>
                         </div>
-                        
+
+                        {reservationType === "pack" && serviceIdsInSelectedPack.length > 0 && (
+                            <div className="mb-4 rounded-xl bg-blue-50 p-3 text-sm text-blue-800">
+                                <span className="font-bold">ℹ️</span> Les services déjà inclus dans ce pack ne sont pas affichés :{' '}
+                                {serviceIdsInSelectedPack.map(id => {
+                                    const svc = services.find(s => s.id === id);
+                                    return svc ? svc.nom : '';
+                                }).filter(Boolean).join(', ')}
+                            </div>
+                        )}
+
                         <div className="flex-1 overflow-y-auto pr-2 pb-4">
-                            {services.length === 0 ? (
-                                <p className="text-sm text-gray-500">Aucun service supplémentaire disponible.</p>
+                            {availableExtraServices.length === 0 ? (
+                                <div className="text-center py-8">
+                                    <p className="text-sm text-gray-500">
+                                        {reservationType === "pack"
+                                            ? "Aucun service supplémentaire disponible. Tous les services sont déjà inclus dans ce pack."
+                                            : "Aucun service disponible pour le moment."}
+                                    </p>
+                                </div>
                             ) : (
                                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                                    {services.map(service => {
+                                    {availableExtraServices.map(service => {
                                         const isSelected = selectedExtraServices.includes(service.id);
                                         return (
-                                            <div 
-                                                key={service.id} 
+                                            <div
+                                                key={service.id}
                                                 onClick={() => {
                                                     if (isSelected) {
                                                         setSelectedExtraServices(prev => prev.filter(id => id !== service.id));
@@ -881,7 +908,7 @@ export default function ReservationPage() {
                                                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                                     />
                                                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
-                                                    
+
                                                     {/* Pink circular icon badge */}
                                                     <div className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#e91e8c] to-[#f06292] shadow-md shadow-[#e91e8c]/40">
                                                         <Icon d={icons[service.icon as keyof typeof icons] || icons.chef} size={18} stroke="#fff" />
@@ -918,8 +945,8 @@ export default function ReservationPage() {
                                                             </span>
                                                         </div>
                                                         <span className={`rounded-full px-3 py-1 text-[10px] font-bold transition-all ${
-                                                            isSelected 
-                                                                ? "bg-[#fff0f7] text-[#e91e8c] border border-[#fce4ec]" 
+                                                            isSelected
+                                                                ? "bg-[#fff0f7] text-[#e91e8c] border border-[#fce4ec]"
                                                                 : "bg-gray-50 text-gray-500 border border-gray-100"
                                                         }`}>
                                                             {isSelected ? "Sélectionné" : "Ajouter"}
@@ -946,7 +973,7 @@ export default function ReservationPage() {
                                 onClick={() => setShowExtraServicesModal(false)}
                                 className="rounded-full bg-[#e91e8c] px-6 py-2.5 text-sm font-bold text-white transition hover:bg-[#c2185b]"
                             >
-                                Valider
+                                Valider ({selectedExtraServices.length})
                             </button>
                         </div>
                     </motion.div>
