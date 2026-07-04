@@ -86,6 +86,7 @@ const icons = {
 // ── Data ──────────────────────────────────────────────────────────────────
 const services = [
   {
+    id: 1,
     icon: "chef",
     title: "Traiteur",
     desc: "Menus variés et raffinés pour ravir vos invités.",
@@ -106,6 +107,7 @@ const services = [
     tag: "Le plus demandé",
   },
   {
+    id: 2,
     icon: "hall",
     title: "Salle de réception",
     desc: "Salles élégantes adaptées à votre événement.",
@@ -126,6 +128,7 @@ const services = [
     tag: "Exclusif",
   },
   {
+    id: 3,
     icon: "camera",
     title: "Photographe & Vidéaste",
     desc: "Immortalisez chaque instant de votre mariage.",
@@ -146,6 +149,7 @@ const services = [
     tag: "Coup de cœur",
   },
   {
+    id: 4,
     icon: "music",
     title: "DJ & Animation",
     desc: "Ambiance garantie avec nos DJ et animateurs.",
@@ -166,6 +170,7 @@ const services = [
     tag: "Ambiance garantie",
   },
   {
+    id: 5,
     icon: "flower",
     title: "Décoration florale",
     desc: "Décorations personnalisées selon votre thème.",
@@ -186,6 +191,7 @@ const services = [
     tag: "Artisan fleuriste",
   },
   {
+    id: 6,
     icon: "car",
     title: "Transport de luxe",
     desc: "Voitures de luxe et transport de vos invités.",
@@ -206,6 +212,7 @@ const services = [
     tag: "Prestige",
   },
   {
+    id: 7,
     icon: "beauty",
     title: "Beauté & Stylisme",
     desc: "Coiffure et maquillage pour la mariée et ses proches.",
@@ -226,6 +233,7 @@ const services = [
     tag: "Glam & Chic",
   },
   {
+    id: 8,
     icon: "cake",
     title: "Wedding Cake",
     desc: "Gâteaux sur mesure à votre goût.",
@@ -246,6 +254,7 @@ const services = [
     tag: "Artisan pâtissier",
   },
   {
+    id: 9,
     icon: "sparkle",
     title: "Animations spéciales",
     desc: "Feux d'artifice, effets spéciaux et surprises uniques.",
@@ -269,6 +278,7 @@ const services = [
 
 const packages = [
   {
+    id: 1,
     name: "Package Essentiel",
     badge: "54 000 Ar",
     color: "#c2185b",
@@ -279,6 +289,7 @@ const packages = [
     cols: [["3 jours de photographie", "Portraits", "Solo shoot", "Couple shoot", "Family shoot"]],
   },
   {
+    id: 2,
     name: "Package Prestige",
     badge: "78 000 Ar",
     color: "#8e24aa",
@@ -292,6 +303,7 @@ const packages = [
     ],
   },
   {
+    id: 3,
     name: "Package Royal",
     badge: "155 000 Ar",
     color: "#b71c1c",
