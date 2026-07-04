@@ -180,7 +180,7 @@ export default function Blog() {
           className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#b88a2d] hover:bg-[#946c25] text-white rounded-xl font-semibold transition-colors shadow-sm text-sm w-full sm:w-auto"
         >
           <Plus size={16} />
-          Ajouter un service
+          Ajouter un blog
         </button>
       </div>
 
