@@ -1,0 +1,46 @@
+name: Deploy to FTP
+
+on:
+  push:
+    branches:
+      - main   # Triggers on push to main (after a merge)
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'           # Adjust to your project's Node version
+          cache: 'npm'                 # Caches npm dependencies for faster builds
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci                    # Uses package-lock.json for reliable installs
+
+      # 4. Build the Vite application
+      - name: Build project
+        run: npm run build             # Assumes "build" script produces "dist" folder
+
+      # 5. Deploy via FTP
+      - name: Deploy to FTP server
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}  
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/           # Vite's default output directory
+          server-dir: ./               # Remote directory (adjust as needed)
+          protocol: ftp               # Optional: use 'ftp' for plain FTP, 'ftps' for implicit TLS
+          port: 21                     # Optional: default FTP port
+          exclude: |
+            .htaccess
+            *.log
+          # Additional options available – see action documentation
