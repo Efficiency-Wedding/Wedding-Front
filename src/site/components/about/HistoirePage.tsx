@@ -119,7 +119,7 @@ export default function HistoirePage() {
                 <strong style={{ color: C.blue, fontWeight: 600 }}>Efficiency Organization Event</strong>
                 , une agence spécialisée dans l'organisation de mariages élégants, raffinés et entièrement personnalisés.</p>
               <p>Fondée par{" "}
-                <strong style={{ color: C.blue, fontWeight: 600 }}>Andoniaina Van Der Andrianarivo</strong>
+                <strong style={{ color: C.blue, fontWeight: 600 }}>RAJAONARIVELO Elisa</strong>
                 , l'agence accompagne les futurs mariés dans chaque étape de leur aventure avec passion et professionnalisme.</p>
             </div>
           </div>

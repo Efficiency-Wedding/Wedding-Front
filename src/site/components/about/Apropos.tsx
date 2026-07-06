@@ -98,16 +98,18 @@ export default function Perfume() {
             marginBottom: "1.25rem",
             color: C.white,
           }}>
-            EFFICIENCY
+            EFFICIENCY ORGANIZATION EVENT
           </h1>
           <p className="font-script" style={{
             fontSize: "clamp(1.8rem,4vw,2.25rem)",
             lineHeight: 1.15,
             color: C.white,
           }}>
-            Every picture tells a story, every story
+            La réalisation de vos rêves n'est autre que l'efficacité de notre organisation de notre organisation
             <br />
-            needs a picture!
+           Satisfaction garantie à 100% 
+            <br />
+            Toute prestation assurée à 100%
           </p>
         </div>
       </section>
