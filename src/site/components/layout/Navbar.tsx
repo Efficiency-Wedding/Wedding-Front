@@ -6,8 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 
 const menuItems = [
-    { id: "", label: "Home" },
-    { id: "apropos", label: "A propos" },
+    { id: "", label: "Accueil" },
+    { id: "apropos", label: "À propos" },
     { id: "services", label: "Services" },
     { id: "gallery", label: "Gallery" },
     { id: "blog", label: "Blog" },

@@ -181,8 +181,7 @@ const Home = () => {
                         </h1>
                         <p className="text-gray-600 text-base sm:text-lg mb-6 text-justify">
                             Wedding planner professionnel à Madagascar.
-                            Nous organisons votre mariage de A à Z pour faire de votre grand jour un moment inoubliable.
-                        </p>
+                            Nous organisons votre mariage de A à Z pour faire de votre grand jour un moment inoubliable.                        </p>
                         <Button text="Réserver votre Date" icon={FaArrowRight} onClick={() => navigate("/reservation")} />
                         <p className="mt-5 text-gray-500 text-sm">
                             Mariage clé en main garantie.
@@ -249,9 +248,9 @@ const Home = () => {
                         <p className="text-sm text-gray-500">(46%)</p>
                     </div>
                     <div className="mt-5 flex flex-wrap gap-2 justify-start">
-                        <Button text="#Moments capturés" onClick={() => navigate("/gallery")} />
+                        <Button text="#Satisfaction 100 % garantie." onClick={() => navigate("/gallery")} />
                         <Button text="#Amour & émotions" onClick={() => navigate("/gallery")} />
-                        <Button text="#Luxure" onClick={() => navigate("/services")} />
+                        <Button text="#Prestations 100 % assurées" onClick={() => navigate("/services")} />
                         <Button text="#Mariage" onClick={() => navigate("/services")} />
                         <Button text="#Mariage premium" onClick={() => navigate("/services")} />
                         <Button text="#Amour & émotions" onClick={() => navigate("/gallery")} />
@@ -353,7 +352,7 @@ const Home = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-                    {featureCards.map((card) => (
+                    {featureCards.slice(0, 4).map((card) => (
                         <Card
                             key={card.title}
                             image={card.image}
@@ -408,7 +407,7 @@ const Home = () => {
                 <TestimonialCard
                     image1={photo3}
                     image2={photo16}
-                    name="Tolotra & Antso"
+                    name="Niaiko & Sitraka"
                     text="Un moment magique du début à la fin. L’organisation était fluide, élégante et sans stress. Nous avons pu profiter pleinement de notre journée."
                     tags={["Amour", "Luxe", "Mariage"]}
                     footerTag="#Moments capturés"
@@ -416,7 +415,7 @@ const Home = () => {
                 <TestimonialCard
                     image1={photo18}
                     image2={photo17}
-                    name="Miora & Tojo"
+                    name="Miarinaja & Larissa"
                     text="Chaque détail était parfaitement pensé. La décoration, l’ambiance et la coordination ont dépassé toutes nos attentes."
                     tags={["Élégance", "Romance"]}
                     footerTag="#Souvenirs inoubliables"
