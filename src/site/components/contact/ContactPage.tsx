@@ -79,7 +79,7 @@ const ContactInfo: React.FC = () => {
               <div className="absolute bottom-0 left-0 p-5 sm:p-8 text-blanc">
                 <h3 className="text-2xl font-serif mb-2">Notre Bureau</h3>
                 <p className="text-blanc/70 text-sm">
-                  555 West Lane, Summerlin, CA
+                  Ivg 86 Behoririka Antananarivo Madagascar
                 </p>
               </div>
             </div>
