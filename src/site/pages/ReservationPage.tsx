@@ -205,6 +205,26 @@ function formatLocalDate(date: Date) {
     return `${year}-${month}-${day}`;
 }
 
+const PACK_MARIAGE_PRIX: Record<string, Record<string, string>> = {
+    "50": { "servis": "10 500 000 Ar", "semi_buffet": "11 750 000 Ar", "buffet": "12 500 000 Ar" },
+    "100": { "servis": "14 000 000 Ar", "semi_buffet": "15 500 000 Ar", "buffet": "17 500 000 Ar" },
+    "150": { "servis": "17 500 000 Ar", "semi_buffet": "19 000 000 Ar", "buffet": "20 000 000 Ar" },
+    "200": { "servis": "20 000 000 Ar", "semi_buffet": "25 000 000 Ar", "buffet": "28 000 000 Ar" },
+    "250": { "servis": "25 000 000 Ar", "semi_buffet": "30 000 000 Ar", "buffet": "35 000 000 Ar" },
+    "300": { "servis": "30 500 000 Ar", "semi_buffet": "35 500 000 Ar", "buffet": "38 000 000 Ar" },
+    "400": { "servis": "35 000 000 Ar", "semi_buffet": "40 000 000 Ar", "buffet": "45 000 000 Ar" },
+    "500": { "servis": "40 000 000 Ar", "semi_buffet": "45 000 000 Ar", "buffet": "48 000 000 Ar" },
+};
+
+const PACK_VODIONDRY_PRIX: Record<string, Record<string, string>> = {
+    "50": { "servis": "8 800 000 Ar", "semi_buffet": "10 500 000 Ar", "buffet": "11 000 000 Ar" },
+    "80": { "servis": "11 500 000 Ar", "semi_buffet": "12 500 000 Ar", "buffet": "12 900 000 Ar" },
+    "90": { "servis": "11 900 000 Ar", "semi_buffet": "13 000 000 Ar", "buffet": "13 500 000 Ar" },
+    "100": { "servis": "12 500 000 Ar", "semi_buffet": "13 500 000 Ar", "buffet": "14 500 000 Ar" },
+    "150": { "servis": "16 500 000 Ar", "semi_buffet": "17 500 000 Ar", "buffet": "18 900 000 Ar" },
+    "200": { "servis": "18 500 000 Ar", "semi_buffet": "22 000 000 Ar", "buffet": "25 000 000 Ar" },
+};
+
 export default function ReservationPage() {
     const navigate = useNavigate();
     const [form, setForm] = useState<ReservationForm>(initialFormState);
@@ -370,7 +390,45 @@ export default function ReservationPage() {
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
     ) => {
         const { name, value } = event.target;
-        setForm((current) => ({ ...current, [name]: value }));
+        setForm((current) => {
+            const newForm = { ...current, [name]: value };
+            
+            // Calcul du prix automatique si le pack est sélectionné
+            const isPackMariage = currentItemName.toUpperCase().includes("PACK MARIAGE DE RÊVE");
+            const isPackVodiondry = currentItemName.toUpperCase().includes("PACK VODIONDRY");
+
+            if (isPackMariage || isPackVodiondry) {
+                if (name === "prix_package" && newForm.nombre_personnes) {
+                    // Si l'utilisateur choisit un prix manuellement, on met à jour le type de service
+                    const prices = isPackMariage ? PACK_MARIAGE_PRIX[newForm.nombre_personnes] : PACK_VODIONDRY_PRIX[newForm.nombre_personnes];
+                    if (prices) {
+                        const foundEntry = Object.entries(prices).find(([key, val]) => val === value);
+                        if (foundEntry) {
+                            newForm.type_service = foundEntry[0];
+                        }
+                    }
+                } else {
+                    const typeServiceMap: Record<string, string> = {
+                        "servis": "servis",
+                        "semi_buffet": "semi_buffet",
+                        "buffet": "buffet"
+                    };
+                    const mappedTypeService = typeServiceMap[newForm.type_service];
+
+                    if (mappedTypeService && newForm.nombre_personnes) {
+                        if (isPackMariage && PACK_MARIAGE_PRIX[newForm.nombre_personnes] && PACK_MARIAGE_PRIX[newForm.nombre_personnes][mappedTypeService]) {
+                            newForm.prix_package = PACK_MARIAGE_PRIX[newForm.nombre_personnes][mappedTypeService];
+                        } else if (isPackVodiondry && PACK_VODIONDRY_PRIX[newForm.nombre_personnes] && PACK_VODIONDRY_PRIX[newForm.nombre_personnes][mappedTypeService]) {
+                            newForm.prix_package = PACK_VODIONDRY_PRIX[newForm.nombre_personnes][mappedTypeService];
+                        } else {
+                            newForm.prix_package = ""; // Reset if combination not found
+                        }
+                    }
+                }
+            }
+
+            return newForm;
+        });
     };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -666,7 +724,7 @@ export default function ReservationPage() {
                                 required
                             >
                                 <option value="" disabled>-- Choisir le type --</option>
-                                <option value="servis">Servis</option>
+                                <option value="servis">Service</option>
                                 <option value="semi_buffet">Semi-Buffet</option>
                                 <option value="buffet">Buffet</option>
                             </select>
@@ -674,34 +732,96 @@ export default function ReservationPage() {
                         </label>
                         <label className="block text-sm text-[#444]">
                             <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
-                                Prix
+                                Nombre de personnes
                             </span>
-                            <input
-                                type="text"
-                                name="prix_package"
-                                value={form.prix_package}
-                                onChange={handleChange}
-                                className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
-                                placeholder="Ex: 54 000 Ar"
-                                required
-                            />
-                            <FieldError message={fieldErrors.prix_package} />
+                            {(() => {
+                                const isPackMariage = currentItemName.toUpperCase().includes("PACK MARIAGE DE RÊVE");
+                                const isPackVodiondry = currentItemName.toUpperCase().includes("PACK VODIONDRY");
+
+                                if (isPackMariage || isPackVodiondry) {
+                                    const options = isPackMariage 
+                                        ? Object.keys(PACK_MARIAGE_PRIX).sort((a, b) => Number(a) - Number(b))
+                                        : Object.keys(PACK_VODIONDRY_PRIX).sort((a, b) => Number(a) - Number(b));
+                                    
+                                    return (
+                                        <select
+                                            name="nombre_personnes"
+                                            value={form.nombre_personnes}
+                                            onChange={handleChange}
+                                            className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                                            required
+                                        >
+                                            <option value="" disabled>-- Choisir le nombre --</option>
+                                            {options.map(opt => (
+                                                <option key={opt} value={opt}>{opt}pers</option>
+                                            ))}
+                                        </select>
+                                    );
+                                }
+
+                                return (
+                                    <select
+                                        name="nombre_personnes"
+                                        value={form.nombre_personnes}
+                                        onChange={handleChange}
+                                        className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                                        required
+                                    >
+                                        <option value="" disabled>-- Choisir le nombre --</option>
+                                        <option value="50">50pers</option>
+                                        <option value="100">100pers</option>
+                                        <option value="150">150pers</option>
+                                        <option value="200">200pers</option>
+                                        <option value="250">250pers</option>
+                                        <option value="300">300pers</option>
+                                        <option value="350">350pers</option>
+                                        <option value="400">400pers</option>
+                                    </select>
+                                );
+                            })()}
+                            <FieldError message={fieldErrors.nombre_personnes} />
                         </label>
                         <label className="block text-sm text-[#444]">
                             <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
-                                Nombre de personnes
+                                Prix
                             </span>
-                            <input
-                                type="number"
-                                name="nombre_personnes"
-                                value={form.nombre_personnes}
-                                onChange={handleChange}
-                                className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
-                                placeholder="Ex: 150"
-                                min={1}
-                                required
-                            />
-                            <FieldError message={fieldErrors.nombre_personnes} />
+                            {(() => {
+                                const isPackMariage = currentItemName.toUpperCase().includes("PACK MARIAGE DE RÊVE");
+                                const isPackVodiondry = currentItemName.toUpperCase().includes("PACK VODIONDRY");
+                                let availablePrices: string[] = [];
+
+                                if (form.nombre_personnes) {
+                                    if (isPackMariage && PACK_MARIAGE_PRIX[form.nombre_personnes]) {
+                                        availablePrices = Object.values(PACK_MARIAGE_PRIX[form.nombre_personnes]);
+                                    } else if (isPackVodiondry && PACK_VODIONDRY_PRIX[form.nombre_personnes]) {
+                                        availablePrices = Object.values(PACK_VODIONDRY_PRIX[form.nombre_personnes]);
+                                    }
+                                }
+
+                                return (
+                                    <select
+                                        name="prix_package"
+                                        value={form.prix_package}
+                                        onChange={handleChange}
+                                        className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                                        style={{
+                                            backgroundColor: (isPackMariage || isPackVodiondry) ? "#fff" : "#fff",
+                                            cursor: "pointer"
+                                        }}
+                                        required
+                                    >
+                                        <option value="" disabled>-- Prix --</option>
+                                        {availablePrices.length > 0 ? (
+                                            availablePrices.map(price => (
+                                                <option key={price} value={price}>{price}</option>
+                                            ))
+                                        ) : (
+                                            form.prix_package && <option value={form.prix_package}>{form.prix_package}</option>
+                                        )}
+                                    </select>
+                                );
+                            })()}
+                            <FieldError message={fieldErrors.prix_package} />
                         </label>
                     </div>
 
