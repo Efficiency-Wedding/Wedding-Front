@@ -51,6 +51,9 @@ type ReservationForm = {
     deja_reserve: "oui" | "non";
     lieu_nom: string;
     description_projet: string;
+    type_service: string;
+    prix_package: string;
+    nombre_personnes: string;
 };
 
 type ReservationFieldName =
@@ -68,7 +71,7 @@ type ReservationField = {
     type: "text" | "email" | "tel" | "date" | "number";
 };
 
-type FieldErrors = Partial<Record<ReservationFieldName | "budget" | "theme" | "couleurs" | "deja_reserve" | "lieu_nom" | "description_projet", string>>;
+type FieldErrors = Partial<Record<ReservationFieldName | "budget" | "theme" | "couleurs" | "deja_reserve" | "lieu_nom" | "description_projet" | "type_service" | "prix_package" | "nombre_personnes", string>>;
 
 const reservationFields: ReservationField[] = [
     { label: "Prénom", name: "prenom", type: "text" },
@@ -94,6 +97,9 @@ const initialFormState: ReservationForm = {
     deja_reserve: "non",
     lieu_nom: "",
     description_projet: "",
+    type_service: "",
+    prix_package: "",
+    nombre_personnes: "",
 };
 
 // Static fallback data for services and packs (if API calls fail)
@@ -216,7 +222,7 @@ export default function ReservationPage() {
     const [showExtraServicesModal, setShowExtraServicesModal] = useState(false);
 
     const location = useLocation();
-    const state = location.state as { serviceId?: number; packId?: number; type?: "service" | "pack" } | null;
+    const state = location.state as { serviceId?: number; packId?: number; type?: "service" | "pack"; prix?: string } | null;
 
     const [reservationType, setReservationType] = useState<"service" | "pack">("service");
     const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
@@ -309,6 +315,13 @@ export default function ReservationPage() {
             }
         }
         fetchData();
+    }, [state]);
+
+    // Pre-fill prix_package from navigation state
+    useEffect(() => {
+        if (state?.prix) {
+            setForm((prev) => ({ ...prev, prix_package: state.prix! }));
+        }
     }, [state]);
 
     useEffect(() => {
@@ -638,57 +651,57 @@ export default function ReservationPage() {
                         </p>
                     </div>
 
-                    <div className="mb-6 grid gap-4 sm:grid-cols-2">
+
+
+                    <div className="mb-6 grid items-end gap-4 sm:grid-cols-3">
                         <label className="block text-sm text-[#444]">
                             <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
-                                Type de réservation
+                                Type de service
                             </span>
                             <select
-                                value={reservationType}
-                                onChange={(e) => {
-                                    const type = e.target.value as "service" | "pack";
-                                    setReservationType(type);
-                                    if (type === "service" && services.length > 0) {
-                                        setSelectedItemId(services[0].id);
-                                    } else if (type === "pack" && packs.length > 0) {
-                                        setSelectedItemId(packs[0].id);
-                                    } else {
-                                        setSelectedItemId(null);
-                                    }
-                                    setSelectedExtraServices([]);
-                                }}
-                                className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
-                            >
-                                <option value="service">Service individuel</option>
-                                <option value="pack">Package complet</option>
-                            </select>
-                        </label>
-                        <label className="block text-sm text-[#444]">
-                            <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
-                                {reservationType === "service" ? "Sélectionner le service" : "Sélectionner le package"}
-                            </span>
-                            <select
-                                value={selectedItemId ?? ""}
-                                onChange={(e) => {
-                                    setSelectedItemId(Number(e.target.value));
-                                    setSelectedExtraServices([]);
-                                }}
+                                name="type_service"
+                                value={form.type_service}
+                                onChange={handleChange}
                                 className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                                 required
                             >
-                                <option value="" disabled>-- Choisir --</option>
-                                {reservationType === "service"
-                                    ? services.map((s) => (
-                                        <option key={s.id} value={s.id}>
-                                            {s.nom}
-                                        </option>
-                                    ))
-                                    : packs.map((p) => (
-                                        <option key={p.id} value={p.id}>
-                                            {p.nom}
-                                        </option>
-                                    ))}
+                                <option value="" disabled>-- Choisir le type --</option>
+                                <option value="servis">Servis</option>
+                                <option value="semi_buffet">Semi-Buffet</option>
+                                <option value="buffet">Buffet</option>
                             </select>
+                            <FieldError message={fieldErrors.type_service} />
+                        </label>
+                        <label className="block text-sm text-[#444]">
+                            <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
+                                Prix
+                            </span>
+                            <input
+                                type="text"
+                                name="prix_package"
+                                value={form.prix_package}
+                                onChange={handleChange}
+                                className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                                placeholder="Ex: 54 000 Ar"
+                                required
+                            />
+                            <FieldError message={fieldErrors.prix_package} />
+                        </label>
+                        <label className="block text-sm text-[#444]">
+                            <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
+                                Nombre de personnes
+                            </span>
+                            <input
+                                type="number"
+                                name="nombre_personnes"
+                                value={form.nombre_personnes}
+                                onChange={handleChange}
+                                className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                                placeholder="Ex: 150"
+                                min={1}
+                                required
+                            />
+                            <FieldError message={fieldErrors.nombre_personnes} />
                         </label>
                     </div>
 

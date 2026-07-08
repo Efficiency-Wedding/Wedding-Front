@@ -612,7 +612,7 @@ function ServiceModal({ svc, onClose }: { svc: typeof services[0]; onClose: () =
             <motion.button
               onClick={() => {
                 onClose();
-                navigate("/reservation", { state: { serviceId: svc.id, type: "service" } });
+                navigate("/reservation", { state: { serviceId: svc.id, type: "service", prix: svc.price } });
               }}
               whileHover={{ scale: 1.03, boxShadow: "0 10px 36px rgba(233,30,140,0.45)" }}
               whileTap={{ scale: 0.97 }}
@@ -922,7 +922,7 @@ function PackageCard({ pkg, index }: { pkg: typeof packages[0]; index: number })
         </div>
 
         <motion.button
-          onClick={() => navigate("/reservation", { state: { packId: pkg.id, type: "pack" } })}
+          onClick={() => navigate("/reservation", { state: { packId: pkg.id, type: "pack", prix: pkg.badge } })}
           whileHover={{ scale: 1.03, boxShadow: `0 8px 28px ${pkg.color}50` }}
           whileTap={{ scale: 0.97 }}
           style={{
