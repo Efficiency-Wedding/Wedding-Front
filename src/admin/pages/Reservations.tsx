@@ -66,6 +66,37 @@ const getServiceIcon = (serviceName: string) => {
   return "chef";
 };
 
+const PACK_MARIAGE_PRIX: Record<string, Record<string, string>> = {
+  "50": { "servis": "10 500 000 Ar", "semi_buffet": "11 750 000 Ar", "buffet": "12 500 000 Ar" },
+  "100": { "servis": "14 000 000 Ar", "semi_buffet": "15 500 000 Ar", "buffet": "17 500 000 Ar" },
+  "150": { "servis": "17 500 000 Ar", "semi_buffet": "19 000 000 Ar", "buffet": "20 000 000 Ar" },
+  "200": { "servis": "20 000 000 Ar", "semi_buffet": "25 000 000 Ar", "buffet": "28 000 000 Ar" },
+  "250": { "servis": "25 000 000 Ar", "semi_buffet": "30 000 000 Ar", "buffet": "35 000 000 Ar" },
+  "300": { "servis": "30 500 000 Ar", "semi_buffet": "35 500 000 Ar", "buffet": "38 000 000 Ar" },
+  "350": { "servis": "30 500 000 Ar", "semi_buffet": "35 500 000 Ar", "buffet": "38 000 000 Ar" },
+  "400": { "servis": "35 000 000 Ar", "semi_buffet": "40 000 000 Ar", "buffet": "45 000 000 Ar" },
+  "500": { "servis": "40 000 000 Ar", "semi_buffet": "45 000 000 Ar", "buffet": "48 000 000 Ar" },
+};
+
+const PACK_VODIONDRY_PRIX: Record<string, Record<string, string>> = {
+  "50": { "servis": "8 800 000 Ar", "semi_buffet": "10 500 000 Ar", "buffet": "11 000 000 Ar" },
+  "80": { "servis": "11 500 000 Ar", "semi_buffet": "12 500 000 Ar", "buffet": "12 900 000 Ar" },
+  "90": { "servis": "11 900 000 Ar", "semi_buffet": "13 000 000 Ar", "buffet": "13 500 000 Ar" },
+  "100": { "servis": "12 500 000 Ar", "semi_buffet": "13 500 000 Ar", "buffet": "14 500 000 Ar" },
+  "150": { "servis": "16 500 000 Ar", "semi_buffet": "17 500 000 Ar", "buffet": "18 900 000 Ar" },
+  "200": { "servis": "18 500 000 Ar", "semi_buffet": "22 000 000 Ar", "buffet": "25 000 000 Ar" },
+};
+
+function guessTypeService(nombre: number | string, budget: string, packNom: string = "") {
+  const isVodiondry = packNom.toUpperCase().includes("VODIONDRY");
+  const isMariage = !isVodiondry; // Fallback par defaut
+  const grid = isVodiondry ? PACK_VODIONDRY_PRIX : PACK_MARIAGE_PRIX;
+  const prices = grid[String(nombre)];
+  if (!prices) return "";
+  const entry = Object.entries(prices).find(([_, val]) => val === budget);
+  return entry ? entry[0] : "";
+}
+
 export default function Reservations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,6 +127,7 @@ export default function Reservations() {
   const [statut, setStatut] = useState<Reservation["statut"]>("EN_ATTENTE");
   const [selectedServices, setSelectedServices] = useState<number[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [typeService, setTypeService] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -136,7 +168,30 @@ export default function Reservations() {
     setDescriptionProjet(r.description_projet || "");
     setStatut(r.statut);
     setSelectedServices(r.services ? r.services.map((s) => s.id) : []);
+    setTypeService(guessTypeService(r.details_mariage.nombre_invites, r.details_mariage.budget, r.pack?.nom || ""));
     setModal("edit");
+  };
+
+  const handleTypeServiceChange = (val: string) => {
+    setTypeService(val);
+    if (val && nombreInvites) {
+      const isVodiondry = packs.find(p => p.id === packId)?.nom?.toUpperCase().includes("VODIONDRY");
+      const grid = isVodiondry ? PACK_VODIONDRY_PRIX : PACK_MARIAGE_PRIX;
+      if (grid[nombreInvites] && grid[nombreInvites][val]) {
+        setBudgetEstime(grid[nombreInvites][val]);
+      }
+    }
+  };
+
+  const handleNombreInvitesChange = (val: string) => {
+    setNombreInvites(val);
+    if (typeService && val) {
+      const isVodiondry = packs.find(p => p.id === packId)?.nom?.toUpperCase().includes("VODIONDRY");
+      const grid = isVodiondry ? PACK_VODIONDRY_PRIX : PACK_MARIAGE_PRIX;
+      if (grid[val] && grid[val][typeService]) {
+        setBudgetEstime(grid[val][typeService]);
+      }
+    }
   };
 
   const toggleService = (id: number) => {
@@ -163,6 +218,8 @@ export default function Reservations() {
       const updated = await api.updateReservation(currentId, payload);
       setReservations((prev) => prev.map((r) => (r.id === currentId ? updated : r)));
       setModal(null);
+      setDetailModal(updated);
+      alert("Réservation mise à jour avec succès !");
     } catch (err) {
       setError(getErrorMessage(err, "Erreur lors de la mise à jour."));
     } finally {
@@ -437,22 +494,28 @@ export default function Reservations() {
                                     </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-[#b73f68] block mb-1">Date célébration</span>
-                      <span className="text-sm font-semibold text-gray-800">{detailModal.details_mariage.date}</span>
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-[#b73f68] block mb-1">Date création</span>
+                      <span className="text-sm font-semibold text-gray-800">
+                        {new Date(detailModal.created_at).toLocaleDateString("fr-FR")}
+                      </span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
-                      <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5">Contact</h4>
+                      <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5">Client</h4>
                       <div className="text-sm space-y-2">
                         <p className="text-gray-500 flex items-center gap-2">
                           <Icon d={icons.user} size={14} stroke="#aaa" />
-                          <span className="font-medium text-gray-800">{detailModal.client.telephone}</span>
+                          <span className="font-medium text-gray-800">{detailModal.client.prenom} {detailModal.client.nom}</span>
                         </p>
                         <p className="text-gray-500 flex items-center gap-2">
                           <Icon d={icons.user} size={14} stroke="#aaa" />
                           <span className="font-medium text-gray-800">{detailModal.client.email}</span>
+                        </p>
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <Icon d={icons.user} size={14} stroke="#aaa" />
+                          <span className="font-medium text-gray-800">{detailModal.client.telephone}</span>
                         </p>
                         <p className="text-gray-500 flex items-center gap-2">
                           <Icon d={icons.mapPin} size={14} stroke="#aaa" />
@@ -460,36 +523,53 @@ export default function Reservations() {
                         </p>
                       </div>
                     </div>
+                    
                     <div className="space-y-3">
-                      <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5">Détails</h4>
+                      <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5">Événement</h4>
                       <div className="text-sm space-y-2">
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <Icon d={icons.calendar} size={14} stroke="#aaa" />
+                          <span className="font-medium text-gray-800">{detailModal.details_mariage.date}</span>
+                        </p>
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <Icon d={icons.chef} size={14} stroke="#aaa" />
+                          <span className="font-medium text-gray-800">
+                            {guessTypeService(detailModal.details_mariage.nombre_invites, detailModal.details_mariage.budget, detailModal.pack?.nom) || "Non spécifié"}
+                          </span>
+                        </p>
                         <p className="text-gray-500 flex items-center gap-2">
                           <Icon d={icons.users} size={14} stroke="#aaa" />
                           <span className="font-medium text-gray-800">{detailModal.details_mariage.nombre_invites} personnes</span>
                         </p>
                         <p className="text-gray-500 flex items-center gap-2">
                           <Icon d={icons.wallet} size={14} stroke="#aaa" />
-                          <span className="font-medium text-gray-800">{formatMGA(parseFloat(detailModal.details_mariage.budget) || 0)}</span>
-                        </p>
-                        <p className="text-gray-500 flex items-center gap-2">
-                          <Icon d={icons.flower} size={14} stroke="#aaa" />
-                          <span className="font-medium text-gray-800">{detailModal.details_mariage.theme || "—"}</span>
-                        </p>
-                        <p className="text-gray-500 flex items-center gap-2">
-                          <Icon d={icons.flower} size={14} stroke="#aaa" />
-                          <span className="font-medium text-gray-800">{detailModal.details_mariage.couleurs || "—"}</span>
+                          <span className="font-medium text-gray-800 font-bold text-[#e91e8c]">{detailModal.details_mariage.budget}</span>
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div>
-                    <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5 mb-2">Lieu</h4>
-                    <p className="text-sm text-gray-700">
-                      {detailModal.lieu.deja_reserve
-                          ? <span>Déjà réservé : <strong className="text-[#b73f68]">{detailModal.lieu.nom}</strong></span>
-                          : <span className="text-gray-500 italic">Recherche à la charge de l'agence.</span>}
-                    </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5 mb-2">Thème & Couleurs</h4>
+                      <div className="text-sm space-y-2">
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <span className="font-medium text-gray-800">Thème : </span> {detailModal.details_mariage.theme || "—"}
+                        </p>
+                        <p className="text-gray-500 flex items-center gap-2">
+                          <span className="font-medium text-gray-800">Couleurs : </span> {detailModal.details_mariage.couleurs || "—"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-serif text-sm font-bold text-[#1a0a14] border-b border-gray-100 pb-1.5 mb-2">Lieu</h4>
+                      <p className="text-sm text-gray-700">
+                        {detailModal.lieu.deja_reserve
+                            ? <span>Déjà réservé : <strong className="text-[#b73f68]">{detailModal.lieu.nom}</strong></span>
+                            : <span className="text-gray-500 italic">Recherche à la charge de l'agence.</span>}
+                      </p>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -498,7 +578,6 @@ export default function Reservations() {
                       {detailModal.pack ? (
                           <div className="bg-[#fdf6f9] p-4 rounded-3xl border border-[#fce4ec]/50 text-sm">
                             <p className="font-semibold text-gray-800">{detailModal.pack.nom}</p>
-                            <p className="text-[#e91e8c] font-bold text-xs mt-1">{formatMGA(detailModal.pack.prix)}</p>
                           </div>
                       ) : (
                           <p className="text-xs text-gray-400 italic">Aucun forfait choisi.</p>
@@ -529,7 +608,14 @@ export default function Reservations() {
                   )}
                 </div>
 
-                <div className="flex justify-end p-6 border-t border-[#fce4ec]/30">
+                <div className="flex justify-between p-6 border-t border-[#fce4ec]/30">
+                  <button onClick={() => {
+                      setDetailModal(null);
+                      openEdit(detailModal);
+                    }}
+                          className="rounded-full bg-white border border-[#e91e8c] px-8 py-3 text-sm font-bold text-[#e91e8c] transition hover:bg-[#fdf6f9]">
+                    Modifier
+                  </button>
                   <button onClick={() => setDetailModal(null)}
                           className="rounded-full bg-gradient-to-r from-[#e91e8c] to-[#c2185b] px-8 py-3 text-sm font-bold text-white transition hover:opacity-95">
                     Fermer
@@ -590,14 +676,40 @@ export default function Reservations() {
                     </div>
 
                     <div>
+                      <label className="block text-[11px] uppercase tracking-[0.16em] text-[#999] font-semibold mb-1.5">Type de service</label>
+                      <select
+                          value={typeService}
+                          onChange={(e) => handleTypeServiceChange(e.target.value)}
+                          className="w-full rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                      >
+                        <option value="">(Non défini)</option>
+                        <option value="servis">Service à table</option>
+                        <option value="semi_buffet">Semi-buffet</option>
+                        <option value="buffet">Buffet complet</option>
+                      </select>
+                    </div>
+
+                    <div>
                       <label className="block text-[11px] uppercase tracking-[0.16em] text-[#999] font-semibold mb-1.5">Nombre d'invités</label>
-                      <input
-                          type="number"
+                      <select
                           required
                           value={nombreInvites}
-                          onChange={(e) => setNombreInvites(e.target.value)}
+                          onChange={(e) => handleNombreInvitesChange(e.target.value)}
                           className="w-full rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
-                      />
+                      >
+                        <option value="">Sélectionner</option>
+                        <option value="50">50 personnes</option>
+                        <option value="80">80 personnes</option>
+                        <option value="90">90 personnes</option>
+                        <option value="100">100 personnes</option>
+                        <option value="150">150 personnes</option>
+                        <option value="200">200 personnes</option>
+                        <option value="250">250 personnes</option>
+                        <option value="300">300 personnes</option>
+                        <option value="350">350 personnes</option>
+                        <option value="400">400 personnes</option>
+                        <option value="500">500 personnes</option>
+                      </select>
                     </div>
 
                     <div className="md:col-span-2 space-y-2">

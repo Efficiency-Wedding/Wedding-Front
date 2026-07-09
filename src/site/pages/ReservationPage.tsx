@@ -80,7 +80,6 @@ const reservationFields: ReservationField[] = [
     { label: "Téléphone", name: "telephone", type: "tel" },
     { label: "Date du mariage", name: "date", type: "date" },
     { label: "Ville", name: "ville", type: "text" },
-    { label: "Nombre d'invités", name: "nombre_invites", type: "number" },
 ];
 
 const initialFormState: ReservationForm = {
@@ -393,9 +392,9 @@ export default function ReservationPage() {
         setForm((current) => {
             const newForm = { ...current, [name]: value };
             
-            // Calcul du prix automatique si le pack est sélectionné
-            const isPackMariage = currentItemName.toUpperCase().includes("PACK MARIAGE DE RÊVE");
+            // Calcul du prix automatique
             const isPackVodiondry = currentItemName.toUpperCase().includes("PACK VODIONDRY");
+            const isPackMariage = !isPackVodiondry; // Statique par défaut
 
             if (isPackMariage || isPackVodiondry) {
                 if (name === "prix_package" && newForm.nombre_personnes) {
@@ -468,8 +467,8 @@ export default function ReservationPage() {
             email: form.email.trim(),
             date_mariage: form.date,
             ville: form.ville.trim(),
-            nombre_invites: Number(form.nombre_invites),
-            budget_estime: form.budget.trim(),
+            nombre_invites: Number(form.nombre_personnes) || 0,
+            budget_estime: form.prix_package.trim(),
             theme_mariage: form.theme.trim() || null,
             couleurs_principales: form.couleurs.trim() || null,
             lieu_deja_reserve: form.deja_reserve === "oui",
@@ -735,8 +734,8 @@ export default function ReservationPage() {
                                 Nombre de personnes
                             </span>
                             {(() => {
-                                const isPackMariage = currentItemName.toUpperCase().includes("PACK MARIAGE DE RÊVE");
                                 const isPackVodiondry = currentItemName.toUpperCase().includes("PACK VODIONDRY");
+                                const isPackMariage = !isPackVodiondry; // Statique par défaut
 
                                 if (isPackMariage || isPackVodiondry) {
                                     const options = isPackMariage 
@@ -785,42 +784,14 @@ export default function ReservationPage() {
                             <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
                                 Prix
                             </span>
-                            {(() => {
-                                const isPackMariage = currentItemName.toUpperCase().includes("PACK MARIAGE DE RÊVE");
-                                const isPackVodiondry = currentItemName.toUpperCase().includes("PACK VODIONDRY");
-                                let availablePrices: string[] = [];
-
-                                if (form.nombre_personnes) {
-                                    if (isPackMariage && PACK_MARIAGE_PRIX[form.nombre_personnes]) {
-                                        availablePrices = Object.values(PACK_MARIAGE_PRIX[form.nombre_personnes]);
-                                    } else if (isPackVodiondry && PACK_VODIONDRY_PRIX[form.nombre_personnes]) {
-                                        availablePrices = Object.values(PACK_VODIONDRY_PRIX[form.nombre_personnes]);
-                                    }
-                                }
-
-                                return (
-                                    <select
-                                        name="prix_package"
-                                        value={form.prix_package}
-                                        onChange={handleChange}
-                                        className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
-                                        style={{
-                                            backgroundColor: (isPackMariage || isPackVodiondry) ? "#fff" : "#fff",
-                                            cursor: "pointer"
-                                        }}
-                                        required
-                                    >
-                                        <option value="" disabled>-- Prix --</option>
-                                        {availablePrices.length > 0 ? (
-                                            availablePrices.map(price => (
-                                                <option key={price} value={price}>{price}</option>
-                                            ))
-                                        ) : (
-                                            form.prix_package && <option value={form.prix_package}>{form.prix_package}</option>
-                                        )}
-                                    </select>
-                                );
-                            })()}
+                            <input
+                                type="text"
+                                name="prix_package"
+                                value={form.prix_package}
+                                readOnly
+                                placeholder="Calculé automatiquement"
+                                className="w-full rounded-3xl border border-[#eee] bg-[#f9f9f9] px-4 py-3 text-sm font-bold text-[#e91e8c] outline-none cursor-not-allowed"
+                            />
                             <FieldError message={fieldErrors.prix_package} />
                         </label>
                     </div>
@@ -852,22 +823,6 @@ export default function ReservationPage() {
                     </div>
 
                     <div className="mt-4 grid gap-4">
-                        <label className="block text-sm text-[#444]">
-                            <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
-                                Budget estimé
-                            </span>
-                            <input
-                                type="text"
-                                name="budget"
-                                value={form.budget}
-                                onChange={handleChange}
-                                className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
-                                placeholder="Ex: 1 500 000 Ar"
-                                required
-                            />
-                            <FieldError message={fieldErrors.budget} />
-                        </label>
-
                         <div className="grid gap-4 sm:grid-cols-2">
                             <label className="block text-sm text-[#444]">
                                 <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
@@ -919,14 +874,19 @@ export default function ReservationPage() {
                                 <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
                                     Nom du lieu
                                 </span>
-                                <input
-                                    type="text"
+                                <select
                                     name="lieu_nom"
                                     value={form.lieu_nom}
                                     onChange={handleChange}
                                     className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
-                                    placeholder="Nom du lieu ou domaine"
-                                />
+                                >
+                                    <option value="" disabled>-- Choisir le lieu --</option>
+                                    <option value="Espace Yandi">Espace Yandi</option>
+                                    <option value="Espace Vato">Espace Vato</option>
+                                    <option value="Domaine M">Domaine M</option>
+                                    <option value="Le Pavillon">Le Pavillon</option>
+                                    <option value="Autre">Autre</option>
+                                </select>
                                 <FieldError message={fieldErrors.lieu_nom} />
                             </label>
                         </div>
