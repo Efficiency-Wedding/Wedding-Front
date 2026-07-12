@@ -97,6 +97,12 @@ function guessTypeService(nombre: number | string, budget: string, packNom: stri
   return entry ? entry[0] : "";
 }
 
+const TYPE_SERVICE_LABELS: Record<string, string> = {
+  servis: "Service à table",
+  semi_buffet: "Semi-buffet",
+  buffet: "Buffet complet",
+};
+
 export default function Reservations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -534,7 +540,7 @@ export default function Reservations() {
                         <p className="text-gray-500 flex items-center gap-2">
                           <Icon d={icons.chef} size={14} stroke="#aaa" />
                           <span className="font-medium text-gray-800">
-                            {guessTypeService(detailModal.details_mariage.nombre_invites, detailModal.details_mariage.budget, detailModal.pack?.nom) || "Non spécifié"}
+                            {TYPE_SERVICE_LABELS[guessTypeService(detailModal.details_mariage.nombre_invites, detailModal.details_mariage.budget, detailModal.pack?.nom)] || "Non spécifié"}
                           </span>
                         </p>
                         <p className="text-gray-500 flex items-center gap-2">
