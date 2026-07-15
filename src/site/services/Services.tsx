@@ -43,6 +43,7 @@ import blog8 from "@/assets/images/blog/blog (8).jpeg";
 import blog9 from "@/assets/images/blog/blog (9).jpeg";
 import blog17 from "@/assets/images/blog/blog (17).jpeg";
 import blog18 from "@/assets/images/blog/blog (18).jpeg";
+import { svg } from "motion/react-client";
 
 // ── SVG Icon helper ─────────────────────────────────────────────────────────
 type IconProps = {

@@ -29,6 +29,12 @@ export interface Pack {
   created_at?: string;
   updated_at?: string;
   images?: Image[];  // ← ajouter
+  has_dynamic_pricing?: boolean;
+  options?: {
+    nombres_invites: number[];
+    types_service: string[];
+  };
+  tarifs?: Record<string, Record<string, number>>;
 }
 
 export interface ReservationPayload {
@@ -48,6 +54,7 @@ export interface ReservationPayload {
   service_ids?: number[];
   description_projet?: string | null;
   statut?: Reservation["statut"];
+  type_service?: string | null;
 }
 
 export interface Reservation {
@@ -282,6 +289,12 @@ export const api = {
   getActivePacks: async () =>
     (await apiRequest<Pack[]>("/api/packs")).filter((pack) => pack.statut === "ACTIF"),
   getPack: (id: number) => apiRequest<Pack>(`/api/packs/${id}`),
+  calculatePackPrice: (packId: number, invites: number, serviceType: string) =>
+    apiRequest<{ price: number }>(`/api/packs/${packId}/price`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ invites, service_type: serviceType }),
+    }),
   createPack: (formData: FormData) =>
     apiRequest<Pack>("/api/packs", {
       method: "POST",

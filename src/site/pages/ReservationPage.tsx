@@ -347,7 +347,84 @@ export default function ReservationPage() {
     useEffect(() => {
         setActiveImg(0);
         setSelectedExtraServices([]);
+        setForm((prev) => ({
+            ...prev,
+            nombre_personnes: "",
+            type_service: "",
+            prix_package: "",
+        }));
     }, [selectedItemId, reservationType]);
+
+    // Effect to calculate pack prices dynamically from the backend
+    useEffect(() => {
+        if (reservationType === "pack" && selectedPack) {
+            if (selectedPack.has_dynamic_pricing) {
+                if (form.nombre_personnes && form.type_service) {
+                    const fetchPrice = async () => {
+                        try {
+                            const res = await api.calculatePackPrice(
+                                selectedPack.id,
+                                Number(form.nombre_personnes),
+                                form.type_service
+                            );
+                            if (res && res.price !== undefined) {
+                                setForm(prev => ({
+                                    ...prev,
+                                    prix_package: new Intl.NumberFormat("fr-FR").format(res.price) + " Ar"
+                                }));
+                            }
+                        } catch (err) {
+                            console.error("Erreur de calcul du prix dynamique:", err);
+                            setForm(prev => ({ ...prev, prix_package: "Non disponible" }));
+                        }
+                    };
+                    fetchPrice();
+                } else if (state?.prix && !form.nombre_personnes && !form.type_service) {
+                    // Keep pre-filled price from navigation
+                } else {
+                    setForm(prev => ({ ...prev, prix_package: "" }));
+                }
+            } else {
+                // Static pack (including local fallback)
+                const isPackVodiondry = selectedPack.nom.toUpperCase().includes("PACK VODIONDRY");
+                const isPackMariage = selectedPack.nom.toUpperCase().includes("PACK MARIAGE");
+
+                if (isPackMariage || isPackVodiondry) {
+                    const typeServiceMap: Record<string, string> = {
+                        "servis": "servis",
+                        "semi_buffet": "semi_buffet",
+                        "buffet": "buffet"
+                    };
+                    const mappedTypeService = typeServiceMap[form.type_service] || form.type_service;
+
+                    if (mappedTypeService && form.nombre_personnes) {
+                        const priceMap = isPackMariage ? PACK_MARIAGE_PRIX : PACK_VODIONDRY_PRIX;
+                        const price = priceMap[form.nombre_personnes]?.[mappedTypeService];
+                        setForm(prev => ({
+                            ...prev,
+                            prix_package: price || ""
+                        }));
+                    } else if (state?.prix && !form.nombre_personnes && !form.type_service) {
+                        // Keep pre-filled price
+                    } else {
+                        setForm(prev => ({ ...prev, prix_package: "" }));
+                    }
+                } else {
+                    setForm(prev => ({
+                        ...prev,
+                        prix_package: selectedPack.prix ? new Intl.NumberFormat("fr-FR").format(selectedPack.prix) + " Ar" : "Sur devis"
+                    }));
+                }
+            }
+        } else if (reservationType === "service" && selectedService) {
+            setForm(prev => ({
+                ...prev,
+                prix_package: selectedService.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(selectedService.prix_indicatif) + " Ar" : "Sur devis"
+            }));
+        } else {
+            setForm(prev => ({ ...prev, prix_package: "" }));
+        }
+    }, [reservationType, selectedItemId, form.nombre_personnes, form.type_service, selectedPack, selectedService, state?.prix]);
 
     const selectedService = reservationType === "service" ? services.find(s => s.id === selectedItemId) : null;
     const selectedPack = reservationType === "pack" ? packs.find(p => p.id === selectedItemId) : null;
@@ -390,45 +467,10 @@ export default function ReservationPage() {
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
     ) => {
         const { name, value } = event.target;
-        setForm((current) => {
-            const newForm = { ...current, [name]: value };
-            
-            // Calcul du prix automatique
-            const isPackVodiondry = currentItemName.toUpperCase().includes("PACK VODIONDRY");
-            const isPackMariage = !isPackVodiondry; // Statique par défaut
-
-            if (isPackMariage || isPackVodiondry) {
-                if (name === "prix_package" && newForm.nombre_personnes) {
-                    // Si l'utilisateur choisit un prix manuellement, on met à jour le type de service
-                    const prices = isPackMariage ? PACK_MARIAGE_PRIX[newForm.nombre_personnes] : PACK_VODIONDRY_PRIX[newForm.nombre_personnes];
-                    if (prices) {
-                        const foundEntry = Object.entries(prices).find(([key, val]) => val === value);
-                        if (foundEntry) {
-                            newForm.type_service = foundEntry[0];
-                        }
-                    }
-                } else {
-                    const typeServiceMap: Record<string, string> = {
-                        "servis": "servis",
-                        "semi_buffet": "semi_buffet",
-                        "buffet": "buffet"
-                    };
-                    const mappedTypeService = typeServiceMap[newForm.type_service];
-
-                    if (mappedTypeService && newForm.nombre_personnes) {
-                        if (isPackMariage && PACK_MARIAGE_PRIX[newForm.nombre_personnes] && PACK_MARIAGE_PRIX[newForm.nombre_personnes][mappedTypeService]) {
-                            newForm.prix_package = PACK_MARIAGE_PRIX[newForm.nombre_personnes][mappedTypeService];
-                        } else if (isPackVodiondry && PACK_VODIONDRY_PRIX[newForm.nombre_personnes] && PACK_VODIONDRY_PRIX[newForm.nombre_personnes][mappedTypeService]) {
-                            newForm.prix_package = PACK_VODIONDRY_PRIX[newForm.nombre_personnes][mappedTypeService];
-                        } else {
-                            newForm.prix_package = ""; // Reset if combination not found
-                        }
-                    }
-                }
-            }
-
-            return newForm;
-        });
+        setForm((current) => ({
+            ...current,
+            [name]: value,
+        }));
     };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -475,6 +517,7 @@ export default function ReservationPage() {
             lieu_deja_reserve: form.deja_reserve === "oui",
             nom_lieu: form.deja_reserve === "oui" ? form.lieu_nom.trim() || null : null,
             description_projet: form.description_projet.trim() || null,
+            type_service: form.type_service || null,
             ...(reservationType === "service"
                 ? { service_ids: [selectedItemId, ...selectedExtraServices] }
                 : { pack_id: selectedItemId, service_ids: selectedExtraServices.length > 0 ? selectedExtraServices : undefined }),
@@ -709,8 +752,6 @@ export default function ReservationPage() {
                         </p>
                     </div>
 
-
-
                     <div className="mb-6 grid items-end gap-4 sm:grid-cols-3">
                         <label className="block text-sm text-[#444]">
                             <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
@@ -724,9 +765,19 @@ export default function ReservationPage() {
                                 required
                             >
                                 <option value="" disabled>-- Choisir le type --</option>
-                                <option value="servis">Service</option>
-                                <option value="semi_buffet">Semi-Buffet</option>
-                                <option value="buffet">Buffet</option>
+                                {reservationType === "pack" && selectedPack?.has_dynamic_pricing && selectedPack?.options?.types_service ? (
+                                    selectedPack.options.types_service.map(type => (
+                                        <option key={type} value={type}>
+                                            {type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                                        </option>
+                                    ))
+                                ) : (
+                                    <>
+                                        <option value="servis">Service</option>
+                                        <option value="semi_buffet">Semi-Buffet</option>
+                                        <option value="buffet">Buffet</option>
+                                    </>
+                                )}
                             </select>
                             <FieldError message={fieldErrors.type_service} />
                         </label>
@@ -735,8 +786,25 @@ export default function ReservationPage() {
                                 Nombre de personnes
                             </span>
                             {(() => {
+                                if (reservationType === "pack" && selectedPack?.has_dynamic_pricing && selectedPack?.options?.nombres_invites) {
+                                    return (
+                                        <select
+                                            name="nombre_personnes"
+                                            value={form.nombre_personnes}
+                                            onChange={handleChange}
+                                            className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                                            required
+                                        >
+                                            <option value="" disabled>-- Choisir le nombre --</option>
+                                            {selectedPack.options.nombres_invites.map(opt => (
+                                                <option key={opt} value={String(opt)}>{opt} pers</option>
+                                            ))}
+                                        </select>
+                                    );
+                                }
+
                                 const isPackVodiondry = currentItemName.toUpperCase().includes("PACK VODIONDRY");
-                                const isPackMariage = !isPackVodiondry; // Statique par défaut
+                                const isPackMariage = currentItemName.toUpperCase().includes("PACK MARIAGE") || (!isPackVodiondry && reservationType === "pack");
 
                                 if (isPackMariage || isPackVodiondry) {
                                     const options = isPackMariage 
