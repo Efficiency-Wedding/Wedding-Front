@@ -87,6 +87,8 @@ export interface Reservation {
     | "CONFIRME"
     | "ANNULE"
     | "TERMINE";
+  type_service?: string | null;
+  prix_calcule?: number | null;
   created_at: string;
 }
 
@@ -289,6 +291,13 @@ export const api = {
   getActivePacks: async () =>
     (await apiRequest<Pack[]>("/api/packs")).filter((pack) => pack.statut === "ACTIF"),
   getPack: (id: number) => apiRequest<Pack>(`/api/packs/${id}`),
+  getPackPrices: (packId: number) => apiRequest<Pack>(`/api/packs/${packId}/prices`),
+  updatePackPrices: (packId: number, tarifs: Record<string, Record<string, number>>) =>
+    apiRequest<Pack>(`/api/packs/${packId}/prices`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tarifs }),
+    }),
   calculatePackPrice: (packId: number, invites: number, serviceType: string) =>
     apiRequest<{ price: number }>(`/api/packs/${packId}/price`, {
       method: "POST",

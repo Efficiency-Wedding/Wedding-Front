@@ -218,7 +218,7 @@ export default function Reservations() {
         nombre_invites: Number(nombreInvites) || 1, budget_estime: budgetEstime,
         theme_mariage: themeMariage || null, couleurs_principales: couleursPrincipales || null,
         lieu_deja_reserve: lieuDejaReserve, nom_lieu: lieuDejaReserve ? nomLieu.trim() || null : null,
-        pack_id: packId || null, service_ids: selectedServices,
+        pack_id: packId || null, type_service: typeService || null, service_ids: selectedServices,
         description_projet: descriptionProjet || null, statut,
       };
       const updated = await api.updateReservation(currentId, payload);
@@ -380,7 +380,9 @@ export default function Reservations() {
                                 <div>
                                   <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wider">Budget</p>
                                   <p className="text-xs font-medium text-gray-700">
-                                    {formatMGA(parseFloat(r.details_mariage.budget) || 0)}
+                                    {r.prix_calcule !== undefined && r.prix_calcule !== null
+                                      ? formatMGA(r.prix_calcule)
+                                      : formatMGA(parseFloat(r.details_mariage.budget) || 0)}
                                   </p>
                                 </div>
                               </div>
@@ -549,7 +551,11 @@ export default function Reservations() {
                         </p>
                         <p className="text-gray-500 flex items-center gap-2">
                           <Icon d={icons.wallet} size={14} stroke="#aaa" />
-                          <span className="font-medium text-gray-800 font-bold text-[#e91e8c]">{detailModal.details_mariage.budget}</span>
+                          <span className="font-medium text-gray-800 font-bold text-[#e91e8c]">
+                            {detailModal.prix_calcule !== undefined && detailModal.prix_calcule !== null
+                              ? formatMGA(detailModal.prix_calcule)
+                              : detailModal.details_mariage.budget}
+                          </span>
                         </p>
                       </div>
                     </div>
