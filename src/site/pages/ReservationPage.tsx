@@ -361,62 +361,52 @@ export default function ReservationPage() {
     // Effect to calculate pack prices dynamically from the backend
     useEffect(() => {
         if (reservationType === "pack" && selectedPack) {
-            if (selectedPack.has_dynamic_pricing) {
-                if (form.nombre_personnes && form.type_service) {
-                    const fetchPrice = async () => {
-                        try {
-                            const res = await api.calculatePackPrice(
-                                selectedPack.id,
-                                Number(form.nombre_personnes),
-                                form.type_service
-                            );
-                            if (res && res.price !== undefined) {
-                                setForm(prev => ({
-                                    ...prev,
-                                    prix_package: new Intl.NumberFormat("fr-FR").format(res.price) + " Ar"
-                                }));
-                            }
-                        } catch (err) {
-                            console.error("Erreur de calcul du prix dynamique:", err);
-                            setForm(prev => ({ ...prev, prix_package: "Non disponible" }));
+            if (form.nombre_personnes && form.type_service) {
+                const fetchPrice = async () => {
+                    try {
+                        const res = await api.calculatePackPrice(
+                            selectedPack.id,
+                            Number(form.nombre_personnes),
+                            form.type_service
+                        );
+                        if (res && res.price !== undefined) {
+                            setForm(prev => ({
+                                ...prev,
+                                prix_package: new Intl.NumberFormat("fr-FR").format(res.price) + " Ar"
+                            }));
+                            return; // Stop here if API succeeds
                         }
-                    };
-                    fetchPrice();
-                } else if (state?.prix && !form.nombre_personnes && !form.type_service) {
-                    // Keep pre-filled price from navigation
-                } else {
-                    setForm(prev => ({ ...prev, prix_package: "" }));
-                }
-            } else {
-                // Static pack (including local fallback)
-                const isPackVodiondry = selectedPack.nom.toUpperCase().includes("PACK VODIONDRY");
-                const isPackMariage = selectedPack.nom.toUpperCase().includes("PACK MARIAGE");
+                    } catch (err) {
+                        console.error("Erreur de calcul du prix dynamique (fallback au tarif statique):", err);
+                    }
+                    
+                    // Fallback to static pricing if API fails
+                    const isPackVodiondry = selectedPack.nom.toUpperCase().includes("PACK VODIONDRY");
+                    const isPackMariage = selectedPack.nom.toUpperCase().includes("PACK MARIAGE");
 
-                if (isPackMariage || isPackVodiondry) {
-                    const typeServiceMap: Record<string, string> = {
-                        "servi": "servi",
-                        "semi-buffet": "semi-buffet",
-                        "buffet": "buffet"
-                    };
-                    const mappedTypeService = typeServiceMap[form.type_service] || form.type_service;
-
-                    if (mappedTypeService && form.nombre_personnes) {
+                    if (isPackMariage || isPackVodiondry) {
                         const priceMap = isPackMariage ? PACK_MARIAGE_PRIX : PACK_VODIONDRY_PRIX;
-                        const price = priceMap[form.nombre_personnes]?.[mappedTypeService];
+                        const price = priceMap[form.nombre_personnes]?.[form.type_service];
                         setForm(prev => ({
                             ...prev,
-                            prix_package: price || ""
+                            prix_package: price || "Sur devis"
                         }));
-                    } else if (state?.prix && !form.nombre_personnes && !form.type_service) {
-                        // Keep pre-filled price
                     } else {
-                        setForm(prev => ({ ...prev, prix_package: "" }));
+                        setForm(prev => ({ ...prev, prix_package: "Sur devis" }));
                     }
-                } else {
+                };
+                fetchPrice();
+            } else if (state?.prix && !form.nombre_personnes && !form.type_service) {
+                // Keep pre-filled price from navigation
+            } else {
+                // No selection, just show base price or empty
+                if (selectedPack.prix && !form.nombre_personnes && !form.type_service) {
                     setForm(prev => ({
                         ...prev,
-                        prix_package: selectedPack.prix ? new Intl.NumberFormat("fr-FR").format(selectedPack.prix) + " Ar" : "Sur devis"
+                        prix_package: new Intl.NumberFormat("fr-FR").format(selectedPack.prix) + " Ar"
                     }));
+                } else {
+                    setForm(prev => ({ ...prev, prix_package: "" }));
                 }
             }
         } else if (reservationType === "service" && selectedService) {

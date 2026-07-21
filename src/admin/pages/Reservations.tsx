@@ -176,9 +176,19 @@ export default function Reservations() {
     setModal("edit");
   };
 
-  const handleTypeServiceChange = (val: string) => {
+  const handleTypeServiceChange = async (val: string) => {
     setTypeService(val);
-    if (val && nombreInvites) {
+    if (val && nombreInvites && packId) {
+      try {
+        const res = await api.calculatePackPrice(Number(packId), Number(nombreInvites), val);
+        if (res && res.price !== undefined) {
+          setBudgetEstime(new Intl.NumberFormat("fr-FR").format(res.price) + " Ar");
+          return;
+        }
+      } catch (err) {
+        console.error("Erreur calcul prix, fallback:", err);
+      }
+      
       const isVodiondry = packs.find(p => p.id === packId)?.nom?.toUpperCase().includes("VODIONDRY");
       const grid = isVodiondry ? PACK_VODIONDRY_PRIX : PACK_MARIAGE_PRIX;
       if (grid[nombreInvites] && grid[nombreInvites][val]) {
@@ -187,13 +197,44 @@ export default function Reservations() {
     }
   };
 
-  const handleNombreInvitesChange = (val: string) => {
+  const handleNombreInvitesChange = async (val: string) => {
     setNombreInvites(val);
-    if (typeService && val) {
+    if (typeService && val && packId) {
+      try {
+        const res = await api.calculatePackPrice(Number(packId), Number(val), typeService);
+        if (res && res.price !== undefined) {
+          setBudgetEstime(new Intl.NumberFormat("fr-FR").format(res.price) + " Ar");
+          return;
+        }
+      } catch (err) {
+        console.error("Erreur calcul prix, fallback:", err);
+      }
+      
       const isVodiondry = packs.find(p => p.id === packId)?.nom?.toUpperCase().includes("VODIONDRY");
       const grid = isVodiondry ? PACK_VODIONDRY_PRIX : PACK_MARIAGE_PRIX;
       if (grid[val] && grid[val][typeService]) {
         setBudgetEstime(grid[val][typeService]);
+      }
+    }
+  };
+
+  const handlePackChange = async (val: number | "") => {
+    setPackId(val);
+    if (typeService && nombreInvites && val !== "") {
+      try {
+        const res = await api.calculatePackPrice(Number(val), Number(nombreInvites), typeService);
+        if (res && res.price !== undefined) {
+          setBudgetEstime(new Intl.NumberFormat("fr-FR").format(res.price) + " Ar");
+          return;
+        }
+      } catch (err) {
+        console.error("Erreur calcul prix, fallback:", err);
+      }
+      
+      const isVodiondry = packs.find(p => p.id === val)?.nom?.toUpperCase().includes("VODIONDRY");
+      const grid = isVodiondry ? PACK_VODIONDRY_PRIX : PACK_MARIAGE_PRIX;
+      if (grid[nombreInvites] && grid[nombreInvites][typeService]) {
+        setBudgetEstime(grid[nombreInvites][typeService]);
       }
     }
   };
@@ -748,7 +789,7 @@ export default function Reservations() {
                       <label className="block text-[11px] uppercase tracking-[0.16em] text-[#999] font-semibold mb-1.5">Pack</label>
                       <select
                           value={packId}
-                          onChange={(e) => setPackId(e.target.value ? Number(e.target.value) : "")}
+                          onChange={(e) => handlePackChange(e.target.value ? Number(e.target.value) : "")}
                           className="w-full rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                       >
                         <option value="">Aucun pack</option>
