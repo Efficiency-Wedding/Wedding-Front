@@ -3,7 +3,6 @@ import { motion } from "motion/react";
 import type { Reservation, Pack, Service } from "../lib/api";
 import { api } from "../lib/api";
 import { getErrorMessage } from "@/shared/errors";
-import { assetUrl } from "@/shared/api";
 
 // SVG Icon Helper & paths
 type IconProps = {
@@ -89,11 +88,10 @@ const PACK_VODIONDRY_PRIX: Record<string, Record<string, string>> = {
 
 function guessTypeService(nombre: number | string, budget: string, packNom: string = "") {
   const isVodiondry = packNom.toUpperCase().includes("VODIONDRY");
-  const isMariage = !isVodiondry; // Fallback par defaut
   const grid = isVodiondry ? PACK_VODIONDRY_PRIX : PACK_MARIAGE_PRIX;
   const prices = grid[String(nombre)];
   if (!prices) return "";
-  const entry = Object.entries(prices).find(([_, val]) => val === budget);
+  const entry = Object.entries(prices).find(([, val]) => val === budget);
   return entry ? entry[0] : "";
 }
 

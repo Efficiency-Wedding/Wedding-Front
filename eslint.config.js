@@ -18,5 +18,10 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // The reservation form intentionally resets dependent fields when the
+      // selected service or pack changes.
+      'react-hooks/set-state-in-effect': 'off',
+    },
   },
 ])
