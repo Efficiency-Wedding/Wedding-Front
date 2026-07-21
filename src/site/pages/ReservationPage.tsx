@@ -247,6 +247,9 @@ export default function ReservationPage() {
     const [reservationType, setReservationType] = useState<"service" | "pack">("service");
     const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
+    const selectedService = reservationType === "service" ? services.find(s => s.id === selectedItemId) : null;
+    const selectedPack = reservationType === "pack" ? packs.find(p => p.id === selectedItemId) : null;
+
     const [minimumWeddingDate] = useState(() => {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -426,8 +429,6 @@ export default function ReservationPage() {
         }
     }, [reservationType, selectedItemId, form.nombre_personnes, form.type_service, selectedPack, selectedService, state?.prix]);
 
-    const selectedService = reservationType === "service" ? services.find(s => s.id === selectedItemId) : null;
-    const selectedPack = reservationType === "pack" ? packs.find(p => p.id === selectedItemId) : null;
 
     // Récupérer les IDs des services déjà inclus dans le pack sélectionné
     const serviceIdsInSelectedPack = selectedPack?.services?.map(s => s.id) || [];
@@ -755,34 +756,6 @@ export default function ReservationPage() {
                     <div className="mb-6 grid items-end gap-4 sm:grid-cols-3">
                         <label className="block text-sm text-[#444]">
                             <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
-                                Type de service
-                            </span>
-                            <select
-                                name="type_service"
-                                value={form.type_service}
-                                onChange={handleChange}
-                                className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
-                                required
-                            >
-                                <option value="" disabled>-- Choisir le type --</option>
-                                {reservationType === "pack" && selectedPack?.has_dynamic_pricing && selectedPack?.options?.types_service ? (
-                                    selectedPack.options.types_service.map(type => (
-                                        <option key={type} value={type}>
-                                            {type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
-                                        </option>
-                                    ))
-                                ) : (
-                                    <>
-                                        <option value="servis">Service</option>
-                                        <option value="semi_buffet">Semi-Buffet</option>
-                                        <option value="buffet">Buffet</option>
-                                    </>
-                                )}
-                            </select>
-                            <FieldError message={fieldErrors.type_service} />
-                        </label>
-                        <label className="block text-sm text-[#444]">
-                            <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
                                 Nombre de personnes
                             </span>
                             {(() => {
@@ -848,6 +821,34 @@ export default function ReservationPage() {
                                 );
                             })()}
                             <FieldError message={fieldErrors.nombre_personnes} />
+                        </label>
+                        <label className="block text-sm text-[#444]">
+                            <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
+                                Type de service
+                            </span>
+                            <select
+                                name="type_service"
+                                value={form.type_service}
+                                onChange={handleChange}
+                                className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
+                                required
+                            >
+                                <option value="" disabled>-- Choisir le type --</option>
+                                {reservationType === "pack" && selectedPack?.has_dynamic_pricing && selectedPack?.options?.types_service ? (
+                                    selectedPack.options.types_service.map(type => (
+                                        <option key={type} value={type}>
+                                            {type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                                        </option>
+                                    ))
+                                ) : (
+                                    <>
+                                        <option value="servis">Service</option>
+                                        <option value="semi_buffet">Semi-Buffet</option>
+                                        <option value="buffet">Buffet</option>
+                                    </>
+                                )}
+                            </select>
+                            <FieldError message={fieldErrors.type_service} />
                         </label>
                         <label className="block text-sm text-[#444]">
                             <span className="mb-2 block text-[11px] uppercase tracking-[0.16em] text-[#999]">
