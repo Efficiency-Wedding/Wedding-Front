@@ -67,24 +67,24 @@ const getServiceIcon = (serviceName: string) => {
 };
 
 const PACK_MARIAGE_PRIX: Record<string, Record<string, string>> = {
-  "50": { "servis": "10 500 000 Ar", "semi_buffet": "11 750 000 Ar", "buffet": "12 500 000 Ar" },
-  "100": { "servis": "14 000 000 Ar", "semi_buffet": "15 500 000 Ar", "buffet": "17 500 000 Ar" },
-  "150": { "servis": "17 500 000 Ar", "semi_buffet": "19 000 000 Ar", "buffet": "20 000 000 Ar" },
-  "200": { "servis": "20 000 000 Ar", "semi_buffet": "25 000 000 Ar", "buffet": "28 000 000 Ar" },
-  "250": { "servis": "25 000 000 Ar", "semi_buffet": "30 000 000 Ar", "buffet": "35 000 000 Ar" },
-  "300": { "servis": "30 500 000 Ar", "semi_buffet": "35 500 000 Ar", "buffet": "38 000 000 Ar" },
-  "350": { "servis": "30 500 000 Ar", "semi_buffet": "35 500 000 Ar", "buffet": "38 000 000 Ar" },
-  "400": { "servis": "35 000 000 Ar", "semi_buffet": "40 000 000 Ar", "buffet": "45 000 000 Ar" },
-  "500": { "servis": "40 000 000 Ar", "semi_buffet": "45 000 000 Ar", "buffet": "48 000 000 Ar" },
+  "50": { "servi": "10 500 000 Ar", "semi-buffet": "11 750 000 Ar", "buffet": "12 500 000 Ar" },
+  "100": { "servi": "14 000 000 Ar", "semi-buffet": "15 500 000 Ar", "buffet": "17 500 000 Ar" },
+  "150": { "servi": "17 500 000 Ar", "semi-buffet": "19 000 000 Ar", "buffet": "20 000 000 Ar" },
+  "200": { "servi": "20 000 000 Ar", "semi-buffet": "25 000 000 Ar", "buffet": "28 000 000 Ar" },
+  "250": { "servi": "25 000 000 Ar", "semi-buffet": "30 000 000 Ar", "buffet": "35 000 000 Ar" },
+  "300": { "servi": "30 500 000 Ar", "semi-buffet": "35 500 000 Ar", "buffet": "38 000 000 Ar" },
+  "350": { "servi": "30 500 000 Ar", "semi-buffet": "35 500 000 Ar", "buffet": "38 000 000 Ar" },
+  "400": { "servi": "35 000 000 Ar", "semi-buffet": "40 000 000 Ar", "buffet": "45 000 000 Ar" },
+  "500": { "servi": "40 000 000 Ar", "semi-buffet": "45 000 000 Ar", "buffet": "48 000 000 Ar" },
 };
 
 const PACK_VODIONDRY_PRIX: Record<string, Record<string, string>> = {
-  "50": { "servis": "8 800 000 Ar", "semi_buffet": "10 500 000 Ar", "buffet": "11 000 000 Ar" },
-  "80": { "servis": "11 500 000 Ar", "semi_buffet": "12 500 000 Ar", "buffet": "12 900 000 Ar" },
-  "90": { "servis": "11 900 000 Ar", "semi_buffet": "13 000 000 Ar", "buffet": "13 500 000 Ar" },
-  "100": { "servis": "12 500 000 Ar", "semi_buffet": "13 500 000 Ar", "buffet": "14 500 000 Ar" },
-  "150": { "servis": "16 500 000 Ar", "semi_buffet": "17 500 000 Ar", "buffet": "18 900 000 Ar" },
-  "200": { "servis": "18 500 000 Ar", "semi_buffet": "22 000 000 Ar", "buffet": "25 000 000 Ar" },
+  "50": { "servi": "8 800 000 Ar", "semi-buffet": "10 500 000 Ar", "buffet": "11 000 000 Ar" },
+  "80": { "servi": "11 500 000 Ar", "semi-buffet": "12 500 000 Ar", "buffet": "12 900 000 Ar" },
+  "90": { "servi": "11 900 000 Ar", "semi-buffet": "13 000 000 Ar", "buffet": "13 500 000 Ar" },
+  "100": { "servi": "12 500 000 Ar", "semi-buffet": "13 500 000 Ar", "buffet": "14 500 000 Ar" },
+  "150": { "servi": "16 500 000 Ar", "semi-buffet": "17 500 000 Ar", "buffet": "18 900 000 Ar" },
+  "200": { "servi": "18 500 000 Ar", "semi-buffet": "22 000 000 Ar", "buffet": "25 000 000 Ar" },
 };
 
 function guessTypeService(nombre: number | string, budget: string, packNom: string = "") {
@@ -98,9 +98,9 @@ function guessTypeService(nombre: number | string, budget: string, packNom: stri
 }
 
 const TYPE_SERVICE_LABELS: Record<string, string> = {
-  servis: "Service à table",
-  semi_buffet: "Semi-buffet",
-  buffet: "Buffet complet",
+  "servi": "Service à table",
+  "semi-buffet": "Semi-buffet",
+  "buffet": "Buffet complet",
 };
 
 export default function Reservations() {
@@ -695,8 +695,8 @@ export default function Reservations() {
                           className="w-full rounded-3xl border border-[#eee] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                       >
                         <option value="">(Non défini)</option>
-                        <option value="servis">Service à table</option>
-                        <option value="semi_buffet">Semi-buffet</option>
+                        <option value="servi">Service à table</option>
+                        <option value="semi-buffet">Semi-buffet</option>
                         <option value="buffet">Buffet complet</option>
                       </select>
                     </div>
