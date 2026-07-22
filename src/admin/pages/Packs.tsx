@@ -16,7 +16,6 @@ export default function Packs() {
   const [currentId, setCurrentId] = useState<number | null>(null);
   const [nom, setNom] = useState("");
   const [description, setDescription] = useState("");
-  const [prix, setPrix] = useState("");
   const [selectedServices, setSelectedServices] = useState<number[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -100,7 +99,6 @@ export default function Packs() {
     setCurrentId(null);
     setNom("");
     setDescription("");
-    setPrix("");
     setSelectedServices([]);
     setImageFile(null);
     setImagePreview(null);
@@ -114,7 +112,6 @@ export default function Packs() {
     setCurrentId(p.id);
     setNom(p.nom);
     setDescription(p.description || "");
-    setPrix(p.prix ? String(p.prix) : "");
     setSelectedServices(p.services ? p.services.map((s) => s.id) : []);
     setImageFile(null);
     setImagePreview(
@@ -161,7 +158,7 @@ export default function Packs() {
       const formData = new FormData();
       formData.append("nom", nom.trim());
       formData.append("description", description.trim());
-      formData.append("prix", prix || "0");
+      formData.append("prix", "0"); // Hardcoded since field was removed in favor of tarifs
 
       selectedServices.forEach((serviceId) => {
         formData.append("services[]", String(serviceId));
@@ -369,18 +366,6 @@ export default function Packs() {
                     required
                     value={nom}
                     onChange={(e) => setNom(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-[#f5e8c2] rounded-xl text-sm focus:outline-none focus:border-[#d4a843]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
-                    Prix (MGA)
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    value={prix}
-                    onChange={(e) => setPrix(e.target.value)}
                     className="w-full px-4 py-2.5 border border-[#f5e8c2] rounded-xl text-sm focus:outline-none focus:border-[#d4a843]"
                   />
                 </div>
