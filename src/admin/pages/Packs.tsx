@@ -22,6 +22,54 @@ export default function Packs() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // Pricing Form State
+  const [pricingRows, setPricingRows] = useState<any[]>([
+    {
+      id: 1,
+      persons: 50,
+      servi: 10500000,
+      semi: 11750000,
+      buffet: 12500000,
+    },
+    {
+      id: 2,
+      persons: 100,
+      servi: 14000000,
+      semi: 15500000,
+      buffet: 17500000,
+    },
+  ]);
+
+  const handlePricingChange = (id: number, field: string, value: string) => {
+    setPricingRows((prev) =>
+      prev.map((row) =>
+        row.id === id
+          ? {
+              ...row,
+              [field]: Number(value),
+            }
+          : row
+      )
+    );
+  };
+
+  const addPricingRow = () => {
+    setPricingRows([
+      ...pricingRows,
+      {
+        id: Date.now(),
+        persons: "",
+        servi: "",
+        semi: "",
+        buffet: "",
+      },
+    ]);
+  };
+
+  const removePricingRow = (id: number) => {
+    setPricingRows(pricingRows.filter((row) => row.id !== id));
+  };
+
   useEffect(() => {
     async function loadPacksAndServices() {
       try {
@@ -56,6 +104,9 @@ export default function Packs() {
     setSelectedServices([]);
     setImageFile(null);
     setImagePreview(null);
+    setPricingRows([
+      { id: 1, persons: "", servi: "", semi: "", buffet: "" }
+    ]);
     setModal("create");
   };
 
@@ -69,6 +120,20 @@ export default function Packs() {
     setImagePreview(
       p.image_url || assetUrl(p.image_principale),
     );
+    
+    if (p.tarifs && Object.keys(p.tarifs).length > 0) {
+      const parsedRows = Object.entries(p.tarifs).map(([persons, prices], index) => ({
+        id: index + 1,
+        persons: Number(persons),
+        servi: prices.servi || "",
+        semi: prices.semi || "",
+        buffet: prices.buffet || "",
+      }));
+      setPricingRows(parsedRows);
+    } else {
+      setPricingRows([{ id: 1, persons: "", servi: "", semi: "", buffet: "" }]);
+    }
+    
     setModal("edit");
   };
 
@@ -100,6 +165,14 @@ export default function Packs() {
 
       selectedServices.forEach((serviceId) => {
         formData.append("services[]", String(serviceId));
+      });
+
+      pricingRows.forEach((row) => {
+        if (row.persons) {
+          if (row.servi) formData.append(`tarifs[${row.persons}][servi]`, String(row.servi));
+          if (row.semi) formData.append(`tarifs[${row.persons}][semi]`, String(row.semi));
+          if (row.buffet) formData.append(`tarifs[${row.persons}][buffet]`, String(row.buffet));
+        }
       });
 
       if (imageFile) {
@@ -406,6 +479,100 @@ export default function Packs() {
                           </label>
                         );
                       })}
+                  </div>
+                </div>
+
+                {/* Pricing Table */}
+                <div className="md:col-span-2">
+                  <div className="bg-white rounded-xl border border-[#f5e8c2] p-4 sm:p-6 shadow-sm mt-2">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                      <h2 className="text-lg font-semibold text-[#664a24]">
+                        Tarifs par nombre de personnes
+                      </h2>
+
+                      <button
+                        type="button"
+                        onClick={addPricingRow}
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors shadow-sm whitespace-nowrap"
+                      >
+                        ➕ Ajouter une ligne
+                      </button>
+                    </div>
+
+                    <div className="overflow-x-auto rounded-lg border border-gray-100">
+                      <table className="w-full border-collapse">
+                        <thead className="bg-[#fdfbf7]">
+                          <tr>
+                            <th className="p-3 border-b border-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Nb personnes</th>
+                            <th className="p-3 border-b border-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Servi</th>
+                            <th className="p-3 border-b border-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Semi-buffet</th>
+                            <th className="p-3 border-b border-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">Buffet</th>
+                            <th className="p-3 border-b border-gray-100 w-24 text-center text-xs font-semibold text-gray-600 uppercase">Action</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {pricingRows.map((row) => (
+                            <tr key={row.id} className="hover:bg-gray-50/50 transition-colors">
+                              <td className="p-2 border-b border-gray-100">
+                                <input
+                                  type="number"
+                                  value={row.persons}
+                                  onChange={(e) =>
+                                    handlePricingChange(row.id, "persons", e.target.value)
+                                  }
+                                  className="w-full px-3 py-2 border border-[#f5e8c2] rounded-lg text-sm focus:outline-none focus:border-[#d4a843]"
+                                />
+                              </td>
+
+                              <td className="p-2 border-b border-gray-100">
+                                <input
+                                  type="number"
+                                  value={row.servi}
+                                  onChange={(e) =>
+                                    handlePricingChange(row.id, "servi", e.target.value)
+                                  }
+                                  className="w-full px-3 py-2 border border-[#f5e8c2] rounded-lg text-sm focus:outline-none focus:border-[#d4a843]"
+                                />
+                              </td>
+
+                              <td className="p-2 border-b border-gray-100">
+                                <input
+                                  type="number"
+                                  value={row.semi}
+                                  onChange={(e) =>
+                                    handlePricingChange(row.id, "semi", e.target.value)
+                                  }
+                                  className="w-full px-3 py-2 border border-[#f5e8c2] rounded-lg text-sm focus:outline-none focus:border-[#d4a843]"
+                                />
+                              </td>
+
+                              <td className="p-2 border-b border-gray-100">
+                                <input
+                                  type="number"
+                                  value={row.buffet}
+                                  onChange={(e) =>
+                                    handlePricingChange(row.id, "buffet", e.target.value)
+                                  }
+                                  className="w-full px-3 py-2 border border-[#f5e8c2] rounded-lg text-sm focus:outline-none focus:border-[#d4a843]"
+                                />
+                              </td>
+
+                              <td className="p-2 border-b border-gray-100 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => removePricingRow(row.id)}
+                                  className="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white p-2 rounded-lg transition-colors border border-red-100 hover:border-transparent"
+                                  title="Supprimer"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>

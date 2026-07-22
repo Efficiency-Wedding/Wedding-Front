@@ -238,6 +238,12 @@ export default function ReservationPage() {
     const [packs, setPacks] = useState<Pack[]>(staticPacks);
     const [loading, setLoading] = useState(true);
 
+    const [packOptions, setPackOptions] = useState<{
+        nombres_invites: (string | number)[];
+        types_service: string[];
+    } | null>(null);
+    const [isFetchingOptions, setIsFetchingOptions] = useState(false);
+
     const [selectedExtraServices, setSelectedExtraServices] = useState<number[]>([]);
     const [showExtraServicesModal, setShowExtraServicesModal] = useState(false);
 
@@ -357,6 +363,36 @@ export default function ReservationPage() {
             prix_package: "",
         }));
     }, [selectedItemId, reservationType]);
+
+    // Fetch dynamic options (invites, services) for the selected pack
+    useEffect(() => {
+        if (reservationType === "pack" && selectedItemId) {
+            const fetchOptions = async () => {
+                setIsFetchingOptions(true);
+                try {
+                    const packDetails = await api.getPackPrices(selectedItemId);
+                    if (packDetails.has_dynamic_pricing && packDetails.options) {
+                        setPackOptions(packDetails.options);
+                        setForm(prev => ({
+                            ...prev,
+                            nombre_personnes: packDetails.options?.nombres_invites[0] ? String(packDetails.options.nombres_invites[0]) : "",
+                            type_service: packDetails.options?.types_service[0] ? packDetails.options.types_service[0] : ""
+                        }));
+                    } else {
+                        setPackOptions(null);
+                    }
+                } catch (err) {
+                    console.error("Erreur récupération options pack:", err);
+                    setPackOptions(null);
+                } finally {
+                    setIsFetchingOptions(false);
+                }
+            };
+            fetchOptions();
+        } else {
+            setPackOptions(null);
+        }
+    }, [reservationType, selectedItemId]);
 
     // Effect to calculate pack prices dynamically from the backend
     useEffect(() => {
@@ -749,17 +785,18 @@ export default function ReservationPage() {
                                 Nombre de personnes
                             </span>
                             {(() => {
-                                if (reservationType === "pack" && selectedPack?.has_dynamic_pricing && selectedPack?.options?.nombres_invites) {
+                                if (reservationType === "pack" && packOptions) {
                                     return (
                                         <select
                                             name="nombre_personnes"
                                             value={form.nombre_personnes}
                                             onChange={handleChange}
+                                            disabled={isFetchingOptions}
                                             className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                                             required
                                         >
-                                            <option value="" disabled>-- Choisir le nombre --</option>
-                                            {selectedPack.options.nombres_invites.map(opt => (
+                                            <option value="" disabled>{isFetchingOptions ? "Chargement..." : "-- Choisir le nombre --"}</option>
+                                            {packOptions.nombres_invites.map(opt => (
                                                 <option key={opt} value={String(opt)}>{opt} pers</option>
                                             ))}
                                         </select>
@@ -779,12 +816,13 @@ export default function ReservationPage() {
                                             name="nombre_personnes"
                                             value={form.nombre_personnes}
                                             onChange={handleChange}
+                                            disabled={isFetchingOptions}
                                             className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                                             required
                                         >
                                             <option value="" disabled>-- Choisir le nombre --</option>
                                             {options.map(opt => (
-                                                <option key={opt} value={opt}>{opt}pers</option>
+                                                <option key={opt} value={opt}>{opt} pers</option>
                                             ))}
                                         </select>
                                     );
@@ -795,18 +833,19 @@ export default function ReservationPage() {
                                         name="nombre_personnes"
                                         value={form.nombre_personnes}
                                         onChange={handleChange}
+                                        disabled={isFetchingOptions}
                                         className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                                         required
                                     >
                                         <option value="" disabled>-- Choisir le nombre --</option>
-                                        <option value="50">50pers</option>
-                                        <option value="100">100pers</option>
-                                        <option value="150">150pers</option>
-                                        <option value="200">200pers</option>
-                                        <option value="250">250pers</option>
-                                        <option value="300">300pers</option>
-                                        <option value="350">350pers</option>
-                                        <option value="400">400pers</option>
+                                        <option value="50">50 pers</option>
+                                        <option value="100">100 pers</option>
+                                        <option value="150">150 pers</option>
+                                        <option value="200">200 pers</option>
+                                        <option value="250">250 pers</option>
+                                        <option value="300">300 pers</option>
+                                        <option value="350">350 pers</option>
+                                        <option value="400">400 pers</option>
                                     </select>
                                 );
                             })()}
@@ -820,12 +859,13 @@ export default function ReservationPage() {
                                 name="type_service"
                                 value={form.type_service}
                                 onChange={handleChange}
+                                disabled={isFetchingOptions || (reservationType === "pack" && isFetchingOptions)}
                                 className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                                 required
                             >
-                                <option value="" disabled>-- Choisir le type --</option>
-                                {reservationType === "pack" && selectedPack?.has_dynamic_pricing && selectedPack?.options?.types_service ? (
-                                    selectedPack.options.types_service.map(type => (
+                                <option value="" disabled>{isFetchingOptions ? "Chargement..." : "-- Choisir le type --"}</option>
+                                {reservationType === "pack" && packOptions ? (
+                                    packOptions.types_service.map(type => (
                                         <option key={type} value={type}>
                                             {type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                                         </option>
