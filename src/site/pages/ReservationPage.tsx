@@ -425,10 +425,10 @@ export default function ReservationPage() {
                         const price = priceMap[form.nombre_personnes]?.[form.type_service];
                         setForm(prev => ({
                             ...prev,
-                            prix_package: price || "Sur devis"
+                            prix_package: price || ""
                         }));
                     } else {
-                        setForm(prev => ({ ...prev, prix_package: "Sur devis" }));
+                        setForm(prev => ({ ...prev, prix_package: "" }));
                     }
                 };
                 fetchPrice();
@@ -448,7 +448,7 @@ export default function ReservationPage() {
         } else if (reservationType === "service" && selectedService) {
             setForm(prev => ({
                 ...prev,
-                prix_package: selectedService.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(selectedService.prix_indicatif) + " Ar" : "Sur devis"
+                prix_package: selectedService.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(selectedService.prix_indicatif) + " Ar" : ""
             }));
         } else {
             setForm(prev => ({ ...prev, prix_package: "" }));
@@ -476,8 +476,8 @@ export default function ReservationPage() {
         : (selectedPack ? (selectedPack.description || "") : "");
 
     const currentItemPrice = selectedService
-        ? (selectedService.prix_formate || (selectedService.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(selectedService.prix_indicatif) + " Ar" : "Sur devis"))
-        : (selectedPack ? (new Intl.NumberFormat("fr-FR").format(selectedPack.prix) + " Ar") : "Sur devis");
+        ? (selectedService.prix_formate || (selectedService.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(selectedService.prix_indicatif) + " Ar" : ""))
+        : (selectedPack ? (new Intl.NumberFormat("fr-FR").format(selectedPack.prix) + " Ar") : "");
 
     // Resolve images
     const currentItemImage = selectedService
@@ -665,9 +665,6 @@ export default function ReservationPage() {
                                 </p>
                             </div>
                             <div className="rounded-3xl bg-[#fdf6f9] px-5 py-4 text-right">
-                                <p className="text-[11px] uppercase tracking-[0.1em] text-[#aaa]">
-                                    À partir de
-                                </p>
                                 <p className="mt-1 text-3xl font-black text-[#e91e8c]">
                                     {currentItemPrice}
                                 </p>
@@ -1132,9 +1129,8 @@ export default function ReservationPage() {
                                                     </p>
                                                     <div className="flex items-center justify-between border-t border-[#fce4ec]/40 pt-3">
                                                         <div>
-                                                            <span className="block text-[9px] uppercase tracking-wider text-[#bbb]">À partir de</span>
                                                             <span className="text-sm font-black text-[#e91e8c]">
-                                                                {service.prix_formate || (service.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(service.prix_indicatif) + " Ar" : "Sur devis")}
+                                                                {service.prix_formate || (service.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(service.prix_indicatif) + " Ar" : "")}
                                                             </span>
                                                         </div>
                                                         <span className={`rounded-full px-3 py-1 text-[10px] font-bold transition-all ${

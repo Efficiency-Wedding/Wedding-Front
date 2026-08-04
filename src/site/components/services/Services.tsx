@@ -340,7 +340,7 @@ type StaticPackageCard = (typeof packages)[number] & { id?: number };
 
 const numberFormat = new Intl.NumberFormat("fr-FR");
 
-function formatMgaPrice(value?: number | null, fallback = "Sur devis") {
+function formatMgaPrice(value?: number | null, fallback = "") {
   return value === null || value === undefined ? fallback : `${numberFormat.format(value)} MGA`;
 }
 
@@ -562,7 +562,6 @@ function ServiceModal({ svc, onClose }: { svc: typeof services[0]; onClose: () =
               <p className="m-0 text-sm leading-6 text-[#777]">{svc.desc}</p>
             </div>
             <div className="shrink-0 rounded-2xl bg-[#fdf6f9] px-4 py-3 text-left md:text-right">
-              <p className="m-0 mb-1 text-[11px] uppercase tracking-[0.08em] text-[#aaa]">À partir de</p>
               <p className="m-0 text-3xl font-black leading-none" style={{ color: PINK }}>{svc.price}</p>
             </div>
           </div>

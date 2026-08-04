@@ -629,7 +629,6 @@ function ServiceCard({ svc, onOpen }: { svc: typeof services[0]; onOpen: () => v
         </p>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <span style={{ fontSize: 11, color: "#bbb", display: "block", textTransform: "uppercase", letterSpacing: "0.07em" }}>À partir de</span>
             <span style={{ fontWeight: 900, fontSize: 17, color: PINK }}>
               {svc.price}
             </span>
