@@ -238,7 +238,9 @@ export default function ReservationPage() {
     const [packs, setPacks] = useState<Pack[]>(staticPacks);
     const [loading, setLoading] = useState(true);
 
-    const [packOptions, setPackOptions] = useState<{
+    // Options de tarification dynamique (nombre de personnes / type de service),
+    // récupérées depuis l'admin — valable pour un pack ET pour un service.
+    const [dynamicOptions, setDynamicOptions] = useState<{
         nombres_invites: (string | number)[];
         types_service: string[];
     } | null>(null);
@@ -364,33 +366,36 @@ export default function ReservationPage() {
         }));
     }, [selectedItemId, reservationType]);
 
-    // Fetch dynamic options (invites, services) for the selected pack
+    // Fetch dynamic options (invites, type de service) pour l'élément sélectionné,
+    // que ce soit un pack ou un service — même logique, même source (admin).
     useEffect(() => {
-        if (reservationType === "pack" && selectedItemId) {
+        if (selectedItemId && (reservationType === "pack" || reservationType === "service")) {
             const fetchOptions = async () => {
                 setIsFetchingOptions(true);
                 try {
-                    const packDetails = await api.getPackPrices(selectedItemId);
-                    if (packDetails.has_dynamic_pricing && packDetails.options) {
-                        setPackOptions(packDetails.options);
+                    const details = reservationType === "pack"
+                        ? await api.getPackPrices(selectedItemId)
+                        : await api.getServicePrices(selectedItemId);
+                    if (details.has_dynamic_pricing && details.options) {
+                        setDynamicOptions(details.options);
                         setForm(prev => ({
                             ...prev,
-                            nombre_personnes: packDetails.options?.nombres_invites[0] ? String(packDetails.options.nombres_invites[0]) : "",
-                            type_service: packDetails.options?.types_service[0] ? packDetails.options.types_service[0] : ""
+                            nombre_personnes: details.options?.nombres_invites[0] ? String(details.options.nombres_invites[0]) : "",
+                            type_service: details.options?.types_service[0] ? details.options.types_service[0] : ""
                         }));
                     } else {
-                        setPackOptions(null);
+                        setDynamicOptions(null);
                     }
                 } catch (err) {
-                    console.error("Erreur récupération options pack:", err);
-                    setPackOptions(null);
+                    console.error("Erreur récupération options de tarification:", err);
+                    setDynamicOptions(null);
                 } finally {
                     setIsFetchingOptions(false);
                 }
             };
             fetchOptions();
         } else {
-            setPackOptions(null);
+            setDynamicOptions(null);
         }
     }, [reservationType, selectedItemId]);
 
@@ -446,10 +451,38 @@ export default function ReservationPage() {
                 }
             }
         } else if (reservationType === "service" && selectedService) {
-            setForm(prev => ({
-                ...prev,
-                prix_package: selectedService.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(selectedService.prix_indicatif) + " Ar" : ""
-            }));
+            if (form.nombre_personnes && form.type_service) {
+                const fetchPrice = async () => {
+                    try {
+                        const res = await api.calculateServicePrice(
+                            selectedService.id,
+                            Number(form.nombre_personnes),
+                            form.type_service
+                        );
+                        if (res && res.price !== undefined) {
+                            setForm(prev => ({
+                                ...prev,
+                                prix_package: new Intl.NumberFormat("fr-FR").format(res.price) + " Ar"
+                            }));
+                            return; // Le prix vient de l'admin, on s'arrête là
+                        }
+                    } catch (err) {
+                        console.error("Erreur de calcul du prix dynamique du service (fallback au prix indicatif):", err);
+                    }
+
+                    // Repli sur le prix indicatif fixe si aucun tarif dynamique ne correspond
+                    setForm(prev => ({
+                        ...prev,
+                        prix_package: selectedService.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(selectedService.prix_indicatif) + " Ar" : ""
+                    }));
+                };
+                fetchPrice();
+            } else {
+                setForm(prev => ({
+                    ...prev,
+                    prix_package: selectedService.prix_indicatif ? new Intl.NumberFormat("fr-FR").format(selectedService.prix_indicatif) + " Ar" : ""
+                }));
+            }
         } else {
             setForm(prev => ({ ...prev, prix_package: "" }));
         }
@@ -782,7 +815,7 @@ export default function ReservationPage() {
                                 Nombre de personnes
                             </span>
                             {(() => {
-                                if (reservationType === "pack" && packOptions) {
+                                if (dynamicOptions) {
                                     return (
                                         <select
                                             name="nombre_personnes"
@@ -793,7 +826,7 @@ export default function ReservationPage() {
                                             required
                                         >
                                             <option value="" disabled>{isFetchingOptions ? "Chargement..." : "-- Choisir le nombre --"}</option>
-                                            {packOptions.nombres_invites.map(opt => (
+                                            {dynamicOptions.nombres_invites.map(opt => (
                                                 <option key={opt} value={String(opt)}>{opt} pers</option>
                                             ))}
                                         </select>
@@ -856,13 +889,13 @@ export default function ReservationPage() {
                                 name="type_service"
                                 value={form.type_service}
                                 onChange={handleChange}
-                                disabled={isFetchingOptions || (reservationType === "pack" && isFetchingOptions)}
+                                disabled={isFetchingOptions}
                                 className="w-full rounded-3xl border border-[#eee] bg-[#fff] px-4 py-3 text-sm outline-none transition focus:border-[#e91e8c] focus:ring-2 focus:ring-[#fad1e1]"
                                 required
                             >
                                 <option value="" disabled>{isFetchingOptions ? "Chargement..." : "-- Choisir le type --"}</option>
-                                {reservationType === "pack" && packOptions ? (
-                                    packOptions.types_service.map(type => (
+                                {dynamicOptions ? (
+                                    dynamicOptions.types_service.map(type => (
                                         <option key={type} value={type}>
                                             {type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                                         </option>
