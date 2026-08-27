@@ -32,6 +32,12 @@ export interface Service {
   created_at?: string;
   updated_at?: string;
   images?: Image[];
+  has_dynamic_pricing?: boolean;
+  options?: {
+    nombres_invites: number[];
+    types_service: string[];
+  };
+  tarifs?: Record<string, Record<string, number>>;
 }
 
 export interface Pack {
@@ -320,6 +326,19 @@ export const api = {
   deleteService: (id: number) =>
     apiRequest<void>(`/api/services/${id}`, {
       method: "DELETE",
+    }),
+  getServicePrices: (serviceId: number) => apiRequest<Service>(`/api/services/${serviceId}/prices`),
+  updateServicePrices: (serviceId: number, tarifs: Record<string, Record<string, number>>) =>
+    apiRequest<Service>(`/api/services/${serviceId}/prices`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      data: { tarifs },
+    }),
+  calculateServicePrice: (serviceId: number, invites: number, serviceType: string) =>
+    apiRequest<{ price: number }>(`/api/services/${serviceId}/price`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      data: { invites, service_type: serviceType },
     }),
 
   // Packs
